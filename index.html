@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Задачі-мультфільми</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 28px 16px 70px;
+    font-family: "Comic Sans MS", "Segoe UI", system-ui, sans-serif;
+    color: #3a2d1f; background: #d9f4ff; min-height: 100vh;
+  }
+  .scene { position: fixed; inset: 0; overflow: hidden; pointer-events: none; z-index: 0; }
+  .sky { position: absolute; inset: 0;
+    background: linear-gradient(180deg, #9fe3ff 0%, #cdf3ff 32%, #eafbd6 66%, #d7efb2 100%); }
+  .sun { position: absolute; top: 5%; right: 9%; width: 120px; height: 120px; border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #fff8c4, #ffdf6b 55%, #ffc233);
+    box-shadow: 0 0 70px rgba(255,214,90,.75); }
+  .cloud { position: absolute; background: #ffffff; border-radius: 60px; opacity: .85;
+    box-shadow: 0 8px 0 rgba(160,200,220,.18); }
+  .cloud::before, .cloud::after { content: ""; position: absolute; background: #fff; border-radius: 50%; }
+  .cloud::before { width: 55%; height: 130%; left: 8%; top: -55%; }
+  .cloud::after { width: 42%; height: 110%; right: 6%; top: -40%; }
+  .c1 { width: 190px; height: 52px; top: 12%; left: 6%; animation: float 26s linear infinite; }
+  .c2 { width: 140px; height: 40px; top: 24%; left: 58%; animation: float 34s linear infinite reverse; }
+  .c3 { width: 220px; height: 58px; top: 3%; left: 38%; animation: float 42s linear infinite; }
+  .hill { position: absolute; bottom: -8vh; border-radius: 50% 50% 0 0 / 100% 100% 0 0; }
+  .h1 { left: -12%; width: 78%; height: 34vh; background: #a9e07c; }
+  .h2 { right: -16%; width: 84%; height: 27vh; background: #8ed267; }
+  .water { position: absolute; left: 0; right: 0; bottom: 0; height: 13vh;
+    background: linear-gradient(180deg, #86ded4 0%, #4fb9bb 100%); }
+  .water::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 10px;
+    background: repeating-linear-gradient(90deg, rgba(255,255,255,.7) 0 26px, transparent 26px 52px); }
+  .mushroom { position: absolute; width: 96px; height: 130px; }
+  .mushroom::before { content: ""; position: absolute; inset: 0 0 auto 0; height: 70px;
+    border-radius: 50% 50% 14px 14px;
+    background:
+      radial-gradient(circle at 28% 34%, #ffe2e2 0 11px, transparent 12px),
+      radial-gradient(circle at 62% 44%, #ffd6d6 0 8px, transparent 9px),
+      linear-gradient(180deg, #ff6b7d 0%, #e0384f 100%);
+    box-shadow: inset 0 -8px 0 rgba(0,0,0,.08); }
+  .mushroom::after { content: ""; position: absolute; left: 50%; transform: translateX(-50%); top: 62px;
+    width: 36px; height: 66px; border-radius: 14px / 20px;
+    background: linear-gradient(180deg, #fff6e6, #f2dfc2); }
+  .m1 { left: 4%; bottom: 12vh; transform: scale(.9) rotate(-6deg); }
+  .m2 { left: 16%; bottom: 15vh; transform: scale(.6) rotate(7deg); }
+  .m3 { right: 7%; bottom: 13vh; transform: scale(1.05) rotate(5deg); }
+  .m4 { right: 21%; bottom: 16vh; transform: scale(.72) rotate(-8deg); }
+  .lily { position: absolute; width: 120px; height: 62px; border-radius: 50%;
+    background: radial-gradient(ellipse at 50% 40%, #79d67f, #46ab55); opacity: .95; }
+  .lily::after { content: ""; position: absolute; right: -6px; top: 46%; width: 62px; height: 34px;
+    background: #56c3c1; border-radius: 50%; transform: translateY(-50%) rotate(24deg); }
+  .l1 { left: 8%; bottom: 4vh; }
+  .l2 { right: 12%; bottom: 7vh; transform: scale(.75); }
+  .l3 { left: 44%; bottom: 2vh; transform: scale(1.1); }
+  .fly { position: absolute; width: 13px; height: 13px; border-radius: 50%;
+    background: radial-gradient(circle, #fffde0 0 30%, #ffe45e 60%, rgba(255,228,94,0) 72%);
+    box-shadow: 0 0 16px 4px rgba(255,228,94,.85);
+    animation: drift 11s ease-in-out infinite, blink 3.2s ease-in-out infinite; }
+  @keyframes drift { 0%,100% { transform: translate(0,0) } 50% { transform: translate(34px,-46px) } }
+  @keyframes blink { 0%,100% { opacity: .25 } 50% { opacity: 1 } }
+  @keyframes float { 0% { transform: translateX(-40px) } 100% { transform: translateX(60px) } }
+  .wrap { position: relative; z-index: 1; }
+  header { max-width: 1180px; margin: 0 auto 18px; text-align: center; }
+  h1 {
+    font-size: clamp(28px, 5vw, 44px); margin: 0 0 10px; line-height: 1.15;
+    color: #ff5c8a;
+    text-shadow: 3px 3px 0 #fff, 6px 6px 0 rgba(255,209,102,.7);
+    letter-spacing: .5px;
+  }
+  .sub { margin: 0 auto; max-width: 720px; font-size: 17px; color: #5a6b52; }
+  .grid {
+    display: grid; gap: 26px; max-width: 1180px; margin: 0 auto;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  }
+  .card {
+    background: #fffdf7; border: 6px solid var(--c); border-radius: 28px;
+    padding: 20px 20px 18px; box-shadow: 0 10px 0 rgba(0,0,0,.07), 0 14px 26px rgba(90,120,160,.16);
+    transition: transform .18s ease, box-shadow .18s ease;
+  }
+  .card:hover { transform: rotate(0deg) translateY(-4px) scale(1.01);
+                 box-shadow: 0 14px 0 rgba(0,0,0,.08), 0 18px 32px rgba(90,120,160,.22); }
+  h2 { font-size: 21px; margin: 0 0 12px; display: flex; align-items: center; gap: 8px; color: #46372a; }
+  .emo { font-size: 24px; }
+  .num { font-size: 20px; color: #ff5c8a; font-weight: 700; margin-left: auto;
+          background: #ffe3ec; border-radius: 14px; padding: 2px 12px; }
+  .task {
+    font-size: 16px; line-height: 1.55; margin: 0 0 16px; color: #4a3b2c;
+    background: #fff8e3; border: 3px dashed var(--c); border-radius: 18px; padding: 14px 16px;
+  }
+  video { width: 100%; border-radius: 18px; display: block; background: #000;
+           border: 4px solid var(--c); }
+  .pending {
+    padding: 46px 12px; text-align: center; font-size: 16px; color: #8a7a66;
+    border: 4px dashed var(--c); border-radius: 18px; background: #fffdf3;
+  }
+  .hour { font-size: 34px; display: inline-block; animation: bob 1.6s ease-in-out infinite; }
+  @keyframes bob { 0%,100% { transform: translateY(0) } 50% { transform: translateY(-8px) } }
+  .alt { margin-top: 12px; font-size: 14px; color: #8a7a66; }
+  .alt a { color: #ff5c8a; margin-left: 6px; font-weight: 700; text-decoration: none;
+            border-bottom: 2px dotted #ffb3c6; }
+  footer { max-width: 1180px; margin: 34px auto 0; text-align: center; color: #7b8a71; font-size: 14px; }
+</style>
+</head>
+<body>
+  <div class="scene" aria-hidden="true">
+    <div class="sky"></div>
+    <div class="sun"></div>
+    <div class="cloud c1"></div><div class="cloud c2"></div><div class="cloud c3"></div>
+    <div class="hill h1"></div><div class="hill h2"></div>
+    <div class="water"></div>
+    <div class="mushroom m1"></div><div class="mushroom m2"></div>
+    <div class="mushroom m3"></div><div class="mushroom m4"></div>
+    <div class="lily l1"></div><div class="lily l2"></div><div class="lily l3"></div>
+    <div class="fly" style="left:12%;top:62%"></div>
+    <div class="fly" style="left:22%;top:48%;animation-delay:-2s"></div>
+    <div class="fly" style="left:31%;top:70%;animation-delay:-4s"></div>
+    <div class="fly" style="left:44%;top:56%;animation-delay:-1s"></div>
+    <div class="fly" style="left:57%;top:66%;animation-delay:-5s"></div>
+    <div class="fly" style="left:68%;top:52%;animation-delay:-3s"></div>
+    <div class="fly" style="left:77%;top:72%;animation-delay:-6s"></div>
+    <div class="fly" style="left:86%;top:58%;animation-delay:-2.5s"></div>
+    <div class="fly" style="left:8%;top:38%;animation-delay:-7s"></div>
+    <div class="fly" style="left:93%;top:34%;animation-delay:-1.5s"></div>
+  </div>
+  <div class="wrap">
+  <header>
+    <h1>🎈 Задачі-мультфільми 🎬</h1>
+    <p class="sub">Зверху — умова задачі, знизу — мультик, у якому ця умова написана й озвучена 🐸</p>
+  </header>
+  <div class="grid">
+    <article class="card" style="--c:#ff8fab; transform: rotate(-0.7deg)">
+      <h2><span class="emo">🍎</span> Пиріжки баби Лени <span class="num">№319</span></h2>
+      <p class="task">На святковому столі 30 пиріжків із сиром і з м&#x27;ясом. Гості з&#x27;їли 20 пиріжків із м&#x27;ясом, а господиня поклала ще 15 пиріжків із сиром. Як змінилося число пиріжків на столі?</p>
+      <video controls preload="metadata" playsinline src="pies_amphibia/video.mp4"></video>
+      <div class="alt">Інші версії: <a href="pies_story/video.mp4" target="_blank">pies_story</a><a href="pies_gumball/video.mp4" target="_blank">pies_gumball</a><a href="pies/video.mp4" target="_blank">pies</a></div>
+    </article>
+    <article class="card" style="--c:#ffd166; transform: rotate(0.7deg)">
+      <h2><span class="emo">🎈</span> Квіти <span class="num">№307</span></h2>
+      <p class="task">Настуся намалювала 26 квіток у 4 букетах. У трьох із них було по 7 квіток, а решта — у четвертому букеті. Скільки квіток у четвертому букеті?</p>
+      <video controls preload="metadata" playsinline src="flowers_am/video.mp4"></video>
+      <div class="alt">Інші версії: <a href="flowers/video.mp4" target="_blank">flowers</a></div>
+    </article>
+    <article class="card" style="--c:#7ee0b8; transform: rotate(-0.7deg)">
+      <h2><span class="emo">🌈</span> Три класи (27 / на 2 менше) <span class="num"></span></h2>
+      <p class="task">У трьох класах школи 90 учнів. У першому — 27 учнів, у другому — на 2 учні менше. Скільки учнів у третьому класі?</p>
+      <video controls preload="metadata" playsinline src="am_school/as.mp4"></video>
+      <div class="alt">Інші версії: <a href="school/school_a.mp4" target="_blank">school</a></div>
+    </article>
+    <article class="card" style="--c:#8ecae6; transform: rotate(0.7deg)">
+      <h2><span class="emo">🚀</span> Три класи (25 / на 2 більше) <span class="num"></span></h2>
+      <p class="task">У трьох класах школи 90 учнів. У першому — 25 учнів, у другому — на 2 учні більше. Скільки учнів у третьому класі?</p>
+      <video controls preload="metadata" playsinline src="am_school/as_b.mp4"></video>
+      <div class="alt">Інші версії: <a href="school/school_b.mp4" target="_blank">school</a></div>
+    </article>
+    <article class="card" style="--c:#c9a7ff; transform: rotate(-0.7deg)">
+      <h2><span class="emo">🐸</span> Олівці <span class="num"></span></h2>
+      <p class="task">У коробці є короткі, середні та довгі олівці — усього 36 штук. Коротких — 12, середніх — на 3 більше. Скільки довгих олівців у коробці?</p>
+      <video controls preload="metadata" playsinline src="am2_pencils/p2.mp4"></video>
+      <div class="alt">Інші версії: <a href="am_pencils/ap.mp4" target="_blank">am_pencils</a><a href="pencils/video.mp4" target="_blank">pencils</a></div>
+    </article>
+    <article class="card" style="--c:#ffa45c; transform: rotate(0.7deg)">
+      <h2><span class="emo">🍰</span> Деталі до кузова <span class="num"></span></h2>
+      <p class="task">За три години робітник виготовляє 24 деталі до кузова автомобіля. Скільки таких деталей він виготовить, працюючи так само, за 5 годин?</p>
+      <video controls preload="metadata" playsinline src="am2_parts/w2.mp4"></video>
+      <div class="alt">Інші версії: <a href="am_parts/aw.mp4" target="_blank">am_parts</a><a href="parts/video.mp4" target="_blank">parts</a></div>
+    </article>
+    <article class="card" style="--c:#9be564; transform: rotate(-0.7deg)">
+      <h2><span class="emo">🎨</span> Курка й гуска <span class="num">№246 (а)</span></h2>
+      <p class="task">Маса курки 2 кг, а маса гуски — на 3 кг більша. Яка маса трьох таких курей і трьох гусей разом?</p>
+      <video controls preload="metadata" playsinline src="am2_birds/b2.mp4"></video>
+      <div class="alt">Інші версії: <a href="am_birds/ab.mp4" target="_blank">am_birds</a><a href="birds/video.mp4" target="_blank">birds</a></div>
+    </article>
+    <article class="card" style="--c:#ff9f9f; transform: rotate(0.7deg)">
+      <h2><span class="emo">🐱</span> Булочка <span class="num"></span></h2>
+      <p class="task">У Данилка було 26 грн. Коли він купив булочку в їдальні, у нього залишилося чотири купюри, по 5 грн кожна. Скільки коштує булочка?</p>
+      <video controls preload="metadata" playsinline src="am2_bun/u2.mp4"></video>
+      <div class="alt">Інші версії: <a href="am_bun/au.mp4" target="_blank">am_bun</a><a href="bun/video.mp4" target="_blank">bun</a></div>
+    </article>
+    <article class="card" style="--c:#ff8fab; transform: rotate(-0.7deg)">
+      <h2><span class="emo">✂️</span> Сукня <span class="num">№266</span></h2>
+      <p class="task">Швачка з 3 рулонів тканини, по 8 м у кожному, пошила 8 однакових суконь. Скільки метрів витратили на одну сукню?</p>
+      <video controls preload="metadata" playsinline src="am2_dress/d2.mp4"></video>
+      <div class="alt">Інші версії: <a href="am_dress/ad.mp4" target="_blank">am_dress</a><a href="dress/video.mp4" target="_blank">dress</a></div>
+    </article>
+    <article class="card" style="--c:#ffd166; transform: rotate(0.7deg)">
+      <h2><span class="emo">🥛</span> Молоко і сир <span class="num">№7</span></h2>
+      <p class="task">З 15 л молока можна зробити 5 кг сиру. Скільки молока потрібно, щоб зробити 10 кг сиру?</p>
+      <video controls preload="metadata" playsinline src="am3_cheese/ch.mp4"></video>
+      
+    </article>
+    <article class="card" style="--c:#7ee0b8; transform: rotate(-0.7deg)">
+      <h2><span class="emo">🐾</span> Кошеня <span class="num">№6</span></h2>
+      <p class="task">Маса кота у віці 12 місяців становить 4 кг. Маса двомісячного кошеняти становить чверть від цієї маси. Яка маса кошеняти у 2 місяці?</p>
+      <video controls preload="metadata" playsinline src="am3_kitten/kt.mp4"></video>
+      
+    </article>
+    <article class="card" style="--c:#8ecae6; transform: rotate(0.7deg)">
+      <h2><span class="emo">🎪</span> Цирк <span class="num">№7</span></h2>
+      <p class="task">У цирковій програмі 18 номерів. Третина з них — виступи повітряних акробатів, решта — жонглери й клоуни, порівну. Скільки номерів із клоунами?</p>
+      <video controls preload="metadata" playsinline src="am3_circus/cc.mp4"></video>
+      
+    </article>
+    <article class="card" style="--c:#c9a7ff; transform: rotate(-0.7deg)">
+      <h2><span class="emo">🤹</span> Жонглювання <span class="num">№8</span></h2>
+      <p class="task">Під час виступу жонглера з підкидання кульок сценаристка помітила, що коли на підлогу впало 9 кульок, у руках артиста залишилося у 2 рази більше. Скільки кульок було спочатку?</p>
+      <video controls preload="metadata" playsinline src="am3_juggling/jg.mp4"></video>
+      
+    </article>
+    <article class="card" style="--c:#ffa45c; transform: rotate(0.7deg)">
+      <h2><span class="emo">📿</span> Бісер <span class="num">№6</span></h2>
+      <p class="task">Для виготовлення прикрас використали 40 пакетиків червоного бісеру і 32 пакетики чорного. На одну прикрасу витрачається 8 пакетиків. Скільки прикрас виготовили?</p>
+      <video controls preload="metadata" playsinline src="am3_beads/bd.mp4"></video>
+      
+    </article>
+    <article class="card" style="--c:#9be564; transform: rotate(-0.7deg)">
+      <h2><span class="emo">🧵</span> Майстерня баби Світи <span class="num"></span></h2>
+      <p class="task">У швейній майстерні було 54 м тканини. З 18 м пошили дитячі куртки, а з решти — плащі для дорослих. На кожен плащ витрачали по 4 м. Скільки плащів пошили?</p>
+      <video controls preload="metadata" playsinline src="am4_sewing/sw.mp4"></video>
+      
+    </article>
+    <article class="card" style="--c:#ff9f9f; transform: rotate(0.7deg)">
+      <h2><span class="emo">🐺</span> Вовк, лисиця, леопард <span class="num">№7</span></h2>
+      <p class="task">Маса лисиці 8 кг, а маса леопарда — у 9 разів більша. Яка маса вовка, якщо вона менша від маси леопарда на 30 кг?</p>
+      <video controls preload="metadata" playsinline src="am4_wolf/wf.mp4"></video>
+      
+    </article>
+    <article class="card" style="--c:#ff8fab; transform: rotate(-0.7deg)">
+      <h2><span class="emo">🥐</span> Круасани (Дениско) <span class="num">№8</span></h2>
+      <p class="task">Дениско купив 3 круасани з джемом, по 9 грн кожний, і пакет соку за 14 грн. На скільки гривень більше коштують усі куплені круасани, ніж пакет соку?</p>
+      <video controls preload="metadata" playsinline src="am4_croissants/cr.mp4"></video>
+      
+    </article>
+    <article class="card" style="--c:#ffd166; transform: rotate(0.7deg)">
+      <h2><span class="emo">🍪</span> Софійка: круасани і сік <span class="num">№7</span></h2>
+      <p class="task">Софійка купила 3 круасани з джемом, по 6 грн кожний, і пакет соку за 5 грн. Скільки грошей витратила Софійка?</p>
+      <video controls preload="metadata" playsinline src="am5_sofia/sf.mp4"></video>
+      
+    </article></div>
+  <footer>Стиль «Амфібія» 🌿 Відео 1024×768, 14.5–24 с, з українською озвучкою</footer>
+  </div>
+</body>
+</html>
