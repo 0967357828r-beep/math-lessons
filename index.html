@@ -315,6 +315,22 @@ document.querySelectorAll('.ansbtn').forEach(function (btn) {
 });
 
 var QCOLORS = ['#ff5c8a', '#ffd166', '#7ee0b8', '#8ecae6', '#c9a7ff', '#ffa45c', '#9be564'];
+var _actx = null;
+function playDing() {
+  try {
+    if (!_actx) { _actx = new (window.AudioContext || window.webkitAudioContext)(); }
+    var now = _actx.currentTime;
+    [880, 1320, 1760].forEach(function (freq, i) {
+      var osc = _actx.createOscillator(), gain = _actx.createGain();
+      osc.type = 'sine'; osc.frequency.value = freq;
+      gain.gain.setValueAtTime(0.0001, now + i * 0.06);
+      gain.gain.exponentialRampToValueAtTime(0.22 / (i + 1), now + i * 0.06 + 0.01);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + i * 0.06 + 0.55);
+      osc.connect(gain); gain.connect(_actx.destination);
+      osc.start(now + i * 0.06); osc.stop(now + i * 0.06 + 0.6);
+    });
+  } catch (e) {}
+}
 function miniFirework(x, y) {
   var c = document.createElement('canvas');
   c.style.cssText = 'position:fixed;inset:0;pointer-events:none;z-index:9999';
@@ -353,6 +369,7 @@ document.querySelectorAll('.quiz').forEach(function (q) {
         btn.classList.add('ok');
         msg.textContent = 'Молодець! 🎉';
         var r = btn.getBoundingClientRect();
+        playDing();
         miniFirework(r.left + r.width / 2, r.top + r.height / 2);
         opts.forEach(function (o) { o.disabled = true; });
       } else {
