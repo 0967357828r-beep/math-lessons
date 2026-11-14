@@ -55,8 +55,9 @@
   <div class="top">
     <a class="back" href="index.html" title="До карти">←</a>
     <div class="hud">
+      <div class="chip">❤️ <span id="lives">10</span></div>
+      <div class="chip">💎 <span id="gems">0</span></div>
       <div class="chip">⚡ <span id="xp">0</span></div>
-      <div class="chip">🔥 <span id="streak">0</span></div>
     </div>
   </div>
   <h1 id="title">…</h1>
@@ -90,8 +91,23 @@ const id = params.get("id");
 const task = (window.TASKS || []).find(t => t.id === id);
 
 function load() {
-  try { return JSON.parse(localStorage.getItem(KEY)) || {levels: {}, xp: 0, streak: 0, last: null}; }
-  catch (e) { return {levels: {}, xp: 0, streak: 0, last: null}; }
+  let p;
+  try { p = JSON.parse(localStorage.getItem(KEY)) || {}; } catch (e) { p = {}; }
+  p.levels = p.levels || {};
+  p.xp = p.xp || 0;
+  p.streak = p.streak || 0;
+  p.last = p.last || null;
+  p.gems = p.gems || 0;
+  p.lives = typeof p.lives === "number" ? p.lives : 10;
+  p.livesDate = p.livesDate || new Date().toISOString().slice(0, 10);
+  Object.keys(p.levels).forEach(k => {
+    const l = p.levels[k];
+    if (typeof l.gems !== "number") { l.gems = l.stars || 0; }
+    delete l.stars;
+  });
+  const today = new Date().toISOString().slice(0, 10);
+  if (p.livesDate !== today) { p.lives = 10; p.livesDate = today; }
+  return p;
 }
 function save(p) { localStorage.setItem(KEY, JSON.stringify(p)); }
 function toast(msg) {
@@ -138,7 +154,14 @@ if (!task) {
 
   const p = load();
   document.getElementById("xp").textContent = p.xp || 0;
-  document.getElementById("streak").textContent = p.streak || 0;
+  document.getElementById("gems").textContent = p.gems || 0;
+  document.getElementById("lives").textContent = p.lives;
+  if (p.lives <= 0) {
+    document.getElementById("opts").innerHTML =
+      '<div style="grid-column:1/-1;font-weight:700;color:#a3284d">❤️ Життя закінчились. ' +
+      'Відновляться завтра — або на карті за 3 💎.</div>';
+    document.getElementById("showAns").style.display = "inline-block";
+  }
 
   const opts = document.getElementById("opts");
   const items = task.options.map((text, i) => ({text, ok: i === task.correct}));
@@ -158,12 +181,12 @@ if (!task) {
         playDing();
         const r = b.getBoundingClientRect();
         confetti(r.left + r.width/2, r.top + r.height/2);
-        const stars = Math.max(1, 3 - attempts);
         const pr = load();
-        const prev = pr.levels[task.id] || {stars: 0, done: false};
-        const gain = 10 + stars * 5;
-        pr.levels[task.id] = {done: true, stars: Math.max(prev.stars || 0, stars)};
-        pr.xp = (pr.xp || 0) + gain;
+        const prev = pr.levels[task.id] || {gems: 0, done: false};
+        const earned = 1 + (attempts === 0 ? 1 : 0);
+        pr.levels[task.id] = {done: true, gems: Math.max(prev.gems || 0, earned)};
+        pr.gems = (pr.gems || 0) + earned;
+        pr.xp = (pr.xp || 0) + 10;
         const today = new Date().toISOString().slice(0, 10);
         if (pr.last !== today) {
           const y = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
@@ -172,15 +195,25 @@ if (!task) {
         }
         save(pr);
         document.getElementById("msg").innerHTML =
-          "Молодець! 🎉 " + "⭐".repeat(stars) + "☆".repeat(3 - stars) + " +" + gain + " XP";
+          "Молодець! 🎉 " + "💎".repeat(earned) + " +10 XP";
         document.getElementById("xp").textContent = pr.xp;
-        document.getElementById("streak").textContent = pr.streak;
+        document.getElementById("gems").textContent = pr.gems;
         document.querySelectorAll(".qopt").forEach(o => o.disabled = true);
         document.getElementById("next").classList.add("show");
       } else {
         attempts++;
         b.classList.add("bad"); b.disabled = true;
-        document.getElementById("msg").textContent = "Спробуй ще 🙂";
+        const pr = load();
+        pr.lives = Math.max(0, pr.lives - 1);
+        save(pr);
+        document.getElementById("lives").textContent = pr.lives;
+        if (pr.lives <= 0) {
+          document.querySelectorAll(".qopt").forEach(o => o.disabled = true);
+          document.getElementById("msg").textContent =
+            "❤️ Життя закінчились. Відновляться завтра — або на карті за 3 💎.";
+        } else {
+          document.getElementById("msg").textContent = "Спробуй ще 🙂 ❤️ " + pr.lives;
+        }
       }
     });
     opts.appendChild(b);
