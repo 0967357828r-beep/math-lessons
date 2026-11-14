@@ -138,20 +138,22 @@ const CHARS = ["🐸", "🦎", "🐛", "🐌", "🦋", "🐞"];
 function characterFor(idx) { return idx % 6 === 2 ? CHARS[Math.floor(idx / 6) % CHARS.length] : null; }
 
 function chestsOf(p) {
-  if (Array.isArray(p.chests)) { return p.chests; }
+  if (p.chestsV === 2 && Array.isArray(p.chests)) { return p.chests; }
   const n = window.TASKS.length;
   const list = [];
   const count = Math.max(4, Math.round(n / 6));
   const used = new Set();
   let guard = 0;
-  while (list.length < count && guard < 500) {
+  while (list.length < count && guard < 800) {
     guard++;
     const i = 2 + Math.floor(Math.random() * Math.max(1, n - 3));
     if (used.has(i)) { continue; }
+    if (isDone(p, window.TASKS[i].id)) { continue; }
     used.add(i);
     list.push({ i: i, kind: Math.random() < 0.55 ? "life" : "gems", opened: false });
   }
   p.chests = list.sort((a, b) => a.i - b.i);
+  p.chestsV = 2;
   return p.chests;
 }
 
