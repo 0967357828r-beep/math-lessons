@@ -51,12 +51,26 @@
                 animation: chestBob 1.8s ease-in-out infinite; }
   .chest .cap { color: #a5661f; font-weight: 700; }
   @keyframes chestBob { 0%,100% { transform: translateY(0) } 50% { transform: translateY(-5px) } }
-  .char { position: absolute; font-size: 62px; line-height: 1; pointer-events: none; z-index: 2;
-          animation: charFloat 3.2s ease-in-out infinite;
-          filter: drop-shadow(0 3px 3px rgba(0,0,0,.2)); }
-  .char.left { left: -46px; top: -2px; }
-  .char.right { right: -46px; top: -2px; }
-  @keyframes charFloat { 0%,100% { transform: translateY(0) rotate(-5deg) } 50% { transform: translateY(-7px) rotate(5deg) } }
+  .char { position: absolute; font-size: 104px; line-height: 1; pointer-events: none; z-index: 3;
+          opacity: 0; transform: scale(.3) translateY(24px);
+          filter: drop-shadow(0 5px 5px rgba(0,0,0,.22)); }
+  .char.left { left: -118px; top: -18px; }
+  .char.right { right: -118px; top: -18px; }
+  .char.show { animation: charPop .62s cubic-bezier(.2,1.7,.4,1) forwards,
+                          charFloat 3.4s .7s ease-in-out infinite; }
+  @keyframes charPop {
+    0%   { opacity: 0; transform: scale(.3) translateY(24px) rotate(-14deg); }
+    65%  { opacity: 1; transform: scale(1.14) translateY(-6px) rotate(7deg); }
+    100% { opacity: 1; transform: scale(1) translateY(0) rotate(0); }
+  }
+  .char .bubble { position: absolute; top: -20px; left: 50%; transform: translateX(-50%);
+                  background: #fffdf7; border: 3px solid #ffd166; border-radius: 14px;
+                  padding: 1px 9px; font: 700 13px/1.35 "Comic Sans MS", "Segoe UI", sans-serif;
+                  color: #7a5b12; white-space: nowrap; box-shadow: 0 3px 0 rgba(0,0,0,.08); }
+  .char .bubble::after { content: ""; position: absolute; bottom: -8px; left: 50%; margin-left: -6px;
+                         width: 0; height: 0; border: 6px solid transparent;
+                         border-top-color: #ffd166; }
+  @keyframes charFloat { 0%,100% { transform: translateY(0) rotate(-5deg) } 50% { transform: translateY(-10px) rotate(5deg) } }
   .banner { max-width: 760px; margin: 0 auto 16px; background: #ffe3e9; border: 4px solid #ff8fab;
             border-radius: 18px; padding: 12px 16px; text-align: center; font-weight: 700; color: #a3284d;
             display: none; }
@@ -134,8 +148,26 @@ function toast(msg) {
   clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove("show"), 2200);
 }
 
-const CHARS = ["🐸", "🦎", "🐛", "🐌", "🦋", "🐞"];
-function characterFor(idx) { return idx % 6 === 2 ? CHARS[Math.floor(idx / 6) % CHARS.length] : null; }
+const CHARS = ["🐸", "🦎", "🐛", "🐌", "🦋", "🐞", "👧", "🐢"];
+const PHRASES = ["Привіт!", "Молодець!", "Далі!", "Ура!", "Ти зможеш!", "Ще одна!", "Супер!", "Гайда!"];
+function characterFor(idx) {
+  if (idx % 4 !== 2) { return null; }
+  const k = Math.floor(idx / 4) % CHARS.length;
+  return { emoji: CHARS[k], phrase: idx % 8 === 2 ? PHRASES[k] : "" };
+}
+
+let charObserver = null;
+function observeChar(el) {
+  if (!("IntersectionObserver" in window)) { el.classList.add("show"); return; }
+  if (!charObserver) {
+    charObserver = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) { e.target.classList.add("show"); charObserver.unobserve(e.target); }
+      });
+    }, { threshold: 0.35 });
+  }
+  charObserver.observe(el);
+}
 
 function chestsOf(p) {
   if (p.chestsV === 3 && Array.isArray(p.chests)) { return p.chests; }
@@ -258,9 +290,15 @@ function render() {
     if (ch) {
       const s = document.createElement("span");
       s.className = "char " + (idx % 2 ? "left" : "right");
-      s.textContent = ch;
-      s.style.animationDelay = (idx % 5) * 0.35 + "s";
+      s.textContent = ch.emoji;
+      if (ch.phrase) {
+        const b = document.createElement("span");
+        b.className = "bubble";
+        b.textContent = ch.phrase;
+        s.appendChild(b);
+      }
       step.appendChild(s);
+      observeChar(s);
     }
 
     path.appendChild(step);
