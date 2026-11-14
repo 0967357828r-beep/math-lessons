@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Задачі-мультфільми — гра</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 18px 14px 90px; min-height: 100vh;
+    font-family: "Comic Sans MS", "Segoe UI", system-ui, sans-serif;
+    color: #3a2d1f;
+    background: linear-gradient(180deg, #9fe3ff 0%, #cdf3ff 34%, #eafbd6 68%, #d7efb2 100%);
+  }
+  header { max-width: 760px; margin: 0 auto 14px; text-align: center; }
+  h1 { font-size: clamp(24px, 5vw, 36px); margin: 0 0 6px; color: #ff5c8a;
+       text-shadow: 2px 2px 0 #fff, 4px 4px 0 rgba(255,209,102,.7); }
+  .sub { margin: 0; color: #5a6b52; font-size: 15px; }
+  .hud {
+    max-width: 760px; margin: 0 auto 18px; display: flex; gap: 10px; flex-wrap: wrap;
+    justify-content: center;
+  }
+  .chip {
+    background: #fffdf7; border: 4px solid #ffd166; border-radius: 18px;
+    padding: 8px 14px; font-weight: 700; font-size: 15px; display: flex; align-items: center; gap: 6px;
+    box-shadow: 0 6px 0 rgba(0,0,0,.07);
+  }
+  .chip.xp { border-color: #8ecae6; }
+  .chip.streak { border-color: #ffa45c; }
+  .chip.stars { border-color: #7ee0b8; }
+  .path { max-width: 520px; margin: 0 auto; position: relative; padding: 10px 0 20px; }
+  .path::before {
+    content: ""; position: absolute; left: 50%; top: 0; bottom: 0; width: 8px;
+    transform: translateX(-50%); border-radius: 8px;
+    background: repeating-linear-gradient(180deg, rgba(255,255,255,.9) 0 14px, rgba(255,255,255,.35) 14px 28px);
+  }
+  .step { position: relative; display: flex; justify-content: center; margin: 0 0 18px; }
+  .step:nth-child(4n+1) { transform: translateX(-120px); }
+  .step:nth-child(4n+2) { transform: translateX(-40px); }
+  .step:nth-child(4n+3) { transform: translateX(40px); }
+  .step:nth-child(4n+4) { transform: translateX(120px); }
+  .lvl {
+    width: 96px; text-align: center; cursor: pointer; text-decoration: none; color: inherit;
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
+  }
+  .dot {
+    width: 74px; height: 74px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center; font-size: 30px;
+    border: 6px solid #fff; box-shadow: 0 8px 0 rgba(0,0,0,.12);
+    background: #d7e3ea; color: #7c8b93; transition: transform .15s ease;
+  }
+  .lvl.open .dot { background: #ffe08a; color: #7a5b12; animation: pulse 1.6s ease-in-out infinite; }
+  .lvl.done .dot { background: #7ee0b8; color: #1f6b4c; }
+  .lvl:hover .dot { transform: translateY(-3px) scale(1.04); }
+  .lvl .cap { font-size: 12px; line-height: 1.2; color: #5a6b52; max-width: 96px; }
+  .lvl .st { font-size: 13px; letter-spacing: 1px; }
+  @keyframes pulse { 0%,100% { box-shadow: 0 8px 0 rgba(0,0,0,.12), 0 0 0 0 rgba(255,196,0,.6); }
+                     50% { box-shadow: 0 8px 0 rgba(0,0,0,.12), 0 0 0 14px rgba(255,196,0,0); } }
+  .tools { max-width: 760px; margin: 26px auto 0; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+  button.tool {
+    border: 4px solid #c9a7ff; background: #fff; color: #5a4a7a; font: 700 14px inherit;
+    border-radius: 14px; padding: 8px 14px; cursor: pointer;
+  }
+  button.tool:hover { background: #f4ecff; }
+  footer { max-width: 760px; margin: 26px auto 0; text-align: center; color: #7b8a71; font-size: 13px; }
+  a.plain { color: #ff5c8a; }
+  .toast {
+    position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%) translateY(20px);
+    background: #3a2d1f; color: #fff; padding: 10px 16px; border-radius: 14px; opacity: 0;
+    transition: all .25s ease; font-size: 14px; pointer-events: none;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+<header>
+  <h1>🎮 Задачі-мультфільми</h1>
+  <p class="sub">Проходь рівні по черзі: подивись мультик, дай відповідь — і отримай зірки ⭐</p>
+</header>
+
+<div class="hud">
+  <div class="chip xp">⚡ XP: <span id="xp">0</span></div>
+  <div class="chip streak">🔥 Серія: <span id="streak">0</span> дн.</div>
+  <div class="chip stars">⭐ Зірок: <span id="stars">0</span> / <span id="maxstars">0</span></div>
+</div>
+
+<div class="path" id="path"></div>
+
+<div class="tools">
+  <button class="tool" id="reset">Скинути прогрес</button>
+  <button class="tool" id="export">Зберегти прогрес</button>
+  <button class="tool" id="import">Завантажити прогрес</button>
+  <a class="tool" style="text-decoration:none;border-color:#8ecae6;color:#2b5d75" href="../index.html">📚 Бібліотека</a>
+</div>
+
+<footer>Прогрес зберігається у цьому браузері · <a class="plain" href="../index.html">усі задачі списком</a></footer>
+<div class="toast" id="toast"></div>
+
+<script src="tasks.js"></script>
+<script>
+const KEY = "mathgame_v1";
+const todayStr = () => new Date().toISOString().slice(0, 10);
+
+function load() {
+  try { return JSON.parse(localStorage.getItem(KEY)) || {levels: {}, xp: 0, streak: 0, last: null}; }
+  catch (e) { return {levels: {}, xp: 0, streak: 0, last: null}; }
+}
+function save(p) { localStorage.setItem(KEY, JSON.stringify(p)); }
+
+function starsFor(p, id) { return (p.levels[id] && p.levels[id].stars) || 0; }
+function isDone(p, id) { return !!(p.levels[id] && p.levels[id].done); }
+
+function toast(msg) {
+  const t = document.getElementById("toast");
+  t.textContent = msg; t.classList.add("show");
+  clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove("show"), 2200);
+}
+
+function render() {
+  const p = load();
+  const totalStars = Object.values(p.levels).reduce((s, l) => s + (l.stars || 0), 0);
+  document.getElementById("xp").textContent = p.xp || 0;
+  document.getElementById("streak").textContent = p.streak || 0;
+  document.getElementById("stars").textContent = totalStars;
+  document.getElementById("maxstars").textContent = (window.TASKS.length * 3);
+
+  const path = document.getElementById("path");
+  path.innerHTML = "";
+  window.TASKS.forEach((task, idx) => {
+    const done = isDone(p, task.id);
+    const prevDone = idx === 0 || isDone(p, window.TASKS[idx - 1].id);
+    const open = done || prevDone;
+    const stars = starsFor(p, task.id);
+
+    const step = document.createElement("div");
+    step.className = "step";
+
+    const a = document.createElement(done || open ? "a" : "div");
+    a.className = "lvl " + (done ? "done" : open ? "open" : "locked");
+    if (done || open) { a.href = "level.html?id=" + encodeURIComponent(task.id); }
+    a.innerHTML =
+      '<div class="dot">' + (done ? "✅" : open ? "▶️" : "🔒") + "</div>" +
+      '<div class="cap">' + task.title + "</div>" +
+      '<div class="st">' + (done ? "⭐".repeat(stars) + "☆".repeat(3 - stars) : "") + "</div>";
+    if (!open) { a.title = "Спочатку пройди попередню задачу"; }
+    step.appendChild(a);
+    path.appendChild(step);
+  });
+}
+
+document.getElementById("reset").addEventListener("click", () => {
+  if (confirm("Скинути весь прогрес?")) { localStorage.removeItem(KEY); render(); toast("Прогрес скинуто"); }
+});
+document.getElementById("export").addEventListener("click", () => {
+  const blob = new Blob([JSON.stringify(load(), null, 2)], {type: "application/json"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "math-lessons-progress.json";
+  a.click();
+  toast("Файл прогресу збережено");
+});
+document.getElementById("import").addEventListener("click", () => {
+  const inp = document.createElement("input");
+  inp.type = "file"; inp.accept = ".json,application/json";
+  inp.addEventListener("change", () => {
+    const f = inp.files[0]; if (!f) { return; }
+    const r = new FileReader();
+    r.onload = () => {
+      try { const d = JSON.parse(r.result); localStorage.setItem(KEY, JSON.stringify(d)); render(); toast("Прогрес завантажено"); }
+      catch (e) { toast("Не вдалося прочитати файл"); }
+    };
+    r.readAsText(f);
+  });
+  inp.click();
+});
+
+render();
+</script>
+</body>
+</html>
