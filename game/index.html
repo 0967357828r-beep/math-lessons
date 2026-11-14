@@ -47,6 +47,16 @@
   .lvl .st { font-size: 13px; letter-spacing: 1px; }
   @keyframes pulse { 0%,100% { box-shadow: 0 8px 0 rgba(0,0,0,.12), 0 0 0 0 rgba(255,196,0,.6); }
                      50% { box-shadow: 0 8px 0 rgba(0,0,0,.12), 0 0 0 14px rgba(255,196,0,0); } }
+  .chest .dot { background: #ffd9a0; border-color: #ffb347; color: #8a5a12;
+                animation: chestBob 1.8s ease-in-out infinite; }
+  .chest .cap { color: #a5661f; font-weight: 700; }
+  @keyframes chestBob { 0%,100% { transform: translateY(0) } 50% { transform: translateY(-5px) } }
+  .char { position: absolute; font-size: 24px; pointer-events: none; z-index: 2;
+          animation: charFloat 3.2s ease-in-out infinite;
+          filter: drop-shadow(0 2px 2px rgba(0,0,0,.18)); }
+  .char.left { left: -14px; top: 4px; }
+  .char.right { right: -14px; top: 4px; }
+  @keyframes charFloat { 0%,100% { transform: translateY(0) rotate(-5deg) } 50% { transform: translateY(-7px) rotate(5deg) } }
   .banner { max-width: 760px; margin: 0 auto 16px; background: #ffe3e9; border: 4px solid #ff8fab;
             border-radius: 18px; padding: 12px 16px; text-align: center; font-weight: 700; color: #a3284d;
             display: none; }
@@ -67,7 +77,7 @@
 <body>
 <header>
   <h1>🎮 Задачі-мультфільми</h1>
-  <p class="sub">Один крок — одна задача. Правильна відповідь дає кристал 💎, помилка забирає життя ❤️</p>
+  <p class="sub">Один крок — одна задача. Правильна відповідь дає кристал 💎, помилка забирає життя ❤️.<br>Дорогою трапляються скрині 🧰 — у них буває життя або кілька кристалів.</p>
 </header>
 
 <div class="hud">
@@ -124,6 +134,57 @@ function toast(msg) {
   clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove("show"), 2200);
 }
 
+const CHARS = ["🐸", "🦎", "🐛", "🐌", "🦋", "🐞"];
+function characterFor(idx) { return idx % 6 === 2 ? CHARS[Math.floor(idx / 6) % CHARS.length] : null; }
+
+function chestsOf(p) {
+  if (Array.isArray(p.chests)) { return p.chests; }
+  const n = window.TASKS.length;
+  const list = [];
+  const count = Math.max(4, Math.round(n / 6));
+  const used = new Set();
+  let guard = 0;
+  while (list.length < count && guard < 500) {
+    guard++;
+    const i = 2 + Math.floor(Math.random() * Math.max(1, n - 3));
+    if (used.has(i)) { continue; }
+    used.add(i);
+    list.push({ i: i, kind: Math.random() < 0.55 ? "life" : "gems", opened: false });
+  }
+  p.chests = list.sort((a, b) => a.i - b.i);
+  return p.chests;
+}
+
+function chime(freqs) {
+  try {
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if (!AC) { return; }
+    const ctx = chime.ctx || (chime.ctx = new AC());
+    freqs.forEach((f, k) => {
+      const o = ctx.createOscillator(), g = ctx.createGain();
+      o.type = "triangle"; o.frequency.value = f;
+      const t0 = ctx.currentTime + k * 0.09;
+      g.gain.setValueAtTime(0.0001, t0);
+      g.gain.exponentialRampToValueAtTime(0.22, t0 + 0.02);
+      g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.3);
+      o.connect(g).connect(ctx.destination); o.start(t0); o.stop(t0 + 0.32);
+    });
+  } catch (e) {}
+}
+
+function openChest(p, chest) {
+  chest.opened = true;
+  let msg;
+  if (chest.kind === "life") {
+    if (p.lives < MAX_LIVES) { p.lives += 1; msg = "❤️ У скрині життя! +1 життя"; }
+    else { p.gems += 2; msg = "💎 Життя повні — натомість +2 кристали"; }
+  } else {
+    const add = 1 + Math.floor(Math.random() * 2);
+    p.gems += add; msg = "💎 У скрині кристали! +" + add;
+  }
+  save(p); chime([660, 880, 1180]); render(); toast(msg);
+}
+
 function render() {
   const p = load(); save(p);
   document.getElementById("xp").textContent = p.xp;
@@ -139,23 +200,55 @@ function render() {
 
   const path = document.getElementById("path");
   path.innerHTML = "";
+  const chests = chestsOf(p);
   window.TASKS.forEach((task, idx) => {
     const done = isDone(p, task.id);
     const prevDone = idx === 0 || isDone(p, window.TASKS[idx - 1].id);
     const open = (done || prevDone) && p.lives > 0;
     const gems = gemsOf(p, task.id);
+    const chest = chests.find(c => c.i === idx);
 
     const step = document.createElement("div");
     step.className = "step";
-    const a = document.createElement(done || open ? "a" : "div");
-    a.className = "lvl " + (done ? "done" : open ? "open" : "locked");
-    if (done || open) { a.href = "level.html?id=" + encodeURIComponent(task.id); }
-    a.innerHTML =
-      '<div class="dot">' + (done ? "✅" : open ? "▶️" : "🔒") + "</div>" +
-      '<div class="cap">' + task.title + "</div>" +
-      '<div class="st">' + (done ? "💎".repeat(Math.min(gems, 3)) : "") + "</div>";
-    if (!open) { a.title = p.lives > 0 ? "Спочатку пройди попередню задачу" : "Немає життів"; }
-    step.appendChild(a);
+
+    if (chest && !chest.opened) {
+      const reachable = idx === 0 || prevDone;
+      const b = document.createElement("button");
+      b.className = "lvl chest" + (reachable ? "" : " locked");
+      b.style.cssText = "background:none;border:0;font:inherit;padding:0";
+      b.innerHTML = '<div class="dot">' + (reachable ? "🧰" : "📦") + '</div><div class="cap">' +
+        (reachable ? "Скриня!" : "Скриня") + '</div>' +
+        '<div class="st">' + (chest.kind === "life" ? "❤️" : "💎") + "</div>";
+      if (reachable) {
+        b.title = "Відкрий скриню — там подарунок";
+        b.addEventListener("click", () => openChest(p, chest));
+      } else {
+        b.disabled = true;
+        b.style.opacity = ".55";
+        b.title = "Спочатку дійди до цієї скрині";
+      }
+      step.appendChild(b);
+    } else {
+      const a = document.createElement(done || open ? "a" : "div");
+      a.className = "lvl " + (done ? "done" : open ? "open" : "locked");
+      if (done || open) { a.href = "level.html?id=" + encodeURIComponent(task.id); }
+      a.innerHTML =
+        '<div class="dot">' + (done ? "✅" : open ? "▶️" : "🔒") + "</div>" +
+        '<div class="cap">' + task.title + "</div>" +
+        '<div class="st">' + (done ? "💎".repeat(Math.min(gems, 3)) : "") + "</div>";
+      if (!open) { a.title = p.lives > 0 ? "Спочатку пройди попередню задачу" : "Немає життів"; }
+      step.appendChild(a);
+    }
+
+    const ch = characterFor(idx);
+    if (ch) {
+      const s = document.createElement("span");
+      s.className = "char " + (idx % 2 ? "left" : "right");
+      s.textContent = ch;
+      s.style.animationDelay = (idx % 5) * 0.35 + "s";
+      step.appendChild(s);
+    }
+
     path.appendChild(step);
   });
 }
