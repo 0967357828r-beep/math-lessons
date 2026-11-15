@@ -23,7 +23,7 @@
         <div class="card">
           <h3>Налаштування</h3>
           <div class="tools" style="margin-top:0">
-            <button class="btn ghost" id="heal">❤️ Життя (3 💎)</button>
+            <button class="btn ghost" id="heal">❤️ Відновити життя (3 💎)</button>
             <button class="btn ghost" id="export">⬇️ Зберегти</button>
             <button class="btn ghost" id="import">⬆️ Завантажити</button>
             <button class="btn ghost" id="reset">♻️ Скинути</button>
@@ -140,7 +140,7 @@
       '<div style="margin-top:12px" class="bar"><i style="width:' + Math.round(lg.pct * 100) + '%;background:' +
       lg.cur.color + '"></i></div>' +
       '<div class="muted" style="font-size:11px;font-weight:800;margin-top:6px">' +
-      (lg.next ? (lg.next.need - p.weekXp) + ' XP до «' + lg.next.name + '» ліги' : 'Найвища ліга! 🎉') + '</div>';
+      (lg.next ? (lg.next.need - p.weekXp) + ' XP до ліги «' + lg.next.name + '»' : 'Найвища ліга! 🎉') + '</div>';
   }
 
   function render() {
