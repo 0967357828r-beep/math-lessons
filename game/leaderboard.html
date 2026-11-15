@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Дошки пошани — Задачі-мультфільми</title>
+<link rel="stylesheet" href="game.css">
+</head>
+<body>
+<aside class="side" id="side"></aside>
+
+<main class="main">
+  <div class="wrap">
+    <div class="hud" id="hud"></div>
+    <div id="board"></div>
+  </div>
+</main>
+
+<div class="toast" id="toast"></div>
+<script src="tasks.js"></script>
+<script src="game.js"></script>
+<script>
+(function () {
+  Game.renderSidebar("board");
+  document.getElementById("hud").innerHTML = Game.hudHTML();
+  var EMOJI = ["🐸", "🦎", "🐛", "🐌", "🦋", "🐞", "🐢", "🐝", "🦊", "🐼", "🐨", "🐯", "🦁", "🐮"];
+
+  function render() {
+    var p = Game.load();
+    var lg = Game.leagueOf(p);
+    var lb = Game.weekLeaderboard(p);
+    var host = document.getElementById("board");
+
+    var html = '<div class="sec-head purple"><div class="sh-emoji">' + lg.cur.emoji + '</div>' +
+      '<div><div class="sh-kicker">Тиждень · ' + p.weekStart + '</div>' +
+      '<h2>' + lg.cur.name + ' ліга</h2></div>' +
+      '<div class="sh-bar"><div>' + p.weekXp + ' XP</div></div></div>';
+
+    html += '<div class="card"><h3>Місце у лізі <span class="more" style="color:' +
+      (lb.promote ? "#58cc02" : lb.demote ? "#ff4b4b" : "#999") + '">' +
+      (lb.promote ? "зона підвищення" : lb.demote ? "зона пониження" : "спокійна зона") +
+      '</span></h3>';
+
+    lb.list.forEach(function (row, i) {
+      if (i === 10) { html += '<div class="zone">↑ вище — підвищення</div>'; }
+      if (i === 25) { html += '<div class="zone demote">↓ нижче — пониження</div>'; }
+      html += '<div class="lb-row' + (row.me ? " me" : "") + '">' +
+        '<div class="rank">' + (i + 1) + '</div>' +
+        '<div class="av">' + (row.me ? p.profile.avatar : EMOJI[i % EMOJI.length]) + '</div>' +
+        '<div class="nm">' + Game.esc(row.name) + '</div>' +
+        '<div class="x">' + row.xp + ' XP</div></div>';
+    });
+    html += '</div>';
+
+    html += '<div class="card" style="margin-top:16px"><h3>Ліги</h3>';
+    Game.LEAGUES.forEach(function (l, i) {
+      html += '<div class="tier' + (i === lg.index ? " on" : "") + '" style="--tc:' + l.color + '">' +
+        '<div class="te">' + l.emoji + '</div><div><b>' + l.name + ' ліга</b>' +
+        '<div class="muted" style="font-size:12px">' + (i === lg.index ? "твоя ліга зараз" : "потрібно " + l.need + " XP/тиждень") +
+        '</div></div><div class="need">' + l.need + ' XP</div></div>';
+    });
+    html += '</div>';
+
+    host.innerHTML = html;
+  }
+
+  render();
+})();
+</script>
+</body>
+</html>

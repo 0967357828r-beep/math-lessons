@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Профіль — Задачі-мультфільми</title>
+<link rel="stylesheet" href="game.css">
+</head>
+<body>
+<aside class="side" id="side"></aside>
+
+<main class="main">
+  <div class="wrap">
+    <div class="hud" id="hud"></div>
+    <div id="profile"></div>
+  </div>
+</main>
+
+<div class="toast" id="toast"></div>
+<script src="tasks.js"></script>
+<script src="game.js"></script>
+<script>
+(function () {
+  var AVATARS = ["🐸", "🦎", "🐛", "🐌", "🦋", "🐞", "🐢", "🐝", "🦊", "🐼", "🦄", "🐙", "🚀", "🌟"];
+  Game.renderSidebar("profile");
+  document.getElementById("hud").innerHTML = Game.hudHTML();
+
+  var MONTHS = ["січня", "лютого", "березня", "квітня", "травня", "червня",
+                "липня", "серпня", "вересня", "жовтня", "листопада", "грудня"];
+  function dateUa(iso) {
+    var p2 = iso.split("-");
+    return (+p2[2]) + " " + MONTHS[(+p2[1]) - 1] + " " + p2[0];
+  }
+  function daysJoined(iso) {
+    var a = new Date(iso + "T00:00:00"), b = new Date(Game.todayStr() + "T00:00:00");
+    return Math.max(1, Math.round((b - a) / 86400000) + 1);
+  }
+
+  function render() {
+    var p = Game.load();
+    Game.save(p);
+    var lg = Game.leagueOf(p);
+    var ach = Game.achievements(p);
+    var host = document.getElementById("profile");
+    var doneLevels = Object.keys(p.levels).filter(function (k) { return p.levels[k].done; }).length;
+
+    var html = '<div class="hero"><div class="avatar">' + p.profile.avatar + '</div>' +
+      '<button class="edit" id="editAvatar">✏️ Змінити</button></div>' +
+      '<h1 class="profile-name" id="pname">' + Game.esc(p.profile.name) + '</h1>' +
+      '<div class="profile-sub">З нами з ' + dateUa(p.profile.joined) + ' · ' + daysJoined(p.profile.joined) +
+      ' дн. · пройдено ' + doneLevels + ' із ' + Game.SEQ.length + ' уроків</div>' +
+      '<div class="stats">' +
+        '<div class="stat"><div class="si">🔥</div><div><b>' + p.streak + '</b><span>денна серія</span></div></div>' +
+        '<div class="stat"><div class="si">⚡</div><div><b>' + p.xp + '</b><span>усього балів</span></div></div>' +
+        '<div class="stat"><div class="si">' + lg.cur.emoji + '</div><div><b>' + lg.cur.name + '</b><span>поточна ліга</span></div></div>' +
+        '<div class="stat"><div class="si">💎</div><div><b>' + p.gems + '</b><span>кристали</span></div></div>' +
+      '</div>' +
+
+      '<div class="card" style="margin-bottom:18px">' +
+        '<h3>Досягнення <a class="more" href="quests.html">квести</a></h3>';
+    ach.forEach(function (a) {
+      var pct = Math.min(100, Math.round(a.now / a.goal * 100));
+      var badge = a.level > 0 ? "Рівень " + a.level : "Нове";
+      html += '<div class="ach"><div class="ai" style="background:' + (a.level ? "#fff3d6" : "#f2f2f2") + '">' +
+              a.icon + '</div><div class="am"><div class="at">' + a.title +
+              '<span>' + a.now + ' / ' + a.goal + '</span></div>' +
+              '<div class="ad">' + a.desc + ' · ' + badge + '</div>' +
+              '<div class="bar"><i style="width:' + pct + '%"></i></div></div></div>';
+    });
+    html += '</div>' +
+
+      '<div class="card" style="margin-bottom:18px"><h3>' + lg.cur.name + ' ліга' +
+      ' <a class="more" href="leaderboard.html">дошка</a></h3>' +
+      '<div class="league-row"><div class="league-badge" style="background:' + lg.cur.color + '22">' +
+      lg.cur.emoji + '</div><div><b>' + p.weekXp + ' XP за тиждень</b>' +
+      '<div class="muted">' + (lg.next ? "До «" + lg.next.name + "» ліги: " + (lg.next.need - p.weekXp) + " XP" : "Найвища ліга!") +
+      '</div></div></div>' +
+      '<div class="bar" style="margin-top:12px"><i style="width:' + Math.round(lg.pct * 100) + '%;background:' +
+      lg.cur.color + '"></i></div></div>' +
+
+      '<div class="tools">' +
+        '<button class="btn ghost" id="rename">✏️ Імʼя</button>' +
+        '<button class="btn ghost" id="export">⬇️ Зберегти прогрес</button>' +
+        '<button class="btn ghost" id="import">⬆️ Завантажити</button>' +
+        '<button class="btn danger" id="reset">♻️ Скинути</button>' +
+      '</div>';
+
+    host.innerHTML = html;
+
+    document.getElementById("editAvatar").addEventListener("click", function () {
+      var p2 = Game.load();
+      var pick = document.createElement("div");
+      pick.style.cssText = "position:fixed;inset:0;background:rgba(0,0,0,.35);display:flex;" +
+        "align-items:center;justify-content:center;z-index:100";
+      var box = document.createElement("div");
+      box.className = "card";
+      box.style.cssText = "max-width:340px;text-align:center";
+      box.innerHTML = '<h3 style="justify-content:center">Обери персонажа</h3>';
+      AVATARS.forEach(function (em) {
+        var b = document.createElement("button");
+        b.textContent = em;
+        b.style.cssText = "font-size:30px;background:#f7f7f7;border:2px solid #e5e5e5;border-radius:14px;" +
+          "padding:8px 12px;margin:4px;cursor:pointer";
+        b.addEventListener("click", function () {
+          var pp = Game.load(); pp.profile.avatar = em; Game.save(pp);
+          pick.remove(); render(); Game.renderSidebar("profile");
+        });
+        box.appendChild(b);
+      });
+      pick.appendChild(box);
+      pick.addEventListener("click", function (e) { if (e.target === pick) { pick.remove(); } });
+      document.body.appendChild(pick);
+    });
+
+    document.getElementById("rename").addEventListener("click", function () {
+      var name = prompt("Як тебе звати?", p.profile.name);
+      if (name) {
+        var pp = Game.load(); pp.profile.name = name.slice(0, 20); Game.save(pp);
+        render(); Game.renderSidebar("profile");
+      }
+    });
+    document.getElementById("reset").addEventListener("click", function () {
+      if (confirm("Скинути весь прогрес?")) { localStorage.removeItem(Game.KEY); render(); Game.renderSidebar("profile"); }
+    });
+    document.getElementById("export").addEventListener("click", function () {
+      var blob = new Blob([JSON.stringify(Game.load(), null, 2)], { type: "application/json" });
+      var a = document.createElement("a");
+      a.href = URL.createObjectURL(blob); a.download = "math-lessons-progress.json"; a.click();
+      Game.toast("Файл прогресу збережено");
+    });
+    document.getElementById("import").addEventListener("click", function () {
+      var inp = document.createElement("input");
+      inp.type = "file"; inp.accept = ".json,application/json";
+      inp.addEventListener("change", function () {
+        var f = inp.files[0]; if (!f) { return; }
+        var r = new FileReader();
+        r.onload = function () {
+          try {
+            localStorage.setItem(Game.KEY, JSON.stringify(JSON.parse(r.result)));
+            render(); Game.renderSidebar("profile"); Game.toast("Прогрес завантажено");
+          } catch (e) { Game.toast("Не вдалося прочитати файл"); }
+        };
+        r.readAsText(f);
+      });
+      inp.click();
+    });
+  }
+
+  render();
+})();
+</script>
+</body>
+</html>

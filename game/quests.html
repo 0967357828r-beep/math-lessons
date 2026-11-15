@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Квести — Задачі-мультфільми</title>
+<link rel="stylesheet" href="game.css">
+</head>
+<body>
+<aside class="side" id="side"></aside>
+
+<main class="main">
+  <div class="wrap">
+    <div class="hud" id="hud"></div>
+    <div id="quests"></div>
+  </div>
+</main>
+
+<div class="toast" id="toast"></div>
+<script src="tasks.js"></script>
+<script src="game.js"></script>
+<script>
+(function () {
+  Game.renderSidebar("quests");
+  document.getElementById("hud").innerHTML = Game.hudHTML();
+
+  var MONTH_NAMES = ["січня", "лютого", "березня", "квітня", "травня", "червня",
+                     "липня", "серпня", "вересня", "жовтня", "листопада", "грудня"];
+
+  function daysLeftInMonth() {
+    var d = new Date();
+    var last = new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate();
+    return last - d.getDate() + 1;
+  }
+
+  function render() {
+    var p = Game.load();
+    Game.save(p);
+    var qs = Game.quests(p);
+    var host = document.getElementById("quests");
+    var monthGoal = 30;
+    var monthNow = Math.min(monthGoal, p.quests.done);
+    var mpct = Math.round(monthNow / monthGoal * 100);
+    var monthName = MONTH_NAMES[new Date().getMonth()];
+
+    var html = '<div class="month-card">' +
+      '<span class="month">' + monthName + '</span>' +
+      '<h2>Квест місяця</h2>' +
+      '<div class="days">⏳ ' + daysLeftInMonth() + ' днів</div>' +
+      '<div class="inner"><div style="font-weight:900;margin-bottom:8px">Виконайте 30 квестів</div>' +
+      '<div class="bar"><i style="width:' + mpct + '%"></i></div>' +
+      '<div style="text-align:center;font-weight:900;color:#b02472;margin-top:6px">' +
+      monthNow + ' / ' + monthGoal + '</div></div></div>' +
+
+      '<div class="card quest-list"><h3>Квести дня <span class="more" style="color:#ff9600">' +
+      'оновлення о 00:00</span></h3>';
+
+    qs.forEach(function (q) {
+      var pct = Math.min(100, Math.round(q.now / q.goal * 100));
+      var done = q.now >= q.goal;
+      var claimed = !!p.quests.claimed[q.id];
+      html += '<div class="quest"><div class="qi">' + q.icon + '</div><div class="qm">' +
+        '<div class="qt">' + q.title + '</div>' +
+        '<div class="qbar"><div class="bar"><i style="width:' + pct + '%;background:#ffc800"></i></div>' +
+        '<span>' + Math.min(q.now, q.goal) + ' / ' + q.goal + '</span></div></div>' +
+        '<div class="qr">' + q.reward + '</div>' +
+        (done ? (claimed ? '<span class="qr muted">✓ отримано</span>'
+                         : '<button class="qbtn" data-claim="' + q.id + '">Забрати</button>')
+              : '') + '</div>';
+    });
+    html += '</div>';
+
+    html += '<div class="card" style="margin-top:16px"><h3>Як це працює</h3>' +
+      '<div class="muted" style="font-size:13px;line-height:1.6;font-weight:700">' +
+      'Бали ⚡ нараховуються за кожен пройдений урок. Хвилини ⏱️ рахуються, поки ти на сторінці уроку. ' +
+      'Урок «без помилок» — коли відповів правильно з першої спроби. ' +
+      'Кристали 💎 тепер дають лише за ідеальний урок (+1), за пройдений розділ (+3) і за квести — тому їх не так багато.' +
+      '</div></div>';
+
+    host.innerHTML = html;
+
+    Array.prototype.forEach.call(document.querySelectorAll("[data-claim]"), function (b) {
+      b.addEventListener("click", function () {
+        var q = Game.claimQuest(b.getAttribute("data-claim"));
+        if (q) {
+          Game.toast("Нагороду отримано: " + q.reward);
+          render();
+          Game.renderSidebar("quests");
+          document.getElementById("hud").innerHTML = Game.hudHTML();
+        }
+      });
+    });
+  }
+
+  render();
+})();
+</script>
+</body>
+</html>

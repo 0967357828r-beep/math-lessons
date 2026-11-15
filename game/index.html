@@ -3,342 +3,263 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Задачі-мультфільми — гра</title>
-<style>
-  * { box-sizing: border-box; }
-  body {
-    margin: 0; padding: 18px 14px 90px; min-height: 100vh; overflow-x: hidden;
-    font-family: "Comic Sans MS", "Segoe UI", system-ui, sans-serif; color: #3a2d1f;
-    background: linear-gradient(180deg, #9fe3ff 0%, #cdf3ff 34%, #eafbd6 68%, #d7efb2 100%);
-  }
-  header { max-width: 760px; margin: 0 auto 14px; text-align: center; }
-  h1 { font-size: clamp(24px, 5vw, 36px); margin: 0 0 6px; color: #ff5c8a;
-       text-shadow: 2px 2px 0 #fff, 4px 4px 0 rgba(255,209,102,.7); }
-  .sub { margin: 0; color: #5a6b52; font-size: 15px; }
-  .hud { max-width: 760px; margin: 0 auto 18px; display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
-  .chip { background: #fffdf7; border: 4px solid #ffd166; border-radius: 18px; padding: 8px 14px;
-          font-weight: 700; font-size: 15px; display: flex; align-items: center; gap: 6px;
-          box-shadow: 0 6px 0 rgba(0,0,0,.07); }
-  .chip.xp { border-color: #8ecae6; }
-  .chip.streak { border-color: #ffa45c; }
-  .chip.gems { border-color: #7ee0b8; }
-  .chip.lives { border-color: #ff8fab; }
-  .path { max-width: 520px; margin: 0 auto; position: relative; padding: 10px 0 20px; }
-  .path::before {
-    content: ""; position: absolute; left: 50%; top: 0; bottom: 0; width: 8px;
-    transform: translateX(-50%); border-radius: 8px;
-    background: repeating-linear-gradient(180deg, rgba(255,255,255,.9) 0 14px, rgba(255,255,255,.35) 14px 28px);
-  }
-  .step { position: relative; display: flex; justify-content: center; margin: 0 0 26px; }
-  .step:nth-child(4n+1) { transform: translateX(-120px); }
-  .step:nth-child(4n+2) { transform: translateX(-40px); }
-  .step:nth-child(4n+3) { transform: translateX(40px); }
-  .step:nth-child(4n+4) { transform: translateX(120px); }
-  .lvl { width: 110px; text-align: center; cursor: pointer; text-decoration: none; color: inherit;
-         display: flex; flex-direction: column; align-items: center; gap: 4px; }
-  .dot { width: 74px; height: 74px; border-radius: 50%; display: flex; align-items: center;
-         justify-content: center; font-size: 30px; border: 6px solid #fff;
-         box-shadow: 0 8px 0 rgba(0,0,0,.12); background: #d7e3ea; color: #7c8b93;
-         transition: transform .15s ease; }
-  .lvl.open .dot { background: #ffe08a; color: #7a5b12; animation: pulse 1.6s ease-in-out infinite; }
-  .lvl.done .dot { background: #7ee0b8; color: #1f6b4c; }
-  .lvl:hover .dot { transform: translateY(-3px) scale(1.04); }
-  .lvl .cap { font-size: 12px; line-height: 1.2; color: #5a6b52; max-width: 110px; }
-  .lvl .st { font-size: 13px; letter-spacing: 1px; }
-  @keyframes pulse { 0%,100% { box-shadow: 0 8px 0 rgba(0,0,0,.12), 0 0 0 0 rgba(255,196,0,.6); }
-                     50% { box-shadow: 0 8px 0 rgba(0,0,0,.12), 0 0 0 14px rgba(255,196,0,0); } }
-  .chest .dot { background: #ffd9a0; border-color: #ffb347; color: #8a5a12;
-                animation: chestBob 1.8s ease-in-out infinite; }
-  .chest .cap { color: #a5661f; font-weight: 700; }
-  @keyframes chestBob { 0%,100% { transform: translateY(0) } 50% { transform: translateY(-5px) } }
-  .char { position: absolute; font-size: 104px; line-height: 1; pointer-events: none; z-index: 3;
-          opacity: 0; transform: scale(.3) translateY(24px);
-          filter: drop-shadow(0 5px 5px rgba(0,0,0,.22)); }
-  .char.left { left: -118px; top: -18px; }
-  .char.right { right: -118px; top: -18px; }
-  .char.show { animation: charPop .62s cubic-bezier(.2,1.7,.4,1) forwards,
-                          charFloat 3.4s .7s ease-in-out infinite; }
-  @keyframes charPop {
-    0%   { opacity: 0; transform: scale(.3) translateY(24px) rotate(-14deg); }
-    65%  { opacity: 1; transform: scale(1.14) translateY(-6px) rotate(7deg); }
-    100% { opacity: 1; transform: scale(1) translateY(0) rotate(0); }
-  }
-  .char .bubble { position: absolute; top: -20px; left: 50%; transform: translateX(-50%);
-                  background: #fffdf7; border: 3px solid #ffd166; border-radius: 14px;
-                  padding: 1px 9px; font: 700 13px/1.35 "Comic Sans MS", "Segoe UI", sans-serif;
-                  color: #7a5b12; white-space: nowrap; box-shadow: 0 3px 0 rgba(0,0,0,.08); }
-  .char .bubble::after { content: ""; position: absolute; bottom: -8px; left: 50%; margin-left: -6px;
-                         width: 0; height: 0; border: 6px solid transparent;
-                         border-top-color: #ffd166; }
-  @keyframes charFloat { 0%,100% { transform: translateY(0) rotate(-5deg) } 50% { transform: translateY(-10px) rotate(5deg) } }
-  .banner { max-width: 760px; margin: 0 auto 16px; background: #ffe3e9; border: 4px solid #ff8fab;
-            border-radius: 18px; padding: 12px 16px; text-align: center; font-weight: 700; color: #a3284d;
-            display: none; }
-  .banner.show { display: block; }
-  .tools { max-width: 760px; margin: 26px auto 0; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
-  button.tool { border: 4px solid #c9a7ff; background: #fff; color: #5a4a7a; font: 700 14px inherit;
-                border-radius: 14px; padding: 8px 14px; cursor: pointer; }
-  button.tool:hover { background: #f4ecff; }
-  a.tool { text-decoration: none; }
-  footer { max-width: 760px; margin: 26px auto 0; text-align: center; color: #7b8a71; font-size: 13px; }
-  a.plain { color: #ff5c8a; }
-  .toast { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%) translateY(20px);
-           background: #3a2d1f; color: #fff; padding: 10px 16px; border-radius: 14px; opacity: 0;
-           transition: all .25s ease; font-size: 14px; pointer-events: none; }
-  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-</style>
+<title>Навчання — Задачі-мультфільми</title>
+<link rel="stylesheet" href="game.css">
 </head>
 <body>
-<header>
-  <h1>🎮 Задачі-мультфільми</h1>
-  <p class="sub">Один крок — одна задача. Правильна відповідь дає кристал 💎, помилка забирає життя ❤️.<br>Дорогою трапляються скрині 🧰 — у них буває життя або кілька кристалів.</p>
-</header>
+<aside class="side" id="side"></aside>
 
-<div class="hud">
-  <div class="chip lives">❤️ <span id="lives">10</span> / 10</div>
-  <div class="chip gems">💎 <span id="gems">0</span></div>
-  <div class="chip xp">⚡ XP: <span id="xp">0</span></div>
-  <div class="chip streak">🔥 Серія: <span id="streak">0</span> дн.</div>
-</div>
+<main class="main">
+  <div class="wrap-wide">
+    <div class="hud" id="hud"></div>
+    <div class="with-rail">
+      <section>
+        <div class="path" id="path"></div>
+      </section>
 
-<div class="banner" id="banner"></div>
-<div class="path" id="path"></div>
+      <aside class="rail">
+        <div class="card" id="leagueCard"></div>
+        <div class="card" id="questCard"></div>
+        <div class="card">
+          <h3>Налаштування</h3>
+          <div class="tools" style="margin-top:0">
+            <button class="btn ghost" id="heal">❤️ Життя (3 💎)</button>
+            <button class="btn ghost" id="export">⬇️ Зберегти</button>
+            <button class="btn ghost" id="import">⬆️ Завантажити</button>
+            <button class="btn ghost" id="reset">♻️ Скинути</button>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</main>
 
-<div class="tools">
-  <button class="tool" id="heal">Відновити життя (3 💎)</button>
-  <button class="tool" id="reset">Скинути прогрес</button>
-  <button class="tool" id="export">Зберегти прогрес</button>
-  <button class="tool" id="import">Завантажити прогрес</button>
-  <a class="tool" style="border-color:#8ecae6;color:#2b5d75" href="../index.html">📚 Бібліотека</a>
-</div>
-
-<footer>Прогрес зберігається у цьому браузері · життя відновлюються щодня</footer>
 <div class="toast" id="toast"></div>
-
 <script src="tasks.js"></script>
+<script src="game.js"></script>
 <script>
-const KEY = "mathgame_v1";
-const MAX_LIVES = 10;
-const todayStr = () => new Date().toISOString().slice(0, 10);
+(function () {
+  var p = Game.load();
+  Game.save(p);
+  Game.renderSidebar("learn");
+  document.getElementById("hud").innerHTML = Game.hudHTML();
 
-function load() {
-  let p;
-  try { p = JSON.parse(localStorage.getItem(KEY)) || {}; } catch (e) { p = {}; }
-  p.levels = p.levels || {};
-  p.xp = p.xp || 0;
-  p.streak = p.streak || 0;
-  p.last = p.last || null;
-  p.gems = p.gems || 0;
-  p.lives = typeof p.lives === "number" ? p.lives : MAX_LIVES;
-  p.livesDate = p.livesDate || todayStr();
-  Object.keys(p.levels).forEach(k => {
-    const l = p.levels[k];
-    if (typeof l.gems !== "number") { l.gems = l.stars || 0; }
-    delete l.stars;
-  });
-  if (p.livesDate !== todayStr()) { p.lives = MAX_LIVES; p.livesDate = todayStr(); }
-  return p;
-}
-function save(p) { localStorage.setItem(KEY, JSON.stringify(p)); }
+  var TASKS = window.TASKS || [];
+  var byId = {};
+  TASKS.forEach(function (t) { byId[t.id] = t; });
 
-function isDone(p, id) { return !!(p.levels[id] && p.levels[id].done); }
-function gemsOf(p, id) { return (p.levels[id] && p.levels[id].gems) || 0; }
-function toast(msg) {
-  const t = document.getElementById("toast"); t.textContent = msg; t.classList.add("show");
-  clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove("show"), 2200);
-}
-
-const CHARS = ["🐸", "🦎", "🐛", "🐌", "🦋", "🐞", "👧", "🐢"];
-const PHRASES = ["Привіт!", "Молодець!", "Далі!", "Ура!", "Ти зможеш!", "Ще одна!", "Супер!", "Гайда!"];
-function characterFor(idx) {
-  if (idx % 4 !== 2) { return null; }
-  const k = Math.floor(idx / 4) % CHARS.length;
-  return { emoji: CHARS[k], phrase: idx % 8 === 2 ? PHRASES[k] : "" };
-}
-
-let charObserver = null;
-function observeChar(el) {
-  if (!("IntersectionObserver" in window)) { el.classList.add("show"); return; }
-  if (!charObserver) {
-    charObserver = new IntersectionObserver((entries) => {
-      entries.forEach(e => {
-        if (e.isIntersecting) { e.target.classList.add("show"); charObserver.unobserve(e.target); }
-      });
-    }, { threshold: 0.35 });
-  }
-  charObserver.observe(el);
-}
-
-function chestsOf(p) {
-  if (p.chestsV === 3 && Array.isArray(p.chests)) { return p.chests; }
-  const n = window.TASKS.length;
-  const list = [];
-  const count = Math.max(4, Math.round(n / 6));
-  const used = new Set();
-  let guard = 0;
-  while (list.length < count && guard < 800) {
-    guard++;
-    const i = 2 + Math.floor(Math.random() * Math.max(1, n - 3));
-    if (used.has(i)) { continue; }
-    if (isDone(p, window.TASKS[i].id)) { continue; }
-    used.add(i);
-    list.push({ i: i, kind: Math.random() < 0.55 ? "life" : "gems", opened: false });
-  }
-  p.chests = list.sort((a, b) => a.i - b.i);
-  // хоча б одна скриня попереду поточного кроку
-  const firstOpen = window.TASKS.findIndex(t => !isDone(p, t.id));
-  if (firstOpen >= 0) {
-    const near = p.chests.some(c => c.i >= firstOpen && c.i <= firstOpen + 4);
-    if (!near) {
-      const at = Math.min(firstOpen + 2, n - 1);
-      if (!p.chests.some(c => c.i === at)) {
-        p.chests.push({ i: at, kind: Math.random() < 0.6 ? "life" : "gems", opened: false });
-        p.chests.sort((a, b) => a.i - b.i);
-      }
+  function chestsOf(p) {
+    if (p.chestsV === 4 && Array.isArray(p.chests)) { return p.chests; }
+    var n = Game.SEQ.length, list = [], used = {}, guard = 0, count = Math.max(4, Math.round(n / 6));
+    while (list.length < count && guard < 900) {
+      guard++;
+      var i = 2 + Math.floor(Math.random() * Math.max(1, n - 3));
+      if (used[i]) { continue; }
+      if (Game.isDone(p, Game.SEQ[i].id)) { continue; }
+      used[i] = 1;
+      list.push({ i: i, kind: Math.random() < 0.55 ? "life" : "gems", opened: false });
     }
+    p.chests = list.sort(function (a, b) { return a.i - b.i; });
+    var firstOpen = -1;
+    for (var k = 0; k < Game.SEQ.length; k++) {
+      if (!Game.isDone(p, Game.SEQ[k].id)) { firstOpen = k; break; }
+    }
+    if (firstOpen >= 0 && !p.chests.some(function (c) { return c.i >= firstOpen && c.i <= firstOpen + 4; })) {
+      p.chests.push({ i: Math.min(firstOpen + 2, n - 1), kind: "gems", opened: false });
+      p.chests.sort(function (a, b) { return a.i - b.i; });
+    }
+    p.chestsV = 4;
+    return p.chests;
   }
-  p.chestsV = 3;
-  return p.chests;
-}
 
-function chime(freqs) {
-  try {
-    const AC = window.AudioContext || window.webkitAudioContext;
-    if (!AC) { return; }
-    const ctx = chime.ctx || (chime.ctx = new AC());
-    freqs.forEach((f, k) => {
-      const o = ctx.createOscillator(), g = ctx.createGain();
-      o.type = "triangle"; o.frequency.value = f;
-      const t0 = ctx.currentTime + k * 0.09;
-      g.gain.setValueAtTime(0.0001, t0);
-      g.gain.exponentialRampToValueAtTime(0.22, t0 + 0.02);
-      g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.3);
-      o.connect(g).connect(ctx.destination); o.start(t0); o.stop(t0 + 0.32);
-    });
-  } catch (e) {}
-}
-
-function openChest(p, chest) {
-  chest.opened = true;
-  let msg;
-  if (chest.kind === "life") {
-    if (p.lives < MAX_LIVES) { p.lives += 1; msg = "❤️ У скрині життя! +1 життя"; }
-    else { p.gems += 2; msg = "💎 Життя повні — натомість +2 кристали"; }
-  } else {
-    const add = 1 + Math.floor(Math.random() * 2);
-    p.gems += add; msg = "💎 У скрині кристали! +" + add;
+  var CHARS = ["🐸", "🦎", "🐛", "🐌", "🦋", "🐞", "🐢", "🐝"];
+  var PHRASES = ["Привіт!", "Молодець!", "Далі!", "Ура!", "Ти зможеш!", "Ще одна!", "Супер!", "Гайда!"];
+  var charObserver = null;
+  function observeChar(el) {
+    if (!("IntersectionObserver" in window)) { el.classList.add("show"); return; }
+    if (!charObserver) {
+      charObserver = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (e.isIntersecting) { e.target.classList.add("show"); charObserver.unobserve(e.target); }
+        });
+      }, { threshold: 0.35 });
+    }
+    charObserver.observe(el);
   }
-  save(p); chime([660, 880, 1180]); render(); toast(msg);
-}
 
-function render() {
-  const p = load(); save(p);
-  document.getElementById("xp").textContent = p.xp;
-  document.getElementById("streak").textContent = p.streak;
-  document.getElementById("gems").textContent = p.gems;
-  document.getElementById("lives").textContent = p.lives;
-
-  const banner = document.getElementById("banner");
-  if (p.lives <= 0) {
-    banner.classList.add("show");
-    banner.innerHTML = "❤️ Життя закінчились. Відновляться завтра — або натисни «Відновити життя (3 💎)».";
-  } else { banner.classList.remove("show"); }
-
-  const path = document.getElementById("path");
-  path.innerHTML = "";
-  const chests = chestsOf(p);
-  window.TASKS.forEach((task, idx) => {
-    const done = isDone(p, task.id);
-    const prevDone = idx === 0 || isDone(p, window.TASKS[idx - 1].id);
-    const open = (done || prevDone) && p.lives > 0;
-    const gems = gemsOf(p, task.id);
-    const chest = chests.find(c => c.i === idx);
-
-    const step = document.createElement("div");
-    step.className = "step";
-
-    if (chest && !chest.opened) {
-      const reachable = idx === 0 || prevDone;
-      const b = document.createElement("button");
-      b.className = "lvl chest" + (reachable ? "" : " locked");
-      b.style.cssText = "background:none;border:0;font:inherit;padding:0";
-      b.innerHTML = '<div class="dot">' + (reachable ? "🧰" : "📦") + '</div><div class="cap">' +
-        (reachable ? "Скриня!" : "Скриня") + '</div>' +
-        '<div class="st">' + (chest.kind === "life" ? "❤️" : "💎") + "</div>";
-      if (reachable) {
-        b.title = "Відкрий скриню — там подарунок";
-        b.addEventListener("click", () => openChest(p, chest));
-      } else {
-        b.disabled = true;
-        b.style.opacity = ".55";
-        b.title = "Спочатку дійди до цієї скрині";
-      }
-      step.appendChild(b);
+  function openChest(p, chest) {
+    chest.opened = true;
+    var msg;
+    if (chest.kind === "life") {
+      if (p.lives < Game.MAX_LIVES) { p.lives += 1; msg = "❤️ У скрині життя! +1"; }
+      else { p.gems += 2; msg = "💎 Життя повні — натомість +2 кристали"; }
     } else {
-      const a = document.createElement(done || open ? "a" : "div");
-      a.className = "lvl " + (done ? "done" : open ? "open" : "locked");
-      if (done || open) { a.href = "level.html?id=" + encodeURIComponent(task.id); }
-      a.innerHTML =
-        '<div class="dot">' + (done ? "✅" : open ? "▶️" : "🔒") + "</div>" +
-        '<div class="cap">' + task.title + "</div>" +
-        '<div class="st">' + (done ? "💎".repeat(Math.min(gems, 3)) : "") + "</div>";
-      if (!open) { a.title = p.lives > 0 ? "Спочатку пройди попередню задачу" : "Немає життів"; }
-      step.appendChild(a);
+      p.gems += 2; msg = "💎 У скрині +2 кристали";
     }
+    Game.save(p);
+    render();
+    Game.toast(msg);
+  }
 
-    const ch = characterFor(idx);
-    if (ch) {
-      const s = document.createElement("span");
-      s.className = "char " + (idx % 2 ? "left" : "right");
-      s.textContent = ch.emoji;
-      if (ch.phrase) {
-        const b = document.createElement("span");
-        b.className = "bubble";
-        b.textContent = ch.phrase;
-        s.appendChild(b);
-      }
-      step.appendChild(s);
-      observeChar(s);
-    }
+  function questsCard() {
+    var p = Game.load();
+    var qs = Game.quests(p);
+    var html = '<h3>Квести дня <a class="more" href="quests.html">усі</a></h3>';
+    qs.forEach(function (q) {
+      var pct = Math.min(100, Math.round(q.now / q.goal * 100));
+      var done = q.now >= q.goal;
+      var claimed = !!p.quests.claimed[q.id];
+      html += '<div class="quest"><div class="qi">' + q.icon + '</div><div class="qm">' +
+              '<div class="qt">' + q.title + '</div>' +
+              '<div class="qbar"><div class="bar"><i style="width:' + pct + '%;background:#ffc800"></i></div>' +
+              '<span>' + Math.min(q.now, q.goal) + ' / ' + q.goal + '</span></div></div>' +
+              '<div class="qr">' + q.reward + '</div>' +
+              (done ? (claimed ? '<span class="qr muted">✓</span>'
+                               : '<button class="qbtn" data-claim="' + q.id + '">Забрати</button>')
+                    : '') + '</div>';
+    });
+    document.getElementById("questCard").innerHTML = html;
+    Array.prototype.forEach.call(document.querySelectorAll("[data-claim]"), function (b) {
+      b.addEventListener("click", function () {
+        var q = Game.claimQuest(b.getAttribute("data-claim"));
+        if (q) { render(); Game.toast("Нагороду отримано: " + q.reward); }
+      });
+    });
+  }
 
-    path.appendChild(step);
+  function leagueCard() {
+    var p = Game.load();
+    var lg = Game.leagueOf(p);
+    var lb = Game.weekLeaderboard(p);
+    var el = document.getElementById("leagueCard");
+    el.innerHTML = '<h3>' + lg.cur.name + ' ліга <a class="more" href="leaderboard.html">переглянути</a></h3>' +
+      '<div class="league-row"><div class="league-badge" style="background:' + lg.cur.color + '22">' +
+      lg.cur.emoji + '</div><div><b>Ви на ' + lb.rank + ' місці</b>' +
+      '<div class="muted">' + (lb.demote ? "Є ризик повернутися в нижчу лігу!"
+                                          : lb.promote ? "Ви в зоні підвищення!" : "Тримайте темп!") + '</div></div></div>' +
+      '<div style="margin-top:12px" class="bar"><i style="width:' + Math.round(lg.pct * 100) + '%;background:' +
+      lg.cur.color + '"></i></div>' +
+      '<div class="muted" style="font-size:11px;font-weight:800;margin-top:6px">' +
+      (lg.next ? (lg.next.need - p.weekXp) + ' XP до «' + lg.next.name + '» ліги' : 'Найвища ліга! 🎉') + '</div>';
+  }
+
+  function render() {
+    var p = Game.load();
+    var chests = chestsOf(p);
+    Game.save(p);
+    var path = document.getElementById("path");
+    path.innerHTML = "";
+    var seqIdx = -1;
+
+    Game.SECTIONS.forEach(function (sec, si) {
+      var prog = Game.sectionProgress(p, sec);
+      var head = document.createElement("div");
+      head.className = "sec-head " + ["", "blue", "gold", "purple", "orange", "red"][si % 6];
+      head.innerHTML = '<div class="sh-emoji">' + sec.emoji + '</div>' +
+        '<div><div class="sh-kicker">Частина 1 · Розділ ' + (si + 1) + '</div>' +
+        '<h2>' + sec.title + '</h2></div>' +
+        '<div class="sh-bar"><div>' + prog.done + ' / ' + prog.total + '</div>' +
+        '<div class="bar"><i style="width:' + Math.round(prog.pct * 100) + '%"></i></div></div>';
+      path.appendChild(head);
+
+      var sub = document.createElement("div");
+      sub.className = "sec-sub";
+      sub.textContent = sec.sub;
+      path.appendChild(sub);
+
+      var steps = document.createElement("div");
+      steps.className = "sec-path";
+      path.appendChild(steps);
+
+      sec.ids.forEach(function (id, li) {
+        seqIdx++;
+        var task = byId[id];
+        if (!task) { return; }
+        var done = Game.isDone(p, id);
+        var open = (seqIdx === 0 || Game.isDone(p, Game.SEQ[seqIdx - 1].id)) && p.lives > 0;
+        var perfect = Game.isPerfect(p, id);
+        var chest = chests.filter(function (c) { return c.i === seqIdx; })[0];
+
+        var step = document.createElement("div");
+        step.className = "step o" + (li % 4);
+
+        if (chest && !chest.opened) {
+          var reachable = seqIdx === 0 || Game.isDone(p, Game.SEQ[seqIdx - 1].id);
+          var cb = document.createElement("button");
+          cb.className = "lvl chest" + (reachable ? "" : " locked");
+          cb.innerHTML = '<div class="dot">' + (reachable ? "🧰" : "📦") + '</div>' +
+            '<div class="cap">' + (reachable ? "Скриня!" : "Скриня") + '</div>' +
+            '<div class="st">' + (chest.kind === "life" ? "❤️" : "💎") + '</div>';
+          if (reachable) {
+            cb.addEventListener("click", function () { openChest(p, chest); });
+          } else { cb.disabled = true; }
+          step.appendChild(cb);
+        } else {
+          var node = document.createElement(done || open ? "a" : "div");
+          node.className = "lvl " + (done ? "done" : open ? "open" : "locked") + (perfect ? " perfect" : "");
+          if (done || open) { node.href = "level.html?id=" + encodeURIComponent(id); }
+          node.innerHTML = '<div class="dot">' + (done ? (perfect ? "💎" : "✅") : open ? "▶️" : "🔒") + '</div>' +
+            '<div class="cap">' + Game.esc(task.title) + '</div>';
+          step.appendChild(node);
+        }
+
+        if (li === 2 || li === 7) {
+          var ch = document.createElement("span");
+          ch.className = "char " + (li % 2 ? "left" : "right");
+          ch.textContent = CHARS[(si + li) % CHARS.length];
+          if ((si + li) % 3 === 0) {
+            var b = document.createElement("span");
+            b.className = "bubble";
+            b.textContent = PHRASES[(si + li) % PHRASES.length];
+            ch.appendChild(b);
+          }
+          step.appendChild(ch);
+          observeChar(ch);
+        }
+        steps.appendChild(step);
+      });
+    });
+
+    leagueCard();
+    questsCard();
+    document.getElementById("hud").innerHTML = Game.hudHTML();
+  }
+
+  document.getElementById("heal").addEventListener("click", function () {
+    var p = Game.load();
+    if (p.lives >= Game.MAX_LIVES) { Game.toast("Життя й так повні"); return; }
+    if (p.gems < 3) { Game.toast("Треба 3 кристали"); return; }
+    p.gems -= 3; p.lives = Game.MAX_LIVES; p.livesDate = Game.todayStr();
+    Game.save(p); render(); Game.toast("Життя відновлено ❤️");
   });
-}
-
-document.getElementById("heal").addEventListener("click", () => {
-  const p = load();
-  if (p.lives >= MAX_LIVES) { toast("Життя й так повні"); return; }
-  if (p.gems < 3) { toast("Треба 3 кристали"); return; }
-  p.gems -= 3; p.lives = MAX_LIVES; p.livesDate = todayStr();
-  save(p); render(); toast("Життя відновлено ❤️");
-});
-document.getElementById("reset").addEventListener("click", () => {
-  if (confirm("Скинути весь прогрес?")) { localStorage.removeItem(KEY); render(); toast("Прогрес скинуто"); }
-});
-document.getElementById("export").addEventListener("click", () => {
-  const blob = new Blob([JSON.stringify(load(), null, 2)], {type: "application/json"});
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(blob);
-  a.download = "math-lessons-progress.json";
-  a.click();
-  toast("Файл прогресу збережено");
-});
-document.getElementById("import").addEventListener("click", () => {
-  const inp = document.createElement("input");
-  inp.type = "file"; inp.accept = ".json,application/json";
-  inp.addEventListener("change", () => {
-    const f = inp.files[0]; if (!f) { return; }
-    const r = new FileReader();
-    r.onload = () => {
-      try { const d = JSON.parse(r.result); localStorage.setItem(KEY, JSON.stringify(d)); render(); toast("Прогрес завантажено"); }
-      catch (e) { toast("Не вдалося прочитати файл"); }
-    };
-    r.readAsText(f);
+  document.getElementById("reset").addEventListener("click", function () {
+    if (confirm("Скинути весь прогрес?")) { localStorage.removeItem(Game.KEY); render(); }
   });
-  inp.click();
-});
+  document.getElementById("export").addEventListener("click", function () {
+    var blob = new Blob([JSON.stringify(Game.load(), null, 2)], { type: "application/json" });
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(blob); a.download = "math-lessons-progress.json"; a.click();
+    Game.toast("Файл прогресу збережено");
+  });
+  document.getElementById("import").addEventListener("click", function () {
+    var inp = document.createElement("input");
+    inp.type = "file"; inp.accept = ".json,application/json";
+    inp.addEventListener("change", function () {
+      var f = inp.files[0]; if (!f) { return; }
+      var r = new FileReader();
+      r.onload = function () {
+        try {
+          localStorage.setItem(Game.KEY, JSON.stringify(JSON.parse(r.result)));
+          render(); Game.toast("Прогрес завантажено");
+        } catch (e) { Game.toast("Не вдалося прочитати файл"); }
+      };
+      r.readAsText(f);
+    });
+    inp.click();
+  });
 
-render();
+  render();
+})();
 </script>
 </body>
 </html>
