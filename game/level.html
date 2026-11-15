@@ -109,7 +109,7 @@
   if (lives <= 0) {
     document.getElementById("showAns").style.display = "inline-flex";
     document.getElementById("opts").innerHTML =
-      '<div style="grid-column:1/-1;font-weight:800;color:#ea2b2b">❤️ Життя закінчились. Відновляться завтра — або на карті за 30 💎.</div>';
+      '<div style="grid-column:1/-1;font-weight:800;color:#ea2b2b">❤️ Життя закінчились. Відновляться завтра — або на карті за 10 💎.</div>';
   }
 
   var opts = document.getElementById("opts");
@@ -164,7 +164,7 @@
         syncHud();
         if (left <= 0) {
           document.querySelectorAll(".qopt").forEach(function (o) { o.disabled = true; });
-          document.getElementById("msg").textContent = "❤️ Життя закінчились. Відновляться завтра — або на карті за 30 💎.";
+          document.getElementById("msg").textContent = "❤️ Життя закінчились. Відновляться завтра — або на карті за 10 💎.";
         } else {
           document.getElementById("msg").textContent = "Спробуй ще 🙂 ❤️ " + left;
         }
@@ -197,7 +197,7 @@
       '<div style="font-size:11px;font-weight:900;letter-spacing:2px;color:#999;text-transform:uppercase">Кубок розділу</div>' +
       '<h2 style="margin:6px 0 4px;font-size:22px">' + Game.esc(t.title) + '</h2>' +
       '<div style="font-weight:800;color:#777;margin-bottom:14px">Розділ пройдено повністю!</div>' +
-      '<div style="font-size:30px;font-weight:900;color:#1cb0f6;margin-bottom:18px">+20 💎</div>' +
+      '<div style="font-size:30px;font-weight:900;color:#1cb0f6;margin-bottom:18px">+5 💎</div>' +
       '<button id="trophyOk" style="border:0;border-radius:14px;padding:13px 22px;font:900 14px inherit;' +
       'background:#58cc02;color:#fff;cursor:pointer">Забрати кубок</button></div>';
     document.body.appendChild(ov);

@@ -176,9 +176,9 @@
       var prog = sectionProgress(p, s);
       if (prog.done === prog.total && !p.stats.sectionsDone[s.id]) {
         p.stats.sectionsDone[s.id] = true;
-        p.gems += 20;
-        gems += 20;
-        trophy = { title: s.title, emoji: s.emoji, reward: 20 };
+        p.gems += 5;
+        gems += 5;
+        trophy = { title: s.title, emoji: s.emoji, reward: 5 };
       }
     }
     p.gems += gems;

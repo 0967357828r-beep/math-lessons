@@ -23,7 +23,7 @@
         <div class="card">
           <h3>Налаштування</h3>
           <div class="tools" style="margin-top:0">
-            <button class="btn ghost" id="heal">❤️ Відновити життя (30 💎)</button>
+            <button class="btn ghost" id="heal">❤️ Відновити життя (10 💎)</button>
             <button class="btn ghost" id="export">⬇️ Зберегти</button>
             <button class="btn ghost" id="import">⬆️ Завантажити</button>
             <button class="btn ghost" id="reset">♻️ Скинути</button>
@@ -218,6 +218,23 @@
         }
         steps.appendChild(step);
       });
+
+      /* кубок розділу — окремий вузол у кінці стежки */
+      var tp = Game.sectionProgress(p, sec);
+      var tdone = tp.done === tp.total;
+      var tstep = document.createElement("div");
+      tstep.className = "step trophy-step o" + (sec.ids.length % 4);
+      var tnode = document.createElement(tdone ? "button" : "div");
+      tnode.className = "lvl trophy" + (tdone ? " done" : " locked");
+      tnode.innerHTML = '<div class="dot"><svg viewBox="0 0 64 64" width="40" height="40" aria-hidden="true"><path d="M20 7h24v11a12 12 0 0 1-24 0z" fill="#f7b500"/><path d="M20 11h-7a9 9 0 0 0 9 9" fill="none" stroke="#e09b00" stroke-width="4" stroke-linecap="round"/><path d="M44 11h7a9 9 0 0 1-9 9" fill="none" stroke="#e09b00" stroke-width="4" stroke-linecap="round"/><rect x="29" y="30" width="6" height="9" rx="1" fill="#e09b00"/><rect x="21" y="39" width="22" height="6" rx="2" fill="#d18f00"/><rect x="16" y="45" width="32" height="9" rx="3" fill="#b37400"/><path d="M27 12h4v10a4 4 0 0 1-4-4z" fill="#ffd54f" opacity=".85"/></svg></div><div class="cap">Кубок розділу</div>' +
+        '<div class="st">' + (tdone ? "+5 💎" : tp.done + " / " + tp.total) + '</div>';
+      if (tdone) {
+        tnode.addEventListener("click", function () {
+          Game.toast("Кубок розділу «" + sec.title + "» вже в колекції 🏆");
+        });
+      }
+      tstep.appendChild(tnode);
+      steps.appendChild(tstep);
     });
 
     leagueCard();
@@ -228,8 +245,8 @@
   document.getElementById("heal").addEventListener("click", function () {
     var p = Game.load();
     if (p.lives >= Game.MAX_LIVES) { Game.toast("Життя й так повні"); return; }
-    if (p.gems < 30) { Game.toast("Треба 30 кристалів"); return; }
-    p.gems -= 30; p.lives = Game.MAX_LIVES; p.livesDate = Game.todayStr();
+    if (p.gems < 10) { Game.toast("Треба 10 кристалів"); return; }
+    p.gems -= 10; p.lives = Game.MAX_LIVES; p.livesDate = Game.todayStr();
     Game.save(p); render(); Game.toast("Життя відновлено ❤️");
   });
   document.getElementById("reset").addEventListener("click", function () {

@@ -246,3 +246,11 @@ b { font-weight: 800; }
   .sec-head .sh-bar { display: none; }
   .month-card { padding: 16px; }
 }
+
+/* кубок розділу */
+.lvl.trophy .dot { background: linear-gradient(180deg, #ffe07a, #ffc800); box-shadow: 0 5px 0 #e6ac00;
+                   font-size: 34px; }
+.lvl.trophy.locked .dot { background: #efefef; box-shadow: 0 5px 0 #d4d4d4; filter: grayscale(1); opacity: .65; }
+.lvl.trophy.done .cap { color: #a06a00; }
+.lvl.trophy .st { color: #a06a00; font-weight: 800; }
+.trophy-step { margin-top: 4px; }
