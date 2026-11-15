@@ -209,6 +209,13 @@
     save(p);
     return xp;
   }
+  function addGems(n) {
+    var p = load();
+    p.gems += n;
+    save(p);
+    return p.gems;
+  }
+
   function finishPracticeRound(stats) {
     var p = load();
     p.practice.rounds += 1;
@@ -370,7 +377,7 @@
     KEY: KEY, MAX_LIVES: MAX_LIVES, SECTIONS: SECTIONS, SEQ: SEQ, LEAGUES: LEAGUES,
     todayStr: todayStr, mondayStr: mondayStr, load: load, save: save,
     isDone: isDone, isPerfect: isPerfect, gemsOf: gemsOf, sectionProgress: sectionProgress,
-    awardLesson: awardLesson, awardPractice: awardPractice,
+    awardLesson: awardLesson, awardPractice: awardPractice, addGems: addGems,
     finishPracticeRound: finishPracticeRound, loseLife: loseLife,
     quests: quests, claimQuest: claimQuest, leagueOf: leagueOf, weekLeaderboard: weekLeaderboard,
     achievements: achievements, renderSidebar: renderSidebar, hudHTML: hudHTML, syncHud: syncHud,

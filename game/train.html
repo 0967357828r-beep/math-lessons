@@ -79,7 +79,7 @@
   var ROUND = 10;
   var bank = window.TRAIN_BANK || { add: [], sub: [], mul: [], div: [], cmp: [] };
   var mode = localStorage.getItem("train_mode") || "add";
-  var queue = [], idx = 0, correct = 0, xp = 0, answered = false, typed = "";
+  var queue = [], idx = 0, correct = 0, xp = 0, gemsEarned = 0, answered = false, typed = "";
 
   function esc(s) { return Game.esc(s); }
 
@@ -120,7 +120,7 @@
 
   function startRound() {
     queue = pickQuestions(mode);
-    idx = 0; correct = 0; xp = 0;
+    idx = 0; correct = 0; xp = 0; gemsEarned = 0;
     renderQuestion();
   }
 
@@ -204,7 +204,9 @@
     xp += gained;
     if (ok) {
       correct++;
-      if (fb) { fb.className = "feedback ok"; fb.textContent = "Правильно! +" + gained + " XP"; }
+      var gemMsg = "";
+      if (correct % 3 === 0) { Game.addGems(1); gemsEarned++; gemMsg = " · +1 💎"; }
+      if (fb) { fb.className = "feedback ok"; fb.textContent = "Правильно! +" + gained + " XP" + gemMsg; }
       var box = document.getElementById("answer");
       if (box) { box.className = "answer ok"; }
       setTimeout(function () { idx++; renderQuestion(); }, 850);
@@ -238,7 +240,7 @@
     host.innerHTML = '<div class="train-card result">' +
       '<div class="big">' + emoji + '</div>' +
       '<h2>' + correct + ' з ' + ROUND + '</h2>' +
-      '<div class="muted" style="font-weight:800;margin-bottom:16px">Зароблено ' + xp + ' XP · серця не знімалися ❤️</div>' +
+      '<div class="muted" style="font-weight:800;margin-bottom:16px">Зароблено ' + xp + ' XP і ' + gemsEarned + ' 💎 · серця не знімалися ❤️</div>' +
       '<div class="row" style="justify-content:center">' +
       '<button class="btn" id="again">Ще раунд</button>' +
       '<a class="btn ghost" href="index.html">До карти</a></div></div>';
