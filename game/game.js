@@ -262,11 +262,15 @@
   /* ---------- ліги ---------- */
   var LEAGUES = [
     { name: "Бронзова", emoji: "🥉", color: "#cd7f32", need: 0 },
-    { name: "Срібна", emoji: "🥈", color: "#9aa7b8", need: 60 },
-    { name: "Золота", emoji: "🥇", color: "#ffc800", need: 140 },
-    { name: "Перлинна", emoji: "🦪", color: "#ff86c8", need: 240 },
-    { name: "Діамантова", emoji: "💎", color: "#1cb0f6", need: 360 },
-    { name: "Рубінова", emoji: "🔴", color: "#ff4b4b", need: 520 }
+    { name: "Срібна", emoji: "🥈", color: "#9aa7b8", need: 40 },
+    { name: "Золота", emoji: "🥇", color: "#ffc800", need: 90 },
+    { name: "Сапфірова", emoji: "🔷", color: "#1cb0f6", need: 150 },
+    { name: "Смарагдова", emoji: "🟢", color: "#2ecc71", need: 220 },
+    { name: "Рубінова", emoji: "🔺", color: "#ff4b4b", need: 300 },
+    { name: "Аметистова", emoji: "🟣", color: "#a55eea", need: 390 },
+    { name: "Перлинна", emoji: "🦪", color: "#ff86c8", need: 490 },
+    { name: "Обсидіанова", emoji: "⚫", color: "#4b4b4b", need: 600 },
+    { name: "Діамантова", emoji: "💎", color: "#00c2c7", need: 720 }
   ];
   function leagueOf(p) {
     var li = 0;
@@ -316,9 +320,9 @@
           level: p.xp >= 1000 ? 2 : p.xp >= 500 ? 1 : 0, max: 2, desc: "Зароби 500 балів" });
     add({ id: "gems25", icon: "💎", title: "Кристальний", now: Math.min(p.gems, 25), goal: 25,
           level: p.gems >= 50 ? 2 : p.gems >= 25 ? 1 : 0, max: 2, desc: "Збери 25 кристалів" });
-    add({ id: "league", icon: "🏆", title: "Чемпіон", now: leagueOf(p).index, goal: 3,
-          level: leagueOf(p).index >= 4 ? 2 : leagueOf(p).index >= 3 ? 1 : 0, max: 2,
-          desc: "Дійди до Золотої ліги" });
+    add({ id: "league", icon: "🏆", title: "Чемпіон", now: leagueOf(p).index, goal: 9,
+          level: leagueOf(p).index >= 9 ? 2 : leagueOf(p).index >= 5 ? 1 : 0, max: 2,
+          desc: "Дійди до Діамантової ліги" });
     return a;
   }
 
