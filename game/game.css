@@ -248,7 +248,7 @@ b { font-weight: 800; }
 }
 
 /* кубок розділу */
-.lvl.trophy .dot { background: linear-gradient(180deg, #ffe07a, #ffc800); box-shadow: 0 5px 0 #e6ac00;
+.lvl.trophy .dot { width: 82px; height: 82px; background: linear-gradient(180deg, #ffe07a, #ffc800); box-shadow: 0 5px 0 #e6ac00;
                    font-size: 34px; }
 .lvl.trophy.locked .dot { background: #efefef; box-shadow: 0 5px 0 #d4d4d4; filter: grayscale(1); opacity: .65; }
 .lvl.trophy.done .cap { color: #a06a00; }

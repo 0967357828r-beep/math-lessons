@@ -70,6 +70,9 @@
     { id: "sub", label: "Віднімання" },
     { id: "mul", label: "Множення" },
     { id: "div", label: "Ділення" },
+    { id: "big", label: "Великі числа" },
+    { id: "chain", label: "Три дії" },
+    { id: "times", label: "Двоцифрові" },
     { id: "mix", label: "Мішане" },
     { id: "cmp", label: "Порівняння" }
   ];
@@ -100,7 +103,7 @@
   function pickQuestions(m) {
     var pool = [];
     if (m === "mix") {
-      ["add", "sub", "mul", "div"].forEach(function (k) {
+      ["add", "sub", "mul", "div", "big", "chain", "times"].forEach(function (k) {
         bank[k].forEach(function (q) { pool.push({ type: "num", key: k, q: q.q, a: q.a }); });
       });
     } else if (m === "cmp") {
