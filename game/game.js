@@ -324,6 +324,14 @@
     { key: "board", href: "leaderboard.html", icon: "🛡️", label: "Дошки пошани" },
     { key: "profile", href: "profile.html", icon: "🐸", label: "Профіль" }
   ];
+  function avatarMarkup(a, size) {
+    if (a && String(a).indexOf("/") > -1) {
+      return '<img src="' + a + '" alt="" style="width:' + size + 'px;height:' + size +
+             'px;border-radius:50%;object-fit:cover;display:inline-block;vertical-align:middle">';
+    }
+    return a || "🐸";
+  }
+
   function renderSidebar(active) {
     var host = document.getElementById("side");
     if (!host) { return; }
@@ -332,7 +340,7 @@
     var html = '<a class="logo" href="index.html">Тімолінго</a>';
     html += '<nav class="nav">';
     NAV.forEach(function (n) {
-      var ic = n.key === "profile" ? p.profile.avatar : n.icon;
+      var ic = n.key === "profile" ? avatarMarkup(p.profile.avatar, 26) : n.icon;
       html += '<a class="nav-item' + (n.key === active ? " on" : "") + '" href="' + n.href + '">' +
               '<span class="ni">' + ic + '</span>' + n.label + "</a>";
     });
@@ -381,6 +389,7 @@
     finishPracticeRound: finishPracticeRound, loseLife: loseLife,
     quests: quests, claimQuest: claimQuest, leagueOf: leagueOf, weekLeaderboard: weekLeaderboard,
     achievements: achievements, renderSidebar: renderSidebar, hudHTML: hudHTML, syncHud: syncHud,
-    toast: toast, esc: esc, positionOf: positionOf, taskById: taskById, nextLessonId: nextLessonId
+    toast: toast, esc: esc, positionOf: positionOf, taskById: taskById, nextLessonId: nextLessonId,
+    avatarMarkup: avatarMarkup
   };
 })();
