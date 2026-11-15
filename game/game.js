@@ -114,6 +114,8 @@
     p.practice.correct = p.practice.correct || 0;
     p.practice.wrong = p.practice.wrong || 0;
     p.practice.byMode = p.practice.byMode || {};
+    p.combo = p.combo || 0;
+    p.bestCombo = p.bestCombo || 0;
     Object.keys(p.levels).forEach(function (k) {
       var l = p.levels[k];
       if (typeof l.gems !== "number") { l.gems = l.stars || 0; }
@@ -158,7 +160,11 @@
     var gems = 0;
     if (perfect && !prev.gems) { gems = 1; }          // 1 кристал лише за урок без помилок
     p.levels[id] = { done: true, gems: Math.max(prev.gems || 0, perfect ? 1 : 0) };
-    var xp = first ? 10 : 4;                           // повторення дає мало
+    var combo = perfect ? ((p.combo || 0) + 1) : 0;
+    p.combo = combo;
+    p.bestCombo = Math.max(p.bestCombo || 0, combo);
+    var comboBonus = (perfect && combo >= 3) ? 2 : 0;   // комбо від 3 уроків поспіль — бонус
+    var xp = (first ? 10 : 4) + comboBonus;             // повторення дає мало
     p.xp += xp;
     p.weekXp += xp;
     var t = todayStr();
@@ -193,7 +199,49 @@
       p.last = t;
     }
     save(p);
-    return { gems: gems, xp: xp, first: first, trophy: trophy };
+    return { gems: gems, xp: xp, first: first, trophy: trophy, combo: combo, comboBonus: comboBonus };
+  }
+
+  /* ---------- щоденні бонуси ---------- */
+  function dayHash(t) {
+    var h = 0;
+    for (var i = 0; i < t.length; i++) { h = (h * 31 + t.charCodeAt(i)) % 100000; }
+    return h;
+  }
+  function taskOfDay(p) {
+    var t = todayStr();
+    var rec = p.taskOfDay;
+    if (!rec || rec.date !== t) {
+      var h = dayHash(t);
+      rec = { date: t, id: SEQ[h % SEQ.length].id, done: false };
+      p.taskOfDay = rec;
+      save(p);
+    }
+    return rec;
+  }
+  function claimTaskOfDay(id) {
+    var p = load();
+    var rec = taskOfDay(p);
+    var gain = 0;
+    if (rec.id === id && !rec.done) { rec.done = true; p.gems += 5; gain = 5; }
+    save(p);
+    return gain;
+  }
+  function dailyChestState(p) {
+    var t = todayStr();
+    return { available: p.dailyChest !== t };
+  }
+  function openDailyChest() {
+    var p = load();
+    var t = todayStr();
+    if (p.dailyChest === t) { return null; }
+    p.dailyChest = t;
+    var r = Math.random(), res;
+    if (r < 0.55) { p.gems += 2; res = { type: "gems", n: 2 }; }
+    else if (r < 0.85) { p.gems += 3; res = { type: "gems", n: 3 }; }
+    else { p.lives = Math.min(MAX_LIVES, p.lives + 2); res = { type: "life", n: 2 }; }
+    save(p);
+    return res;
   }
 
   /* тренування: XP за правильні відповіді, життя не знімаються */
@@ -369,11 +417,13 @@
     return '<span class="chip lives">❤️ <b id="hud-lives">' + p.lives + '</b></span>' +
            '<span class="chip gems">💎 <b id="hud-gems">' + p.gems + '</b></span>' +
            '<span class="chip xp">⚡ <b id="hud-xp">' + p.xp + '</b></span>' +
-           '<span class="chip streak">🔥 <b id="hud-streak">' + p.streak + '</b></span>';
+           '<span class="chip streak">🔥 <b id="hud-streak">' + p.streak + '</b></span>' +
+           '<span class="chip combo">⚡⃞ <b id="hud-combo">x' + (p.combo || 0) + '</b></span>';
   }
   function syncHud() {
     var p = load();
-    var m = { "hud-lives": p.lives, "hud-gems": p.gems, "hud-xp": p.xp, "hud-streak": p.streak };
+    var m = { "hud-lives": p.lives, "hud-gems": p.gems, "hud-xp": p.xp, "hud-streak": p.streak,
+              "hud-combo": "x" + (p.combo || 0) };
     Object.keys(m).forEach(function (id) {
       var el = document.getElementById(id); if (el) { el.textContent = m[id]; }
     });
@@ -398,7 +448,9 @@
     awardLesson: awardLesson, awardPractice: awardPractice, addGems: addGems,
     finishPracticeRound: finishPracticeRound, loseLife: loseLife,
     quests: quests, claimQuest: claimQuest, leagueOf: leagueOf, weekLeaderboard: weekLeaderboard,
-    achievements: achievements, renderSidebar: renderSidebar, hudHTML: hudHTML, syncHud: syncHud,
+    achievements: achievements, renderSidebar: renderSidebar,
+    taskOfDay: taskOfDay, claimTaskOfDay: claimTaskOfDay,
+    dailyChestState: dailyChestState, openDailyChest: openDailyChest, hudHTML: hudHTML, syncHud: syncHud,
     toast: toast, esc: esc, positionOf: positionOf, taskById: taskById, nextLessonId: nextLessonId,
     avatarMarkup: avatarMarkup
   };

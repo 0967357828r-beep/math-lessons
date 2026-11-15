@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Навчання — Тімолінго</title>
-<link rel="stylesheet" href="game.css?v=20261115g">
+<link rel="stylesheet" href="game.css?v=20261115h">
 </head>
 <body>
 <aside class="side" id="side"></aside>
@@ -14,12 +14,14 @@
     <div class="hud" id="hud"></div>
     <div class="with-rail">
       <section>
+        <div class="daily-banner" id="dailyBanner"></div>
         <div class="path" id="path"></div>
       </section>
 
       <aside class="rail">
         <div class="card" id="leagueCard"></div>
         <div class="card" id="questCard"></div>
+        <div class="card" id="dailyCard"></div>
         <div class="card">
           <h3>Налаштування</h3>
           <div class="tools" style="margin-top:0">
@@ -35,9 +37,9 @@
 </main>
 
 <div class="toast" id="toast"></div>
-<script src="tasks.js?v=20261115g"></script>
-<script src="avatars.js?v=20261115g"></script>
-<script src="game.js?v=20261115g"></script>
+<script src="tasks.js?v=20261115h"></script>
+<script src="avatars.js?v=20261115h"></script>
+<script src="game.js?v=20261115h"></script>
 <script>
 (function () {
   var p = Game.load();
@@ -144,6 +146,45 @@
       (lg.next ? (lg.next.need - p.weekXp) + ' XP до ліги «' + lg.next.name + '»' : 'Найвища ліга! 🎉') + '</div>';
   }
 
+  function renderDaily(p) {
+    var rec = Game.taskOfDay(p);
+    var task = Game.taskById(rec.id);
+    var chest = Game.dailyChestState(p);
+    var banner = document.getElementById("dailyBanner");
+    if (banner) {
+      if (!rec.done && task) {
+        banner.innerHTML = '<span>🎯 <b>Задача дня:</b> ' + Game.esc(task.title) + '</span>' +
+          '<a class="db-go" href="level.html?id=' + encodeURIComponent(rec.id) + '">Грати · +5 💎</a>';
+        banner.style.display = "flex";
+      } else {
+        banner.style.display = "none";
+      }
+    }
+    var card = document.getElementById("dailyCard");
+    if (card) {
+      card.innerHTML = '<h3>Бонуси дня</h3>' +
+        '<div class="quest"><div class="qi">🎁</div><div class="qm">' +
+        '<div class="qt">Скриня дня</div><div class="muted" style="font-size:11px;font-weight:700">' +
+        (chest.available ? "Одна на добу — кристали або життя" : "Вже відкрита сьогодні") + '</div></div>' +
+        (chest.available ? '<button class="qbtn" id="dailyChest">Відкрити</button>'
+                         : '<span class="qr muted">✓</span>') + '</div>' +
+        '<div class="quest"><div class="qi">🎯</div><div class="qm">' +
+        '<div class="qt">Задача дня</div><div class="muted" style="font-size:11px;font-weight:700">' +
+        (rec.done ? "Виконано! +5 💎" : (task ? Game.esc(task.title) : "")) + '</div></div>' +
+        (rec.done ? '<span class="qr muted">✓</span>' : '<span class="qr">+5 💎</span>') + '</div>';
+      var b = document.getElementById("dailyChest");
+      if (b) {
+        b.addEventListener("click", function () {
+          var r = Game.openDailyChest();
+          if (r) {
+            render();
+            Game.toast(r.type === "life" ? ("❤️ +" + r.n + " життя") : ("💎 +" + r.n + " кристали"));
+          }
+        });
+      }
+    }
+  }
+
   function render() {
     var p = Game.load();
     var chests = chestsOf(p);
@@ -244,6 +285,7 @@
       steps.appendChild(tstep);
     });
 
+    renderDaily(p);
     leagueCard();
     questsCard();
     document.getElementById("hud").innerHTML = Game.hudHTML();

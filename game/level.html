@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Урок — Тімолінго</title>
-<link rel="stylesheet" href="game.css?v=20261115g">
+<link rel="stylesheet" href="game.css?v=20261115h">
 </head>
 <body>
 <aside class="side" id="side"></aside>
@@ -22,8 +22,8 @@
 
 <audio id="ding" preload="auto" src="ding.mp3"></audio>
 <div class="toast" id="toast"></div>
-<script src="tasks.js?v=20261115g"></script>
-<script src="game.js?v=20261115g"></script>
+<script src="tasks.js?v=20261115h"></script>
+<script src="game.js?v=20261115h"></script>
 <script>
 (function () {
   Game.renderSidebar("learn");
@@ -138,6 +138,9 @@
         if (!reward.trophy && reward.gems === 1) {
           msg += " · 💎 +1 за урок без помилок";
         }
+        if (reward.combo >= 3) { msg += " · комбо x" + reward.combo + " (+" + reward.comboBonus + " XP)"; }
+        var dailyGain = Game.claimTaskOfDay(task.id);
+        if (dailyGain) { msg += " · +" + dailyGain + " 💎 за задачу дня"; }
         document.getElementById("msg").textContent = msg;
         if (reward.trophy) { showTrophy(reward.trophy); }
         document.querySelectorAll(".qopt").forEach(function (o) { o.disabled = true; });
