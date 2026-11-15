@@ -254,3 +254,9 @@ b { font-weight: 800; }
 .lvl.trophy.done .cap { color: #a06a00; }
 .lvl.trophy .st { color: #a06a00; font-weight: 800; }
 .trophy-step { margin-top: 4px; }
+
+/* персонажі-картинки на стежці */
+.char.char-img { width: 66px; height: 66px; }
+.char.char-img img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover;
+                     border: 3px solid #fff; background: #fff; box-shadow: 0 4px 10px rgba(0,0,0,.18); }
+.char.char-img .bubble { top: -18px; }

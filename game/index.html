@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Навчання — Тімолінго</title>
-<link rel="stylesheet" href="game.css?v=20261115b">
+<link rel="stylesheet" href="game.css?v=20261115c">
 </head>
 <body>
 <aside class="side" id="side"></aside>
@@ -35,8 +35,9 @@
 </main>
 
 <div class="toast" id="toast"></div>
-<script src="tasks.js?v=20261115b"></script>
-<script src="game.js?v=20261115b"></script>
+<script src="tasks.js?v=20261115c"></script>
+<script src="avatars.js?v=20261115c"></script>
+<script src="game.js?v=20261115c"></script>
 <script>
 (function () {
   var p = Game.load();
@@ -205,8 +206,14 @@
 
         if (li === 2 || li === 7) {
           var ch = document.createElement("span");
-          ch.className = "char " + (li % 2 ? "left" : "right");
-          ch.textContent = CHARS[(si + li) % CHARS.length];
+          ch.className = "char char-img " + (li % 2 ? "left" : "right");
+          var AVS = (window.AVATARS && window.AVATARS.length) ? window.AVATARS : [];
+          if (AVS.length) {
+            var av = AVS[(si * 5 + li * 3 + 1) % AVS.length];
+            ch.innerHTML = '<img src="' + av.file + '" alt="' + Game.esc(av.name) + '" title="' + Game.esc(av.name) + '">';
+          } else {
+            ch.textContent = CHARS[(si + li) % CHARS.length];
+          }
           if ((si + li) % 3 === 0) {
             var b = document.createElement("span");
             b.className = "bubble";
