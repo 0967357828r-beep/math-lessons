@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Тренування — Тімолінго</title>
+<link rel="stylesheet" href="game.css">
+<style>
+  .modes { display: flex; gap: 8px; flex-wrap: wrap; margin: 6px 0 18px; }
+  .mode { border: 2px solid #e5e5e5; border-bottom-width: 4px; background: #fff; border-radius: 14px;
+          padding: 9px 14px; font: 800 13px inherit; color: #777; cursor: pointer; }
+  .mode.on { border-color: #1cb0f6; background: #ddf4ff; color: #0a7bb8; }
+  .train-card { border: 2px solid #e5e5e5; border-radius: 18px; padding: 20px; }
+  .qbig { font-size: clamp(30px, 6vw, 44px); font-weight: 900; text-align: center; letter-spacing: 1px;
+          margin: 14px 0 8px; color: #3c3c3c; }
+  .qbig .eq { color: #afafaf; margin-left: 8px; }
+  .answer { min-height: 62px; border: 3px solid #e5e5e5; border-radius: 14px; display: flex;
+            align-items: center; justify-content: center; font-size: 34px; font-weight: 900;
+            color: #1cb0f6; margin: 10px 0 16px; letter-spacing: 2px; background: #fafafa; }
+  .answer.ok { border-color: #58cc02; color: #3f8000; background: #f0fff0; }
+  .answer.bad { border-color: #ff4b4b; color: #ea2b2b; background: #fff5f5; }
+  .keypad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; max-width: 330px; margin: 0 auto; }
+  .key { border: 2px solid #e5e5e5; border-bottom-width: 4px; background: #fff; border-radius: 12px;
+         font: 900 22px inherit; color: #3c3c3c; padding: 12px 0; cursor: pointer; }
+  .key:active { transform: translateY(2px); border-bottom-width: 2px; }
+  .key.wide { grid-column: span 1; }
+  .cmp-opts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; max-width: 420px; margin: 6px auto; }
+  .cmp-btn { border: 2px solid #e5e5e5; border-bottom-width: 4px; background: #fff; border-radius: 14px;
+             padding: 18px 0; font: 900 30px inherit; cursor: pointer; }
+  .cmp-btn.ok { background: #d7ffb8; border-color: #58cc02; color: #3f8000; }
+  .cmp-btn.bad { background: #ffdfe0; border-color: #ff4b4b; color: #ea2b2b; }
+  .cmp-row { display: flex; align-items: center; justify-content: center; gap: 14px; font-size: clamp(22px, 4vw, 30px);
+             font-weight: 900; margin: 18px 0; }
+  .cmp-row .qmark { color: #1cb0f6; font-size: 34px; }
+  .feedback { min-height: 30px; text-align: center; font-weight: 900; font-size: 15px; margin-top: 10px; }
+  .feedback.ok { color: #58cc02; } .feedback.bad { color: #ff4b4b; }
+  .round-bar { height: 12px; background: #e5e5e5; border-radius: 8px; overflow: hidden; margin-bottom: 14px; }
+  .round-bar > i { display: block; height: 100%; width: 0; background: #58cc02; }
+  .result { text-align: center; padding: 20px 10px; }
+  .result .big { font-size: 56px; margin: 8px 0; }
+  .result h2 { margin: 0 0 6px; }
+  .hint { text-align: center; color: #999; font-weight: 700; font-size: 12px; margin-top: 12px; }
+</style>
+</head>
+<body>
+<aside class="side" id="side"></aside>
+
+<main class="main">
+  <div class="wrap">
+    <div class="hud" id="hud"></div>
+    <h1 style="font-size:26px;margin:0 0 4px">✏️ Тренування</h1>
+    <p class="muted" style="font-weight:700;font-size:13px;margin:0 0 16px">
+      Приклади з підручників. Тут не знімаються серця ❤️ — просто тренуйся й заробляй бали ⚡.
+    </p>
+    <div class="modes" id="modes"></div>
+    <div id="train"></div>
+  </div>
+</main>
+
+<div class="toast" id="toast"></div>
+<script src="train_bank.js"></script>
+<script src="game.js"></script>
+<script>
+(function () {
+  Game.renderSidebar("train");
+  document.getElementById("hud").innerHTML = Game.hudHTML();
+
+  var MODES = [
+    { id: "add", label: "Додавання" },
+    { id: "sub", label: "Віднімання" },
+    { id: "mul", label: "Множення" },
+    { id: "div", label: "Ділення" },
+    { id: "mix", label: "Мішане" },
+    { id: "cmp", label: "Порівняння" }
+  ];
+  var ROUND = 10;
+  var bank = window.TRAIN_BANK || { add: [], sub: [], mul: [], div: [], cmp: [] };
+  var mode = localStorage.getItem("train_mode") || "add";
+  var queue = [], idx = 0, correct = 0, xp = 0, answered = false, typed = "";
+
+  function esc(s) { return Game.esc(s); }
+
+  function renderModes() {
+    var box = document.getElementById("modes");
+    box.innerHTML = "";
+    MODES.forEach(function (m) {
+      var b = document.createElement("button");
+      b.className = "mode" + (m.id === mode ? " on" : "");
+      b.textContent = m.label;
+      b.addEventListener("click", function () {
+        mode = m.id;
+        localStorage.setItem("train_mode", mode);
+        renderModes();
+        startRound();
+      });
+      box.appendChild(b);
+    });
+  }
+
+  function pickQuestions(m) {
+    var pool = [];
+    if (m === "mix") {
+      ["add", "sub", "mul", "div"].forEach(function (k) {
+        bank[k].forEach(function (q) { pool.push({ type: "num", key: k, q: q.q, a: q.a }); });
+      });
+    } else if (m === "cmp") {
+      bank.cmp.forEach(function (c) { pool.push({ type: "cmp", l: c.l, r: c.r, ans: c.ans }); });
+    } else {
+      bank[m].forEach(function (q) { pool.push({ type: "num", key: m, q: q.q, a: q.a }); });
+    }
+    for (var i = pool.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var t = pool[i]; pool[i] = pool[j]; pool[j] = t;
+    }
+    return pool.slice(0, ROUND);
+  }
+
+  function startRound() {
+    queue = pickQuestions(mode);
+    idx = 0; correct = 0; xp = 0;
+    renderQuestion();
+  }
+
+  function updateBar() {
+    var bar = document.getElementById("roundBar");
+    if (bar) { bar.style.width = Math.round(idx / ROUND * 100) + "%"; }
+  }
+
+  function renderQuestion() {
+    var host = document.getElementById("train");
+    answered = false; typed = "";
+    if (idx >= ROUND) { return renderResult(); }
+    var cur = queue[idx];
+    var p = Game.load();
+
+    if (cur.type === "cmp") {
+      host.innerHTML = '<div class="train-card">' +
+        '<div class="round-bar"><i id="roundBar" style="width:' + Math.round(idx / ROUND * 100) + '%"></i></div>' +
+        '<div class="muted" style="font-weight:800;font-size:12px;text-transform:uppercase;letter-spacing:1px">' +
+        'Порівняй вирази · ' + (idx + 1) + ' з ' + ROUND + '</div>' +
+        '<div class="cmp-row"><span>' + esc(cur.l) + '</span><span class="qmark">?</span><span>' + esc(cur.r) + '</span></div>' +
+        '<div class="cmp-opts"><button class="cmp-btn" data-op="&gt;">&gt;</button>' +
+        '<button class="cmp-btn" data-op="&lt;">&lt;</button>' +
+        '<button class="cmp-btn" data-op="=">=</button></div>' +
+        '<div class="feedback" id="fb"></div>' +
+        '<div class="hint">Помилка не забирає серце — просто спробуй ще</div>' +
+        '</div>';
+      Array.prototype.forEach.call(host.querySelectorAll(".cmp-btn"), function (b) {
+        b.addEventListener("click", function () {
+          if (answered) { return; }
+          var op = b.getAttribute("data-op");
+          var ok = op === cur.ans;
+          finished(ok, cur);
+          b.classList.add(ok ? "ok" : "bad");
+          if (!ok) {
+            Array.prototype.forEach.call(host.querySelectorAll(".cmp-btn"), function (x) {
+              if (x.getAttribute("data-op") === cur.ans) { x.classList.add("ok"); }
+            });
+          }
+        });
+      });
+    } else {
+      host.innerHTML = '<div class="train-card">' +
+        '<div class="round-bar"><i id="roundBar" style="width:' + Math.round(idx / ROUND * 100) + '%"></i></div>' +
+        '<div class="muted" style="font-weight:800;font-size:12px;text-transform:uppercase;letter-spacing:1px">' +
+        'Обчисли · ' + (idx + 1) + ' з ' + ROUND + '</div>' +
+        '<div class="qbig">' + esc(cur.q) + '<span class="eq">=</span></div>' +
+        '<div class="answer" id="answer">' + (typed || "&nbsp;") + '</div>' +
+        '<div class="keypad" id="keypad">' +
+        [1,2,3,4,5,6,7,8,9].map(function (n) { return '<button class="key" data-k="' + n + '">' + n + '</button>'; }).join("") +
+        '<button class="key" data-k="back">⌫</button><button class="key" data-k="0">0</button>' +
+        '<button class="key" data-k="ok" style="background:#58cc02;color:#fff;border-color:#46a302">✓</button>' +
+        '</div>' +
+        '<div class="feedback" id="fb"></div>' +
+        '<div class="hint">Введи відповідь і натисни ✓ (або Enter)</div>' +
+        '</div>';
+      document.getElementById("answer").innerHTML = typed || "&nbsp;";
+      Array.prototype.forEach.call(host.querySelectorAll(".key"), function (k) {
+        k.addEventListener("click", function () {
+          var v = k.getAttribute("data-k");
+          if (v === "back") { typed = typed.slice(0, -1); }
+          else if (v === "ok") { submit(); return; }
+          else if (typed.length < 4) { typed += v; }
+          var a = document.getElementById("answer");
+          a.textContent = typed || " ";
+          a.className = "answer";
+        });
+      });
+    }
+    updateBar();
+    var stat = document.getElementById("statline");
+    if (stat) {
+      stat.textContent = "Правильно: " + p.practice.correct + " · Помилок: " + p.practice.wrong;
+    }
+  }
+
+  function finished(ok, cur) {
+    answered = true;
+    var fb = document.getElementById("fb");
+    var gained = Game.awardPractice(ok, mode);
+    xp += gained;
+    if (ok) {
+      correct++;
+      if (fb) { fb.className = "feedback ok"; fb.textContent = "Правильно! +" + gained + " XP"; }
+      var box = document.getElementById("answer");
+      if (box) { box.className = "answer ok"; }
+      setTimeout(function () { idx++; renderQuestion(); }, 850);
+    } else {
+      var right = cur.type === "cmp" ? cur.ans : cur.a;
+      if (fb) { fb.className = "feedback bad"; fb.textContent = "Правильна відповідь: " + right; }
+      var ab = document.getElementById("answer");
+      if (ab) { ab.className = "answer bad"; }
+      var host = document.getElementById("train");
+      var btn = document.createElement("div");
+      btn.style.cssText = "text-align:center;margin-top:14px";
+      btn.innerHTML = '<button class="btn" id="nextQ">Далі →</button>';
+      host.querySelector(".train-card").appendChild(btn);
+      document.getElementById("nextQ").addEventListener("click", function () { idx++; renderQuestion(); });
+    }
+    Game.syncHud();
+  }
+
+  function submit() {
+    if (answered) { return; }
+    var cur = queue[idx];
+    if (typed === "") { return; }
+    var ok = String(cur.a) === typed;
+    finished(ok, cur);
+  }
+
+  function renderResult() {
+    Game.finishPracticeRound();
+    var host = document.getElementById("train");
+    var emoji = correct === ROUND ? "🏆" : correct >= 7 ? "🎉" : "💪";
+    host.innerHTML = '<div class="train-card result">' +
+      '<div class="big">' + emoji + '</div>' +
+      '<h2>' + correct + ' з ' + ROUND + '</h2>' +
+      '<div class="muted" style="font-weight:800;margin-bottom:16px">Зароблено ' + xp + ' XP · серця не знімалися ❤️</div>' +
+      '<div class="row" style="justify-content:center">' +
+      '<button class="btn" id="again">Ще раунд</button>' +
+      '<a class="btn ghost" href="index.html">До карти</a></div></div>';
+    document.getElementById("again").addEventListener("click", startRound);
+    Game.syncHud();
+  }
+
+  document.addEventListener("keydown", function (e) {
+    if (mode === "cmp") { return; }
+    if (e.key >= "0" && e.key <= "9") {
+      if (typed.length < 4) { typed += e.key; }
+      var a = document.getElementById("answer");
+      if (a) { a.textContent = typed || " "; a.className = "answer"; }
+      e.preventDefault();
+    } else if (e.key === "Backspace") {
+      typed = typed.slice(0, -1);
+      var b = document.getElementById("answer");
+      if (b) { b.textContent = typed || " "; b.className = "answer"; }
+      e.preventDefault();
+    } else if (e.key === "Enter") {
+      submit(); e.preventDefault();
+    }
+  });
+
+  renderModes();
+  startRound();
+})();
+</script>
+</body>
+</html>

@@ -103,6 +103,11 @@
     p.stats.sectionsDone = p.stats.sectionsDone || {};
     p.quests = p.quests || {};
     p.quests.done = p.quests.done || 0;
+    p.practice = p.practice || {};
+    p.practice.rounds = p.practice.rounds || 0;
+    p.practice.correct = p.practice.correct || 0;
+    p.practice.wrong = p.practice.wrong || 0;
+    p.practice.byMode = p.practice.byMode || {};
     Object.keys(p.levels).forEach(function (k) {
       var l = p.levels[k];
       if (typeof l.gems !== "number") { l.gems = l.stars || 0; }
@@ -181,6 +186,31 @@
     }
     save(p);
     return { gems: gems, xp: xp, first: first };
+  }
+
+  /* тренування: XP за правильні відповіді, життя не знімаються */
+  function awardPractice(correct, mode) {
+    var p = load();
+    var xp = correct ? 2 : 0;
+    if (xp) {
+      p.xp += xp;
+      p.weekXp += xp;
+      var t = todayStr();
+      var d = p.stats.days[t] || { lessons: 0, perfect: 0, sec: 0, xp: 0 };
+      d.xp += xp;
+      p.stats.days[t] = d;
+      p.quests.points = (p.quests.points || 0) + xp;
+    }
+    p.practice.correct += correct ? 1 : 0;
+    p.practice.wrong += correct ? 0 : 1;
+    if (mode) { p.practice.byMode[mode] = (p.practice.byMode[mode] || 0) + (correct ? 1 : 0); }
+    save(p);
+    return xp;
+  }
+  function finishPracticeRound(stats) {
+    var p = load();
+    p.practice.rounds += 1;
+    save(p);
   }
 
   function loseLife() {
@@ -280,6 +310,7 @@
   /* ---------- сайдбар ---------- */
   var NAV = [
     { key: "learn", href: "index.html", icon: "🏠", label: "Навчання" },
+    { key: "train", href: "train.html", icon: "✏️", label: "Тренування" },
     { key: "quests", href: "quests.html", icon: "🧰", label: "Квести" },
     { key: "board", href: "leaderboard.html", icon: "🛡️", label: "Дошки пошани" },
     { key: "profile", href: "profile.html", icon: "🐸", label: "Профіль" }
@@ -337,7 +368,8 @@
     KEY: KEY, MAX_LIVES: MAX_LIVES, SECTIONS: SECTIONS, SEQ: SEQ, LEAGUES: LEAGUES,
     todayStr: todayStr, mondayStr: mondayStr, load: load, save: save,
     isDone: isDone, isPerfect: isPerfect, gemsOf: gemsOf, sectionProgress: sectionProgress,
-    awardLesson: awardLesson, loseLife: loseLife,
+    awardLesson: awardLesson, awardPractice: awardPractice,
+    finishPracticeRound: finishPracticeRound, loseLife: loseLife,
     quests: quests, claimQuest: claimQuest, leagueOf: leagueOf, weekLeaderboard: weekLeaderboard,
     achievements: achievements, renderSidebar: renderSidebar, hudHTML: hudHTML, syncHud: syncHud,
     toast: toast, esc: esc, positionOf: positionOf, taskById: taskById, nextLessonId: nextLessonId
