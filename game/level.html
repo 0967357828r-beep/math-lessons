@@ -92,7 +92,7 @@
     '<div class="video-box"><video id="video" controls playsinline preload="metadata"></video></div>' +
     '<div class="quiz"><div class="qtitle">Обери відповідь: <span class="muted" style="font-weight:700;font-size:12px">натисни — перевіримо одразу</span></div>' +
     '<div class="qopts" id="opts"></div><div class="qmsg" id="msg"></div></div>' +
-    '<div class="row"><button class="btn ghost" id="showAns">💡 Показати розв\'язок</button>' +
+    '<div class="row"><button class="btn ghost" id="showAns" style="display:none">💡 Показати розв\'язок</button>' +
     '<a class="btn next" id="next" href="index.html" style="display:none">Далі →</a>' +
     '<a class="btn ghost" href="index.html">До карти</a></div>' +
     '<div class="ansbox" id="ansbox"><ol id="steps"></ol><audio id="ansAudio" preload="none"></audio>' +
@@ -107,6 +107,7 @@
 
   var lives = p0.lives;
   if (lives <= 0) {
+    document.getElementById("showAns").style.display = "inline-flex";
     document.getElementById("opts").innerHTML =
       '<div style="grid-column:1/-1;font-weight:800;color:#ea2b2b">❤️ Життя закінчились. Відновляться завтра — або на карті за 3 💎.</div>';
   }
@@ -141,6 +142,16 @@
         }
         document.getElementById("msg").textContent = msg;
         document.querySelectorAll(".qopt").forEach(function (o) { o.disabled = true; });
+        var ab = document.getElementById("ansbox");
+        var sb = document.getElementById("showAns");
+        ab.classList.add("show");
+        sb.style.display = "inline-flex";
+        sb.textContent = "🙈 Сховати розв'язок";
+        try {
+          var aa = document.getElementById("ansAudio");
+          aa.currentTime = 0;
+          var ap = aa.play(); if (ap && ap.catch) { ap.catch(function () {}); }
+        } catch (e) {}
         var nx = document.getElementById("next");
         var nid = Game.nextLessonId(task.id);
         nx.href = nid ? "level.html?id=" + encodeURIComponent(nid) : "index.html";
@@ -164,9 +175,17 @@
   });
 
   document.getElementById("showAns").addEventListener("click", function () {
-    document.getElementById("ansbox").classList.add("show");
+    var box = document.getElementById("ansbox");
     var a = document.getElementById("ansAudio");
-    try { a.currentTime = 0; var pr = a.play(); if (pr && pr.catch) { pr.catch(function () {}); } } catch (e) {}
+    if (!box.classList.contains("show")) {
+      box.classList.add("show");
+      this.textContent = "🙈 Сховати розв'язок";
+      try { a.currentTime = 0; var pr = a.play(); if (pr && pr.catch) { pr.catch(function () {}); } } catch (e) {}
+    } else {
+      box.classList.remove("show");
+      this.textContent = "💡 Показати розв'язок";
+      try { a.pause(); } catch (e) {}
+    }
   });
 
   syncHud();
