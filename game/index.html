@@ -23,7 +23,7 @@
         <div class="card">
           <h3>Налаштування</h3>
           <div class="tools" style="margin-top:0">
-            <button class="btn ghost" id="heal">❤️ Відновити життя (3 💎)</button>
+            <button class="btn ghost" id="heal">❤️ Відновити життя (30 💎)</button>
             <button class="btn ghost" id="export">⬇️ Зберегти</button>
             <button class="btn ghost" id="import">⬆️ Завантажити</button>
             <button class="btn ghost" id="reset">♻️ Скинути</button>
@@ -228,8 +228,8 @@
   document.getElementById("heal").addEventListener("click", function () {
     var p = Game.load();
     if (p.lives >= Game.MAX_LIVES) { Game.toast("Життя й так повні"); return; }
-    if (p.gems < 3) { Game.toast("Треба 3 кристали"); return; }
-    p.gems -= 3; p.lives = Game.MAX_LIVES; p.livesDate = Game.todayStr();
+    if (p.gems < 30) { Game.toast("Треба 30 кристалів"); return; }
+    p.gems -= 30; p.lives = Game.MAX_LIVES; p.livesDate = Game.todayStr();
     Game.save(p); render(); Game.toast("Життя відновлено ❤️");
   });
   document.getElementById("reset").addEventListener("click", function () {

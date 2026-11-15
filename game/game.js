@@ -170,13 +170,15 @@
     p.quests.sec += Math.min(seconds || 0, 600);
     if (perfect) { p.quests.perfect += 1; }
     var pos = positionOf(id);
+    var trophy = null;
     if (pos) {
       var s = SECTIONS[pos.section];
       var prog = sectionProgress(p, s);
       if (prog.done === prog.total && !p.stats.sectionsDone[s.id]) {
         p.stats.sectionsDone[s.id] = true;
-        p.gems += 3;
-        gems += 3;
+        p.gems += 20;
+        gems += 20;
+        trophy = { title: s.title, emoji: s.emoji, reward: 20 };
       }
     }
     p.gems += gems;
@@ -185,7 +187,7 @@
       p.last = t;
     }
     save(p);
-    return { gems: gems, xp: xp, first: first };
+    return { gems: gems, xp: xp, first: first, trophy: trophy };
   }
 
   /* тренування: XP за правильні відповіді, життя не знімаються */

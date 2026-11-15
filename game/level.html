@@ -109,7 +109,7 @@
   if (lives <= 0) {
     document.getElementById("showAns").style.display = "inline-flex";
     document.getElementById("opts").innerHTML =
-      '<div style="grid-column:1/-1;font-weight:800;color:#ea2b2b">❤️ Життя закінчились. Відновляться завтра — або на карті за 3 💎.</div>';
+      '<div style="grid-column:1/-1;font-weight:800;color:#ea2b2b">❤️ Життя закінчились. Відновляться завтра — або на карті за 30 💎.</div>';
   }
 
   var opts = document.getElementById("opts");
@@ -135,12 +135,11 @@
         var reward = Game.awardLesson(task.id, attempts === 0, seconds);
         var pr = Game.load();
         var msg = "Молодець! 🎉 +" + reward.xp + " XP";
-        if (reward.gems >= 3) {
-          msg += " · розділ пройдено! +3 💎";
-        } else if (reward.gems === 1) {
+        if (!reward.trophy && reward.gems === 1) {
           msg += " · 💎 +1 за урок без помилок";
         }
         document.getElementById("msg").textContent = msg;
+        if (reward.trophy) { showTrophy(reward.trophy); }
         document.querySelectorAll(".qopt").forEach(function (o) { o.disabled = true; });
         var ab = document.getElementById("ansbox");
         var sb = document.getElementById("showAns");
@@ -165,7 +164,7 @@
         syncHud();
         if (left <= 0) {
           document.querySelectorAll(".qopt").forEach(function (o) { o.disabled = true; });
-          document.getElementById("msg").textContent = "❤️ Життя закінчились. Відновляться завтра — або на карті за 3 💎.";
+          document.getElementById("msg").textContent = "❤️ Життя закінчились. Відновляться завтра — або на карті за 30 💎.";
         } else {
           document.getElementById("msg").textContent = "Спробуй ще 🙂 ❤️ " + left;
         }
@@ -187,6 +186,24 @@
       try { a.pause(); } catch (e) {}
     }
   });
+
+  function showTrophy(t) {
+    var ov = document.createElement("div");
+    ov.style.cssText = "position:fixed;inset:0;background:rgba(20,20,20,.55);display:flex;" +
+      "align-items:center;justify-content:center;z-index:1000;padding:16px";
+    ov.innerHTML = '<div style="background:#fff;border-radius:24px;padding:28px 24px;max-width:380px;' +
+      'text-align:center;box-shadow:0 18px 50px rgba(0,0,0,.3)">' +
+      '<div style="font-size:76px;line-height:1;margin-bottom:8px">🏆</div>' +
+      '<div style="font-size:11px;font-weight:900;letter-spacing:2px;color:#999;text-transform:uppercase">Кубок розділу</div>' +
+      '<h2 style="margin:6px 0 4px;font-size:22px">' + Game.esc(t.title) + '</h2>' +
+      '<div style="font-weight:800;color:#777;margin-bottom:14px">Розділ пройдено повністю!</div>' +
+      '<div style="font-size:30px;font-weight:900;color:#1cb0f6;margin-bottom:18px">+20 💎</div>' +
+      '<button id="trophyOk" style="border:0;border-radius:14px;padding:13px 22px;font:900 14px inherit;' +
+      'background:#58cc02;color:#fff;cursor:pointer">Забрати кубок</button></div>';
+    document.body.appendChild(ov);
+    try { document.getElementById("ding").play(); } catch (e) {}
+    document.getElementById("trophyOk").addEventListener("click", function () { ov.remove(); });
+  }
 
   syncHud();
 })();
