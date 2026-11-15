@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Урок — Задачі-мультфільми</title>
+<title>Урок — Тімолінго</title>
 <link rel="stylesheet" href="game.css">
 </head>
 <body>
@@ -84,7 +84,7 @@
   var pos = Game.positionOf(task.id);
   var sec = pos ? Game.SECTIONS[pos.section] : null;
   var p0 = Game.load();
-  document.title = task.title + " — Задачі-мультфільми";
+  document.title = task.title + " — Тімолінго";
   host.innerHTML =
     '<div class="lesson-kicker">' + (sec ? "Розділ " + (sec.index + 1) + " · " + Game.esc(sec.title) : "Урок") + '</div>' +
     '<h1>' + Game.esc(task.title) + '</h1>' +

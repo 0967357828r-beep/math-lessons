@@ -29,27 +29,27 @@
       sub: "Прості дії: скільки всього, на скільки більше",
       ids: ["am8_pinecones_pc", "am11_pebbles_pb", "am10_wool_wl", "am10_buses_bs2",
             "am10_school_party_sv", "am7_checkers_ck", "am7_tickets_tk", "pies_amphibia_video",
-            "am8_cats_kt", "am9_baskets_bk"] },
+            "am8_cats_kt", "am9_baskets_bk", "am12_classes_cl2", "am12_beach_pb2", "am13_medals_md"] },
     { id: "mul", emoji: "✖️", title: "Множення й ділення", color: "#1cb0f6",
       sub: "У скільки разів більше, порівну на всіх",
       ids: ["am11_potatoes_pt", "am6_turkey_tg", "am2_birds_b2", "am9_starch_st",
             "am8_aquarium_aq", "am8_paper_pp", "am9_notebooks_nb", "am9_polygons_pg",
-            "am3_beads_bd", "am3_circus_cc", "am3_juggling_jg", "am9_squirrel_sq"] },
+            "am3_beads_bd", "am3_circus_cc", "am3_juggling_jg", "am9_squirrel_sq", "am12_toys_ty2", "am12_nuts_nt", "am12_bottles_bt", "am13_sweaters_sw2", "am13_trees_tr2", "am13_boats_bn", "am13_buttons_kn"] },
     { id: "money", emoji: "🪙", title: "Гроші та покупки", color: "#ffc800",
       sub: "Ціна, кількість, решта",
       ids: ["am8_candy_cn", "am8_marker_mk", "am8_balloons_bl", "am9_balls_bs",
-            "am4_croissants_cr", "am5_sofia_sf", "am10_money_ol", "am2_bun_u2"] },
+            "am4_croissants_cr", "am5_sofia_sf", "am10_money_ol", "am2_bun_u2", "am13_sweets_cn2", "am13_stickers_st2", "am13_groceries_mm"] },
     { id: "units", emoji: "⏰", title: "Маса, час, довжина", color: "#ce82ff",
       sub: "Кілограми, години, метри, літри",
       ids: ["am8_heron_hr", "am4_wolf_wf", "am3_kitten_kt", "am10_cat_sleep_cat2",
             "am10_vacation_kh", "am6_cistern_ct", "am6_scooter_sc", "am6_engine_en",
-            "am8_polyline_pl", "am6_school_walk_sw"] },
+            "am8_polyline_pl", "am6_school_walk_sw", "am12_lviv_lv", "am12_engine_en2", "am13_lesson_ls", "am13_sandwiches_sd"] },
     { id: "compound", emoji: "🧩", title: "Складені задачі", color: "#ff9600",
       sub: "Кілька дій поспіль — як у підручнику",
       ids: ["am11_weavers_wv", "am11_houses_hs", "am11_basket_bk2", "am11_sugar_sg",
             "am11_trains_tr", "am11_pears_pr", "am11_flamingo_fl2", "am11_nails_nl",
             "am8_cakes_ck2", "am10_herbarium_hb", "am10_flowerbed_fl", "am4_sewing_sw",
-            "am2_parts_w2", "am6_dumplings_dm"] },
+            "am2_parts_w2", "am6_dumplings_dm", "am12_garden_gr", "am12_concert_cc2", "am12_chestnuts_ch"] },
     { id: "logic", emoji: "💡", title: "Кмітливість і логіка", color: "#ff4b4b",
       sub: "Задачі-жарти й ті, де треба подумати",
       ids: ["am9_hedgehog_hg", "am9_shirts_dr", "am9_haystacks_br", "am9_fruits_fr",
@@ -293,7 +293,7 @@
     if (!host) { return; }
     var p = load();
     var lg = leagueOf(p);
-    var html = '<a class="logo" href="index.html">задачі</a>';
+    var html = '<a class="logo" href="index.html">Тімолінго</a>';
     html += '<nav class="nav">';
     NAV.forEach(function (n) {
       var ic = n.key === "profile" ? p.profile.avatar : n.icon;

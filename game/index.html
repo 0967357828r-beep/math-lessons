@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Навчання — Задачі-мультфільми</title>
+<title>Навчання — Тімолінго</title>
 <link rel="stylesheet" href="game.css">
 </head>
 <body>
@@ -49,7 +49,7 @@
   TASKS.forEach(function (t) { byId[t.id] = t; });
 
   function chestsOf(p) {
-    if (p.chestsV === 4 && Array.isArray(p.chests)) { return p.chests; }
+    if (p.chestsV === 5 && Array.isArray(p.chests)) { return p.chests; }
     var n = Game.SEQ.length, list = [], used = {}, guard = 0, count = Math.max(4, Math.round(n / 6));
     while (list.length < count && guard < 900) {
       guard++;
@@ -68,7 +68,7 @@
       p.chests.push({ i: Math.min(firstOpen + 2, n - 1), kind: "gems", opened: false });
       p.chests.sort(function (a, b) { return a.i - b.i; });
     }
-    p.chestsV = 4;
+    p.chestsV = 5;
     return p.chests;
   }
 
