@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Навчання — Тімолінго</title>
-<link rel="stylesheet" href="game.css?v=20261115c">
+<link rel="stylesheet" href="game.css?v=20261115d">
 </head>
 <body>
 <aside class="side" id="side"></aside>
@@ -35,9 +35,9 @@
 </main>
 
 <div class="toast" id="toast"></div>
-<script src="tasks.js?v=20261115c"></script>
-<script src="avatars.js?v=20261115c"></script>
-<script src="game.js?v=20261115c"></script>
+<script src="tasks.js?v=20261115d"></script>
+<script src="avatars.js?v=20261115d"></script>
+<script src="game.js?v=20261115d"></script>
 <script>
 (function () {
   var p = Game.load();
@@ -234,7 +234,7 @@
       var tnode = document.createElement(tdone ? "button" : "div");
       tnode.className = "lvl trophy" + (tdone ? " done" : " locked");
       tnode.innerHTML = '<div class="dot"><svg viewBox="0 0 64 64" width="56" height="56" aria-hidden="true"><path d="M20 7h24v11a12 12 0 0 1-24 0z" fill="#f7b500"/><path d="M20 11h-7a9 9 0 0 0 9 9" fill="none" stroke="#e09b00" stroke-width="4" stroke-linecap="round"/><path d="M44 11h7a9 9 0 0 1-9 9" fill="none" stroke="#e09b00" stroke-width="4" stroke-linecap="round"/><rect x="29" y="30" width="6" height="9" rx="1" fill="#e09b00"/><rect x="21" y="39" width="22" height="6" rx="2" fill="#d18f00"/><rect x="16" y="45" width="32" height="9" rx="3" fill="#b37400"/><path d="M27 12h4v10a4 4 0 0 1-4-4z" fill="#ffd54f" opacity=".85"/></svg></div><div class="cap">Кубок розділу</div>' +
-        '<div class="st">' + (tdone ? "+5 💎" : tp.done + " / " + tp.total) + '</div>';
+        '<div class="st">' + (tdone ? "+15 💎" : tp.done + " / " + tp.total) + '</div>';
       if (tdone) {
         tnode.addEventListener("click", function () {
           Game.toast("Кубок розділу «" + sec.title + "» вже в колекції 🏆");

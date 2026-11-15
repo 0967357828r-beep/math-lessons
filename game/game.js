@@ -52,6 +52,16 @@
     { id: "logic", emoji: "💡", title: "Логіка й кмітливість", color: "#ffc800",
       sub: "Задачі-жарти й ті, де треба подумати",
       ids: ["am9_fruits_fr", "am9_numbers_nm", "am3_cheese_ch", "am_school_as", "am_school_as_b", "flowers_am_video", "am2_dress_d2", "am2_pencils_p2", "am6_recycle_rc", "am10_dogs_dog", "am10_kittens_kt2", "am14_classes2_cls"] }
+
+    ,
+    { id: "mul2", emoji: "✖️", title: "Множення й ділення · 2", color: "#1cb0f6",
+      sub: "Ділення на частини, кратне порівняння, кілька дій",
+      ids: ["am16_garlands_gl", "am16_dresses_dr2", "am16_peas_ps", "am16_stools_st3", "am16_panda_pd",
+            "am16_reserve_rv", "am16_entrances_en3", "am16_age_ag", "am16_money2_tm", "am16_sugar2_sg2"] },
+    { id: "add2", emoji: "🍎", title: "Додавання й віднімання · 2", color: "#58cc02",
+      sub: "Великі числа й кілька дій",
+      ids: ["am17_pencils_pn", "am17_asters_as2", "am17_vegetables_vg", "am17_theatre_th", "am17_pumpkins_pk",
+            "am17_pastries_pt3", "am17_lindens_ld", "am17_school_sc", "am17_bricks_br", "am17_village_vl"] }
   ];
 
   var SEQ = [];
@@ -176,9 +186,9 @@
       var prog = sectionProgress(p, s);
       if (prog.done === prog.total && !p.stats.sectionsDone[s.id]) {
         p.stats.sectionsDone[s.id] = true;
-        p.gems += 5;
-        gems += 5;
-        trophy = { title: s.title, emoji: s.emoji, reward: 5 };
+        p.gems += 15;
+        gems += 15;
+        trophy = { title: s.title, emoji: s.emoji, reward: 15 };
       }
     }
     p.gems += gems;
