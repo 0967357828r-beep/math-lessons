@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Профіль — Тімолінго</title>
-<link rel="stylesheet" href="game.css?v=20261115h">
+<link rel="stylesheet" href="game.css?v=20261115i">
 </head>
 <body>
 <aside class="side" id="side"></aside>
@@ -17,9 +17,9 @@
 </main>
 
 <div class="toast" id="toast"></div>
-<script src="tasks.js?v=20261115h"></script>
-<script src="avatars.js?v=20261115h"></script>
-<script src="game.js?v=20261115h"></script>
+<script src="tasks.js?v=20261115i"></script>
+<script src="avatars.js?v=20261115i"></script>
+<script src="game.js?v=20261115i"></script>
 <script>
 (function () {
   var EMOJI = ["🐸", "🦎", "🐛", "🐌", "🦋", "🐞", "🐢", "🐝", "🦊", "🐼", "🦄", "🐙", "🚀", "🌟"];
@@ -84,8 +84,8 @@
       '<div class="card" style="margin-bottom:18px"><h3>' + lg.cur.name + ' ліга' +
       ' <a class="more" href="leaderboard.html">дошка</a></h3>' +
       '<div class="league-row"><div class="league-badge" style="background:' + lg.cur.color + '22">' +
-      lg.cur.emoji + '</div><div><b>' + p.weekXp + ' XP за тиждень</b>' +
-      '<div class="muted">' + (lg.next ? "До ліги «" + lg.next.name + "»: " + (lg.next.need - p.weekXp) + " XP" : "Найвища ліга!") +
+      lg.cur.emoji + '</div><div><b>' + p.xp + ' XP усього</b>' +
+      '<div class="muted">' + (lg.next ? "До ліги «" + lg.next.name + "»: " + (lg.next.need - p.xp) + " XP" : "Найвища ліга!") +
       '</div></div></div>' +
       '<div class="bar" style="margin-top:12px"><i style="width:' + Math.round(lg.pct * 100) + '%;background:' +
       lg.cur.color + '"></i></div></div>' +

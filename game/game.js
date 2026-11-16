@@ -310,23 +310,24 @@
   /* ---------- ліги ---------- */
   var LEAGUES = [
     { name: "Бронзова", emoji: "🥉", color: "#cd7f32", need: 0 },
-    { name: "Срібна", emoji: "🥈", color: "#9aa7b8", need: 40 },
-    { name: "Золота", emoji: "🥇", color: "#ffc800", need: 90 },
-    { name: "Сапфірова", emoji: "🔷", color: "#1cb0f6", need: 150 },
-    { name: "Смарагдова", emoji: "🟢", color: "#2ecc71", need: 220 },
-    { name: "Рубінова", emoji: "🔺", color: "#ff4b4b", need: 300 },
-    { name: "Аметистова", emoji: "🟣", color: "#a55eea", need: 390 },
-    { name: "Перлинна", emoji: "🦪", color: "#ff86c8", need: 490 },
-    { name: "Обсидіанова", emoji: "⚫", color: "#4b4b4b", need: 600 },
-    { name: "Діамантова", emoji: "💎", color: "#00c2c7", need: 720 }
+    { name: "Срібна", emoji: "🥈", color: "#9aa7b8", need: 100 },
+    { name: "Золота", emoji: "🥇", color: "#ffc800", need: 300 },
+    { name: "Сапфірова", emoji: "🔷", color: "#1cb0f6", need: 600 },
+    { name: "Смарагдова", emoji: "🟢", color: "#2ecc71", need: 1000 },
+    { name: "Рубінова", emoji: "🔺", color: "#ff4b4b", need: 1500 },
+    { name: "Аметистова", emoji: "🟣", color: "#a55eea", need: 2100 },
+    { name: "Перлинна", emoji: "🦪", color: "#ff86c8", need: 2800 },
+    { name: "Обсидіанова", emoji: "⚫", color: "#4b4b4b", need: 3600 },
+    { name: "Діамантова", emoji: "💎", color: "#00c2c7", need: 4500 }
   ];
   function leagueOf(p) {
     var li = 0;
-    for (var i = 0; i < LEAGUES.length; i++) { if (p.weekXp >= LEAGUES[i].need) { li = i; } }
+    var total = p.xp || 0;
+    for (var i = 0; i < LEAGUES.length; i++) { if (total >= LEAGUES[i].need) { li = i; } }
     var cur = LEAGUES[li];
     var next = LEAGUES[li + 1] || null;
-    var pct = next ? Math.min(1, (p.weekXp - cur.need) / (next.need - cur.need)) : 1;
-    return { index: li, cur: cur, next: next, pct: pct };
+    var pct = next ? Math.min(1, (total - cur.need) / (next.need - cur.need)) : 1;
+    return { index: li, cur: cur, next: next, pct: pct, total: total };
   }
   function weekLeaderboard(p) {
     /* суперники стабільні в межах тижня: сіяні від дати понеділка */
@@ -339,11 +340,11 @@
                  "Павучок", "Мишка", "Жабеня Тім", "Дощик", "Каченя", "Лисичка",
                  "Їжачок", "Слимак", "Пташка", "Короп", "Кіт Барсик", "Уля", "Джміль", "Равлик", "Пінгвін"];
     /* суперники зіставні з гравцем: трохи слабші й сильніші */
-    var base = Math.max(12, p.weekXp || 0);
+    var base = Math.max(12, p.xp || 0);
     var arr = names.map(function (n, i) {
       return { name: n, xp: Math.round(base * (0.15 + rnd() * 1.1)), me: false };
     });
-    arr.push({ name: p.profile.name + " (ви)", xp: p.weekXp, me: true });
+    arr.push({ name: p.profile.name + " (ви)", xp: p.xp, me: true });
     arr.sort(function (a, b) { return b.xp - a.xp || (a.me ? -1 : 1); });
     var rank = 1;
     arr.forEach(function (x, i) { if (x.me) { rank = i + 1; } });
@@ -407,7 +408,7 @@
             '<a class="nav-item" href="../index.html"><span class="ni">📚</span>Бібліотека</a>' +
             '<div class="mini-league" style="--lc:' + lg.cur.color + '">' +
             '<div class="ml-emoji">' + lg.cur.emoji + '</div><div><b>' + lg.cur.name + ' ліга</b>' +
-            '<div class="ml-xp">' + p.weekXp + ' XP за тиждень</div></div></div>' +
+            '<div class="ml-xp">' + p.xp + ' XP усього</div></div></div>' +
             "</div>";
     host.innerHTML = html;
   }
@@ -418,7 +419,7 @@
            '<span class="chip gems">💎 <b id="hud-gems">' + p.gems + '</b></span>' +
            '<span class="chip xp">⚡ <b id="hud-xp">' + p.xp + '</b></span>' +
            '<span class="chip streak">🔥 <b id="hud-streak">' + p.streak + '</b></span>' +
-           '<span class="chip combo">⚡⃞ <b id="hud-combo">x' + (p.combo || 0) + '</b></span>';
+           '<span class="chip combo">💫 <b id="hud-combo">x' + (p.combo || 0) + '</b></span>';
   }
   function syncHud() {
     var p = load();

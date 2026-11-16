@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Дошки пошани — Тімолінго</title>
-<link rel="stylesheet" href="game.css?v=20261115h">
+<link rel="stylesheet" href="game.css?v=20261115i">
 </head>
 <body>
 <aside class="side" id="side"></aside>
@@ -17,8 +17,8 @@
 </main>
 
 <div class="toast" id="toast"></div>
-<script src="tasks.js?v=20261115h"></script>
-<script src="game.js?v=20261115h"></script>
+<script src="tasks.js?v=20261115i"></script>
+<script src="game.js?v=20261115i"></script>
 <script>
 (function () {
   Game.renderSidebar("board");
@@ -32,9 +32,9 @@
     var host = document.getElementById("board");
 
     var html = '<div class="sec-head purple"><div class="sh-emoji">' + lg.cur.emoji + '</div>' +
-      '<div><div class="sh-kicker">Тиждень · ' + p.weekStart + '</div>' +
+      '<div><div class="sh-kicker">Загальний залік</div>' +
       '<h2>' + lg.cur.name + ' ліга</h2></div>' +
-      '<div class="sh-bar"><div>' + p.weekXp + ' XP</div></div></div>';
+      '<div class="sh-bar"><div>' + p.xp + ' XP</div></div></div>';
 
     html += '<div class="card"><h3>Місце у лізі <span class="more" style="color:' +
       (lb.promote ? "#58cc02" : lb.demote ? "#ff4b4b" : "#999") + '">' +

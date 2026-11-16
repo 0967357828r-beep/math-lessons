@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Навчання — Тімолінго</title>
-<link rel="stylesheet" href="game.css?v=20261115h">
+<link rel="stylesheet" href="game.css?v=20261115i">
 </head>
 <body>
 <aside class="side" id="side"></aside>
@@ -37,9 +37,9 @@
 </main>
 
 <div class="toast" id="toast"></div>
-<script src="tasks.js?v=20261115h"></script>
-<script src="avatars.js?v=20261115h"></script>
-<script src="game.js?v=20261115h"></script>
+<script src="tasks.js?v=20261115i"></script>
+<script src="avatars.js?v=20261115i"></script>
+<script src="game.js?v=20261115i"></script>
 <script>
 (function () {
   var p = Game.load();
@@ -143,7 +143,7 @@
       '<div style="margin-top:12px" class="bar"><i style="width:' + Math.round(lg.pct * 100) + '%;background:' +
       lg.cur.color + '"></i></div>' +
       '<div class="muted" style="font-size:11px;font-weight:800;margin-top:6px">' +
-      (lg.next ? (lg.next.need - p.weekXp) + ' XP до ліги «' + lg.next.name + '»' : 'Найвища ліга! 🎉') + '</div>';
+      (lg.next ? (lg.next.need - p.xp) + ' XP до ліги «' + lg.next.name + '»' : 'Найвища ліга! 🎉') + '</div>';
   }
 
   function renderDaily(p) {
