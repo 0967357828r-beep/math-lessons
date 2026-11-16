@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Дошки пошани — Тімолінго</title>
-<link rel="stylesheet" href="game.css?v=20261115i">
+<link rel="stylesheet" href="game.css?v=20261115j">
 </head>
 <body>
 <aside class="side" id="side"></aside>
@@ -17,8 +17,8 @@
 </main>
 
 <div class="toast" id="toast"></div>
-<script src="tasks.js?v=20261115i"></script>
-<script src="game.js?v=20261115i"></script>
+<script src="tasks.js?v=20261115j"></script>
+<script src="game.js?v=20261115j"></script>
 <script>
 (function () {
   Game.renderSidebar("board");
@@ -37,13 +37,12 @@
       '<div class="sh-bar"><div>' + p.xp + ' XP</div></div></div>';
 
     html += '<div class="card"><h3>Місце у лізі <span class="more" style="color:' +
-      (lb.promote ? "#58cc02" : lb.demote ? "#ff4b4b" : "#999") + '">' +
-      (lb.promote ? "зона підвищення" : lb.demote ? "зона пониження" : "спокійна зона") +
+      (lb.promote ? "#58cc02" : "#999") + '">' +
+      (lb.promote ? "зона підвищення" : "спокійна зона") +
       '</span></h3>';
 
     lb.list.forEach(function (row, i) {
       if (i === 10) { html += '<div class="zone">↑ вище — підвищення</div>'; }
-      if (i === 25) { html += '<div class="zone demote">↓ нижче — пониження</div>'; }
       html += '<div class="lb-row' + (row.me ? " me" : "") + '">' +
         '<div class="rank">' + (i + 1) + '</div>' +
         '<div class="av">' + (row.me ? Game.avatarMarkup(p.profile.avatar, 30) : EMOJI[i % EMOJI.length]) + '</div>' +

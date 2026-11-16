@@ -115,6 +115,7 @@
     p.practice.wrong = p.practice.wrong || 0;
     p.practice.byMode = p.practice.byMode || {};
     p.combo = p.combo || 0;
+    p.demotedFor = p.demotedFor || null;
     p.bestCombo = p.bestCombo || 0;
     Object.keys(p.levels).forEach(function (k) {
       var l = p.levels[k];
@@ -138,6 +139,28 @@
     p.quests.perfect = p.quests.perfect || 0;
     p.quests.sec = p.quests.sec || 0;
     p.quests.claimed = p.quests.claimed || {};
+
+    /* пониження ліги: 2+ дні без уроків — ліга на одну нижче, XP знімається */
+    if (p.last && p.demotedFor !== p.last) {
+      var lastD = new Date(p.last + "T00:00:00");
+      var nowD = new Date(todayStr() + "T00:00:00");
+      var idle = Math.round((nowD - lastD) / 86400000);
+      if (idle >= 2) {
+        var idx = 0;
+        for (var li2 = 0; li2 < LEAGUES.length; li2++) { if ((p.xp || 0) >= LEAGUES[li2].need) { idx = li2; } }
+        var oldXp = p.xp || 0;
+        if (idx > 0) {
+          p.xp = Math.max(0, LEAGUES[idx].need - 1);
+        } else {
+          p.xp = Math.max(0, oldXp - 50);
+        }
+        p.weekXp = Math.min(p.weekXp || 0, p.xp);
+        p.demotedFor = p.last;
+        p.leagueDropNotice = { lost: oldXp - p.xp, from: LEAGUES[idx].name,
+                               to: LEAGUES[Math.max(0, idx - (idx > 0 ? 1 : 0))].name };
+        save(p);
+      }
+    }
     return p;
   }
   function save(p) { try { localStorage.setItem(KEY, JSON.stringify(p)); } catch (e) {} }

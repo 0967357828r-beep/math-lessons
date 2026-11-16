@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Навчання — Тімолінго</title>
-<link rel="stylesheet" href="game.css?v=20261115i">
+<link rel="stylesheet" href="game.css?v=20261115j">
 </head>
 <body>
 <aside class="side" id="side"></aside>
@@ -37,9 +37,9 @@
 </main>
 
 <div class="toast" id="toast"></div>
-<script src="tasks.js?v=20261115i"></script>
-<script src="avatars.js?v=20261115i"></script>
-<script src="game.js?v=20261115i"></script>
+<script src="tasks.js?v=20261115j"></script>
+<script src="avatars.js?v=20261115j"></script>
+<script src="game.js?v=20261115j"></script>
 <script>
 (function () {
   var p = Game.load();
@@ -325,6 +325,17 @@
   });
 
   render();
+  var notice = Game.load().leagueDropNotice;
+  if (notice) {
+    var p2 = Game.load();
+    delete p2.leagueDropNotice;
+    Game.save(p2);
+    setTimeout(function () {
+      Game.toast(notice.from !== notice.to
+        ? ("😮 2 дні без занять — ліга знижена до «" + notice.to + "», −" + notice.lost + " XP")
+        : ("😮 2 дні без занять — −" + notice.lost + " XP"));
+    }, 600);
+  }
 })();
 </script>
 </body>
