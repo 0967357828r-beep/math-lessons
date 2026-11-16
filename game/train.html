@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Тренування — Тімолінго</title>
-<link rel="stylesheet" href="game.css?v=20261115j">
+<link rel="stylesheet" href="game.css?v=20261115l">
 <style>
   .modes { display: flex; gap: 8px; flex-wrap: wrap; margin: 6px 0 18px; }
   .mode { border: 2px solid #e5e5e5; border-bottom-width: 4px; background: #fff; border-radius: 14px;
@@ -58,8 +58,8 @@
 </main>
 
 <div class="toast" id="toast"></div>
-<script src="train_bank.js?v=20261115j"></script>
-<script src="game.js?v=20261115j"></script>
+<script src="train_bank.js?v=20261115l"></script>
+<script src="game.js?v=20261115l"></script>
 <script>
 (function () {
   Game.renderSidebar("train");
@@ -89,7 +89,7 @@
     MODES.forEach(function (m) {
       var b = document.createElement("button");
       b.className = "mode" + (m.id === mode ? " on" : "");
-      b.textContent = m.label;
+      b.textContent = (Game.trainReady(m.id) ? "" : "⏳ ") + m.label;
       b.addEventListener("click", function () {
         mode = m.id;
         localStorage.setItem("train_mode", mode);
@@ -119,6 +119,8 @@
   }
 
   function startRound() {
+    clearInterval(window._trainTimer);
+    if (!Game.trainReady(mode)) { renderLocked(); return; }
     queue = pickQuestions(mode);
     idx = 0; correct = 0; xp = 0; gemsEarned = 0;
     renderQuestion();
@@ -233,18 +235,68 @@
     finished(ok, cur);
   }
 
+  function renderLocked() {
+    var host = document.getElementById("train");
+    function draw() {
+      var left = Math.ceil(Game.trainLeft(mode) / 1000);
+      if (left <= 0) { startRound(); return; }
+      var m = Math.floor(left / 60), sec = left % 60;
+      host.innerHTML = '<div class="train-card result">' +
+        '<div class="big">⏳</div>' +
+        '<h2>Відпочинок</h2>' +
+        '<div class="muted" style="font-weight:800;margin-bottom:14px">' +
+        'Цей розділ тренування вже пройдено. Наступний раз — через ' +
+        (m > 0 ? (m + ' хв ') : '') + (sec < 10 ? '0' : '') + sec + ' с.</div>' +
+        '<a class="btn ghost" href="index.html">До карти</a></div>';
+    }
+    draw();
+    clearInterval(window._trainTimer);
+    window._trainTimer = setInterval(draw, 1000);
+  }
+
+  function nextMode() {
+    for (var i = 0; i < MODES.length; i++) {
+      var m = MODES[i];
+      if (m.id !== mode && Game.trainReady(m.id) && m.id !== "cmp") { return m; }
+    }
+    for (var j = 0; j < MODES.length; j++) {
+      if (MODES[j].id !== mode && Game.trainReady(MODES[j].id)) { return MODES[j]; }
+    }
+    return null;
+  }
+
   function renderResult() {
     Game.finishPracticeRound();
+    Game.trainMark(mode);
     var host = document.getElementById("train");
     var emoji = correct === ROUND ? "🏆" : correct >= 7 ? "🎉" : "💪";
-    host.innerHTML = '<div class="train-card result">' +
-      '<div class="big">' + emoji + '</div>' +
-      '<h2>' + correct + ' з ' + ROUND + '</h2>' +
-      '<div class="muted" style="font-weight:800;margin-bottom:16px">Зароблено ' + xp + ' XP і ' + gemsEarned + ' 💎 · серця не знімалися ❤️</div>' +
-      '<div class="row" style="justify-content:center">' +
-      '<button class="btn" id="again">Ще раунд</button>' +
-      '<a class="btn ghost" href="index.html">До карти</a></div></div>';
-    document.getElementById("again").addEventListener("click", startRound);
+    var nx = nextMode();
+    function draw() {
+      var left = Math.ceil(Game.trainLeft(mode) / 1000);
+      var mm = Math.floor(left / 60), ss = left % 60;
+      host.innerHTML = '<div class="train-card result">' +
+        '<div class="big">' + emoji + '</div>' +
+        '<h2>' + correct + ' з ' + ROUND + '</h2>' +
+        '<div class="muted" style="font-weight:800;margin-bottom:6px">Зароблено ' + xp + ' XP і ' + gemsEarned + ' 💎</div>' +
+        '<div style="font-weight:900;color:#ff9600;margin-bottom:16px">⏳ Цей розділ — через ' +
+        (mm > 0 ? mm + ' хв ' : '') + (ss < 10 ? '0' : '') + ss + ' с</div>' +
+        (nx ? '<button class="btn" id="nextMode">Далі: ' + nx.label + '</button> ' : '') +
+        '<a class="btn ghost" href="index.html" style="margin-left:8px">До карти</a>' +
+        '<div class="hint">Кожен розділ тренування — раз на годину</div></div>';
+      var b = document.getElementById("nextMode");
+      if (b) {
+        b.addEventListener("click", function () {
+          clearInterval(window._trainTimer);
+          mode = nx.id;
+          localStorage.setItem("train_mode", mode);
+          renderModes();
+          startRound();
+        });
+      }
+    }
+    draw();
+    clearInterval(window._trainTimer);
+    window._trainTimer = setInterval(draw, 1000);
     Game.syncHud();
   }
 

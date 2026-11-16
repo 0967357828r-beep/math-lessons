@@ -18,12 +18,22 @@
 
 <div class="toast" id="toast"></div>
 <script src="tasks.js?v=20261115j"></script>
+<script src="avatars.js?v=20261115j"></script>
 <script src="game.js?v=20261115j"></script>
 <script>
 (function () {
   Game.renderSidebar("board");
   document.getElementById("hud").innerHTML = Game.hudHTML();
   var EMOJI = ["🐸", "🦎", "🐛", "🐌", "🦋", "🐞", "🐢", "🐝", "🦊", "🐼", "🐨", "🐯", "🦁", "🐮"];
+  var AVATARS = (window.AVATARS && window.AVATARS.length) ? window.AVATARS : [];
+  function botAvatar(i) {
+    if (AVATARS.length) {
+      var a = AVATARS[(i * 7 + 3) % AVATARS.length];
+      return '<img src="' + a.file + '" alt="" title="' + Game.esc(a.name) + '" style="width:30px;height:30px;' +
+             'border-radius:50%;object-fit:cover;display:block">';
+    }
+    return EMOJI[i % EMOJI.length];
+  }
 
   function render() {
     var p = Game.load();
@@ -45,7 +55,7 @@
       if (i === 10) { html += '<div class="zone">↑ вище — підвищення</div>'; }
       html += '<div class="lb-row' + (row.me ? " me" : "") + '">' +
         '<div class="rank">' + (i + 1) + '</div>' +
-        '<div class="av">' + (row.me ? Game.avatarMarkup(p.profile.avatar, 30) : EMOJI[i % EMOJI.length]) + '</div>' +
+        '<div class="av">' + (row.me ? Game.avatarMarkup(p.profile.avatar, 30) : botAvatar(i)) + '</div>' +
         '<div class="nm">' + Game.esc(row.name) + '</div>' +
         '<div class="x">' + row.xp + ' XP</div></div>';
     });

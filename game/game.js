@@ -116,6 +116,7 @@
     p.practice.byMode = p.practice.byMode || {};
     p.combo = p.combo || 0;
     p.demotedFor = p.demotedFor || null;
+    p.trainAt = p.trainAt || {};
     p.bestCombo = p.bestCombo || 0;
     Object.keys(p.levels).forEach(function (k) {
       var l = p.levels[k];
@@ -291,6 +292,23 @@
     p.gems += n;
     save(p);
     return p.gems;
+  }
+
+  /* тренування: один раунд на режим раз на годину */
+  function trainReady(mode) {
+    var p = load();
+    var t = p.trainAt[mode] || 0;
+    return Date.now() - t >= 3600000;
+  }
+  function trainLeft(mode) {
+    var p = load();
+    var t = p.trainAt[mode] || 0;
+    return Math.max(0, 3600000 - (Date.now() - t));
+  }
+  function trainMark(mode) {
+    var p = load();
+    p.trainAt[mode] = Date.now();
+    save(p);
   }
 
   function finishPracticeRound(stats) {
@@ -471,6 +489,7 @@
     isDone: isDone, isPerfect: isPerfect, gemsOf: gemsOf, sectionProgress: sectionProgress,
     awardLesson: awardLesson, awardPractice: awardPractice, addGems: addGems,
     finishPracticeRound: finishPracticeRound, loseLife: loseLife,
+    trainReady: trainReady, trainLeft: trainLeft, trainMark: trainMark,
     quests: quests, claimQuest: claimQuest, leagueOf: leagueOf, weekLeaderboard: weekLeaderboard,
     achievements: achievements, renderSidebar: renderSidebar,
     taskOfDay: taskOfDay, claimTaskOfDay: claimTaskOfDay,
