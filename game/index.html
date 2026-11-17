@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Навчання — Тімолінго</title>
-<link rel="stylesheet" href="game.css?v=20261117e">
+<link rel="stylesheet" href="game.css?v=20261117f">
 </head>
 <body>
 <aside class="side" id="side"></aside>
@@ -37,9 +37,11 @@
 </main>
 
 <div class="toast" id="toast"></div>
-<script src="tasks.js?v=20261117e"></script>
-<script src="avatars.js?v=20261117e"></script>
-<script src="game.js?v=20261117e"></script>
+<script src="tasks.js?v=20261117f"></script>
+<script src="avatars.js?v=20261117f"></script>
+<script src="game.js?v=20261117f"></script>
+<script src="three.min.js?v=20261117f"></script>
+<script src="mascots3d.js?v=20261117f"></script>
 <script>
 (function () {
   var p = Game.load();
@@ -197,8 +199,8 @@
       var prog = Game.sectionProgress(p, sec);
       var head = document.createElement("div");
       head.className = "sec-head" + (sec.color === "#ffc800" ? " gold" : "");
-      head.style.background = sec.color;
-      head.style.boxShadow = "0 4px 0 " + (Game.SECTION_SHADE[sec.id] || "#46a302");
+      head.style.setProperty("--sec", sec.color);
+      head.style.setProperty("--sec-shade", Game.SECTION_SHADE[sec.id] || "#46a302");
       head.innerHTML = '<div class="sh-emoji">' + sec.emoji + '</div>' +
         '<div><div class="sh-kicker">Частина 1 · Розділ ' + (si + 1) + '</div>' +
         '<h2>' + sec.title + '</h2></div>' +

@@ -28,7 +28,7 @@
     { id: "add", emoji: "🍎", title: "Додавання й віднімання", color: "#58cc02",
       sub: "Скільки всього, на скільки більше",
       ids: ["am8_pinecones_pc", "am11_pebbles_pb", "am10_wool_wl", "am10_buses_bs2", "am10_school_party_sv", "am7_checkers_ck", "pies_amphibia_video", "am8_cats_kt", "am9_baskets_bk", "am12_classes_cl2", "am12_beach_pb2", "am14_house_hs2"] },
-    { id: "mul", emoji: "✖️", title: "Множення й ділення", color: "#1cb0f6",
+    { id: "mul", emoji: "✖️", title: "Множення й ділення", color: "#ff7a6b",
       sub: "У скільки разів, по скільки в кожному",
       ids: ["am11_potatoes_pt", "am6_turkey_tg", "am2_birds_b2", "am9_starch_st", "am8_aquarium_aq", "am8_paper_pp", "am9_notebooks_nb", "am9_polygons_pg", "am3_beads_bd", "am3_circus_cc", "am3_juggling_jg", "am9_squirrel_sq"] },
     { id: "share", emoji: "⚖️", title: "Поділ порівну", color: "#ffc800",
@@ -46,7 +46,7 @@
     { id: "compound", emoji: "🧩", title: "Складені задачі", color: "#58cc02",
       sub: "Кілька дій поспіль — як у підручнику",
       ids: ["am11_weavers_wv", "am11_houses_hs", "am11_basket_bk2", "am11_sugar_sg", "am11_trains_tr", "am11_pears_pr", "am11_flamingo_fl2", "am11_nails_nl", "am8_cakes_ck2", "am10_herbarium_hb", "am10_flowerbed_fl", "am4_sewing_sw"] },
-    { id: "multi", emoji: "🪜", title: "Задачі на кілька дій", color: "#1cb0f6",
+    { id: "multi", emoji: "🪜", title: "Задачі на кілька дій", color: "#c39cff",
       sub: "Спочатку одне, потім друге",
       ids: ["am2_parts_w2", "am6_dumplings_dm", "am12_garden_gr", "am12_concert_cc2", "am12_chestnuts_ch", "am14_rabbits_rb", "am15_fishermen_fs", "am15_newspapers_np", "am15_garages_gr2", "am9_hedgehog_hg", "am9_shirts_dr", "am9_haystacks_br"] },
     { id: "logic", emoji: "💡", title: "Логіка й кмітливість", color: "#ffc800",
@@ -54,7 +54,7 @@
       ids: ["am9_fruits_fr", "am9_numbers_nm", "am3_cheese_ch", "am_school_as", "am_school_as_b", "flowers_am_video", "am2_dress_d2", "am2_pencils_p2", "am6_recycle_rc", "am10_dogs_dog", "am10_kittens_kt2", "am14_classes2_cls"] }
 
     ,
-    { id: "mul2", emoji: "✖️", title: "Множення й ділення · 2", color: "#1cb0f6",
+    { id: "mul2", emoji: "✖️", title: "Множення й ділення · 2", color: "#ff9f68",
       sub: "Ділення на частини, кратне порівняння, кілька дій",
       ids: ["am16_garlands_gl", "am16_dresses_dr2", "am16_peas_ps", "am16_stools_st3", "am16_panda_pd",
             "am16_reserve_rv", "am16_entrances_en3", "am16_age_ag", "am16_money2_tm", "am16_sugar2_sg2"] }
@@ -418,9 +418,9 @@
     return out;
   }
   var MODES_OK = ["add", "sub", "mul", "div", "big", "chain", "times", "mix", "cmp"];
-  var SECTION_SHADE = { add: "#46a302", mul: "#1899d6", share: "#e6ac00", money: "#a568cc",
-                        units: "#cc7800", time: "#cc3c3c", compound: "#46a302", multi: "#1899d6",
-                        logic: "#e6ac00", mul2: "#1899d6" };
+  var SECTION_SHADE = { add: "#46a302", mul: "#cc5549", share: "#e6ac00", money: "#a568cc",
+                        units: "#cc7800", time: "#cc3c3c", compound: "#46a302", multi: "#9463c9",
+                        logic: "#e6ac00", mul2: "#cc7024" };
 
   /* тренування: один раунд на режим раз на TRAIN_COOLDOWN (5 хв) */
   var TRAIN_COOLDOWN = 5 * 60 * 1000;
@@ -459,7 +459,7 @@
     return [
       { id: "points", icon: "⚡", title: "Отримайте 10 балів", now: q.points, goal: 10,
         reward: "💎 +2", gem: 2, life: 0 },
-      { id: "time", icon: "⏱️", title: "Позаймайтеся 5 хвилин", now: Math.floor(q.sec / 60), goal: 5,
+      { id: "time", icon: "⏱️", title: "Практикуйтеся 5 хвилин", now: Math.floor(q.sec / 60), goal: 5,
         reward: "❤️ +2", gem: 0, life: 2 },
       { id: "perfect", icon: "🎯", title: "Пройдіть 2 уроки без помилок", now: q.perfect, goal: 2,
         reward: "💎 +3", gem: 3, life: 0 }
@@ -483,7 +483,7 @@
     { name: "Бронзова", emoji: "🥉", color: "#cd7f32", need: 0 },
     { name: "Срібна", emoji: "🥈", color: "#9aa7b8", need: 100 },
     { name: "Золота", emoji: "🥇", color: "#ffc800", need: 300 },
-    { name: "Сапфірова", emoji: "🔷", color: "#1cb0f6", need: 600 },
+    { name: "Сапфірова", emoji: "🔷", color: "#2ec4b6", need: 600 },
     { name: "Смарагдова", emoji: "🟢", color: "#2ecc71", need: 1000 },
     { name: "Рубінова", emoji: "🔺", color: "#ff4b4b", need: 1500 },
     { name: "Аметистова", emoji: "🟣", color: "#a55eea", need: 2100 },
