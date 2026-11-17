@@ -639,3 +639,42 @@ body {
 .side { background-image: repeating-linear-gradient(90deg, rgba(255,214,160,.04) 0 2px, transparent 2px 46px),
                           linear-gradient(180deg, rgba(34,26,21,.94), rgba(20,16,14,.94)); }
 
+/* крамниця аватара */
+.shop-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; }
+.shop-item { background:rgba(255,255,255,.05); border:1px solid var(--line); border-radius:16px;
+             padding:10px 8px; text-align:center; }
+.shop-item.on { border-color:var(--leaf); box-shadow:0 0 0 2px rgba(156,204,101,.20); }
+.shop-item .si { font-size:30px; line-height:1.2; }
+.shop-item .sn { font-size:11px; font-weight:800; color:var(--ink); margin:4px 0 8px; }
+.shop-item .btn { width:100%; padding:7px 4px; font-size:11px; letter-spacing:0; text-transform:none; }
+.avwrap { position:relative; display:inline-flex; align-items:center; }
+.avwrap .acc { position:absolute; right:-8px; bottom:-6px; font-size:14px; font-style:normal;
+               filter:drop-shadow(0 2px 2px rgba(0,0,0,.5)); }
+.hero .avatar { position:relative; }
+.hero-acc { position:absolute; right:10%; bottom:10%; font-size:52px;
+            filter:drop-shadow(0 4px 4px rgba(0,0,0,.35)); }
+@media (max-width:860px) { .shop-grid { grid-template-columns:repeat(2,1fr); } }
+
+/* художнє оформлення заголовків та іконок */
+.sec-head {
+  background-image: linear-gradient(90deg, rgba(18,14,11,.62), rgba(18,14,11,.28)),
+                    url("art/header_forest.png") !important;
+  background-size: cover !important;
+  background-position: center 46% !important;
+  border-left: 9px solid var(--sec, var(--leaf)) !important;
+}
+.story-banner {
+  background-image: linear-gradient(90deg, rgba(18,14,11,.55), rgba(18,14,11,.18)),
+                    url("art/header_forest.png");
+  background-size: cover; background-position: center 46%;
+  border: 3px solid rgba(0,0,0,.45); border-radius:22px; padding:26px 22px;
+  min-height:132px; margin-bottom:18px; position:relative; overflow:hidden;
+}
+.story-banner h1 { margin:0 0 6px; font-size:26px; }
+.story-banner p { margin:0; }
+.ico { width:36px; height:36px; object-fit:contain; display:inline-block; vertical-align:middle;
+       filter:drop-shadow(0 2px 2px rgba(0,0,0,.35)); }
+.ico.sm { width:18px; height:18px; }
+.qi .ico { width:26px; height:26px; }
+.shopico { object-fit:contain; display:inline-block; vertical-align:middle; }
+

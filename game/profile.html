@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Профіль — Тімолінго</title>
-<link rel="stylesheet" href="game.css?v=20261117m">
+<link rel="stylesheet" href="game.css?v=20261117n">
 </head>
 <body>
 <div class="story-deco" aria-hidden="true"><span>🍄</span><span>🌿</span><span>✨</span></div>
@@ -18,9 +18,9 @@
 </main>
 
 <div class="toast" id="toast"></div>
-<script src="tasks.js?v=20261117m"></script>
-<script src="avatars.js?v=20261117m"></script>
-<script src="game.js?v=20261117m"></script>
+<script src="tasks.js?v=20261117n"></script>
+<script src="avatars.js?v=20261117n"></script>
+<script src="game.js?v=20261117n"></script>
 <script>
 (function () {
   var EMOJI = ["🐸", "🦎", "🐛", "🐌", "🦋", "🐞", "🐢", "🐝", "🦊", "🐼", "🦄", "🐙", "🚀", "🌟"];
@@ -56,8 +56,10 @@
     var ach = Game.achievements(p);
     var host = document.getElementById("profile");
     var doneLevels = Object.keys(p.levels).filter(function (k) { return p.levels[k].done; }).length;
+    var acc = p.profile.accessory ? Game.SHOP.filter(function (x) { return x.id === p.profile.accessory; })[0] : null;
 
-    var html = '<div class="hero"><div class="avatar">' + avatarHTML(p.profile.avatar, 128) + '</div>' +
+    var html = '<div class="hero"><div class="avatar">' + avatarHTML(p.profile.avatar, 128) +
+      (acc ? '<span class="hero-acc">' + Game.shopIconHTML(acc, 52) + '</span>' : '') + '</div>' +
       '<button class="edit" id="editAvatar">✏️ Змінити</button></div>' +
       '<h1 class="profile-name" id="pname">' + Game.esc(p.profile.name) + '</h1>' +
       '<div class="profile-sub">З нами з ' + dateUa(p.profile.joined) + ' · ' + daysJoined(p.profile.joined) +
@@ -93,8 +95,19 @@
         }).join("")
       : '<div class="muted" style="font-size:13px;font-weight:700">Поки що без помилок — так тримати! 🌟</div>';
 
+    var shopHtml = Game.shopItems().map(function (s) {
+      var label = s.equipped ? "Зняти" : s.owned ? "Вдягнути" : ("💎 " + s.cost);
+      var cls = s.equipped ? "btn" : "btn ghost";
+      return '<div class="shop-item' + (s.equipped ? " on" : "") + '">' +
+             '<div class="si">' + Game.shopIconHTML(s, 30) + '</div><div class="sn">' + s.name + '</div>' +
+             '<button class="' + cls + '" data-shop="' + s.id + '"' + (s.owned ? "" : ' data-buy="1"') + '>' + label + '</button></div>';
+    }).join("");
+
     html += '</div><div class="card" style="margin-bottom:18px"><h3>Слабкі місця <span class="more">для тата</span></h3>' +
             weakHtml + '</div>' +
+
+      '<div class="card" style="margin-bottom:18px"><h3>Крамниця аватара <span class="more">💎 ' +
+            p.gems + '</span></h3><div class="shop-grid">' + shopHtml + '</div></div>' +
 
       '<div class="card" style="margin-bottom:18px"><h3>' + lg.cur.name + ' ліга' +
       ' <a class="more" href="leaderboard.html">дошка</a></h3>' +
@@ -115,6 +128,26 @@
       '</div>';
 
     host.innerHTML = html;
+
+    Array.prototype.forEach.call(document.querySelectorAll("[data-shop]"), function (b) {
+      b.addEventListener("click", function () {
+        var id = b.getAttribute("data-shop");
+        if (b.getAttribute("data-buy") === "1") {
+          var r = Game.buyItem(id);
+          if (!r) { return; }
+          if (r.error === "gems") { Game.toast("Не вистачає кристалів — треба " + r.item.cost); return; }
+          if (r.error === "already") { return; }
+          Game.toast("Куплено: " + r.item.name + " · −" + r.item.cost + " 💎");
+        } else {
+          var e = Game.equipItem(id);
+          Game.toast(e && e.accessory ? "Вдягнуто " + id : "Знято з аватара");
+        }
+        render();
+        Game.renderSidebar("profile");
+        var hud = document.getElementById("hud");
+        if (hud) { hud.innerHTML = Game.hudHTML(); }
+      });
+    });
 
     document.getElementById("editAvatar").addEventListener("click", function () {
       var p2 = Game.load();

@@ -4,6 +4,24 @@
 
   var KEY = "mathgame_v1";
   var MAX_LIVES = 10;
+  var SHOP = [
+    { id: "leaf", icon: "art/icon_leaf.png", name: "Листок", cost: 10 },
+    { id: "mushroom", icon: "art/shop_mushroom.png", name: "Мухомор", cost: 15 },
+    { id: "scarf", icon: "art/shop_scarf.png", name: "Шарф", cost: 12 },
+    { id: "hat", icon: "art/shop_hat.png", name: "Капелюх", cost: 18 },
+    { id: "glasses", icon: "art/shop_glasses.png", name: "Окуляри", cost: 14 },
+    { id: "star", icon: "art/icon_star.png", name: "Зірка", cost: 20 },
+    { id: "lantern", icon: "art/shop_lantern.png", name: "Ліхтарик", cost: 25 },
+    { id: "crown", icon: "art/shop_crown.png", name: "Корона", cost: 35 }
+  ];
+  var SHOP_IDS = SHOP.map(function (x) { return x.id; });
+  function shopIconHTML(x, size) {
+    if (!x) { return ""; }
+    if (x.icon && x.icon.indexOf("/") > -1) {
+      return '<img src="' + esc(x.icon) + '" class="shopico" style="width:' + size + 'px;height:' + size + 'px" alt="">';
+    }
+    return x.icon || "";
+  }
 
   function todayStr(d) {
     d = d || new Date();
@@ -101,6 +119,9 @@
     p.profile.name = p.profile.name || "Тімчик";
     p.profile.avatar = p.profile.avatar || "🐸";
     p.profile.joined = p.profile.joined || todayStr();
+    p.wardrobe = Array.isArray(p.wardrobe)
+      ? p.wardrobe.filter(function (id) { return SHOP_IDS.indexOf(id) > -1; }) : [];
+    if (p.profile.accessory && SHOP_IDS.indexOf(p.profile.accessory) < 0) { p.profile.accessory = null; }
     p.stats = p.stats || {};
     p.stats.lessons = p.stats.lessons || 0;
     p.stats.perfect = p.stats.perfect || 0;
@@ -314,6 +335,34 @@
     return p.gems;
   }
 
+  /* ---------- крамниця аватара ---------- */
+  function shopItems() {
+    var p = load();
+    return SHOP.map(function (x) {
+      return { id: x.id, icon: x.icon, name: x.name, cost: x.cost,
+               owned: p.wardrobe.indexOf(x.id) > -1, equipped: p.profile.accessory === x.id };
+    });
+  }
+  function buyItem(id) {
+    var item = SHOP.filter(function (x) { return x.id === id; })[0];
+    if (!item) { return null; }
+    var p = load();
+    if (p.wardrobe.indexOf(id) > -1) { return { error: "already", item: item }; }
+    if (p.gems < item.cost) { return { error: "gems", item: item }; }
+    p.gems -= item.cost;
+    p.wardrobe.push(id);
+    save(p);
+    return { item: item };
+  }
+  function equipItem(id) {
+    if (SHOP_IDS.indexOf(id) < 0) { return null; }
+    var p = load();
+    if (p.wardrobe.indexOf(id) < 0) { return { error: "locked" }; }
+    p.profile.accessory = p.profile.accessory === id ? null : id;
+    save(p);
+    return { accessory: p.profile.accessory };
+  }
+
   /* ---------- повторення уроків і помилок ---------- */
   function markRepeat(id) {
     var p = load(); p.repeat = p.repeat || {}; p.repeat[id] = todayStr(); save(p); return true;
@@ -391,6 +440,12 @@
     out.profile.avatar = (av.indexOf("/") > -1 && /^[a-zA-Z0-9_./\-]{1,80}$/.test(av)) ? av
                           : (/^[^<>"'\\]{1,8}$/.test(av) ? av : "🐸");
     out.profile.joined = date(raw.profile && raw.profile.joined, t);
+    out.wardrobe = [];
+    (Array.isArray(raw.wardrobe) ? raw.wardrobe : []).forEach(function (id) {
+      if (SHOP_IDS.indexOf(id) > -1 && out.wardrobe.indexOf(id) < 0) { out.wardrobe.push(id); }
+    });
+    out.profile.accessory = (raw.profile && SHOP_IDS.indexOf(raw.profile.accessory) > -1 &&
+                             out.wardrobe.indexOf(raw.profile.accessory) > -1) ? raw.profile.accessory : null;
     var st = (raw.stats && typeof raw.stats === "object") ? raw.stats : {};
     out.stats = { lessons: Math.round(num(st.lessons, 0, 0, 100000)), perfect: Math.round(num(st.perfect, 0, 0, 100000)),
                   sec: Math.round(num(st.sec, 0, 0, 1e9)), days: {}, sectionsDone: {} };
@@ -475,11 +530,11 @@
   function quests(p) {
     var q = p.quests;
     return [
-      { id: "points", icon: "⚡", title: "Отримайте 10 балів", now: q.points, goal: 10,
+      { id: "points", icon: '<img src="art/icon_coin.png" class="ico" alt="">', title: "Отримайте 10 балів", now: q.points, goal: 10,
         reward: "💎 +2", gem: 2, life: 0 },
-      { id: "time", icon: "⏱️", title: "Практикуйтеся 5 хвилин", now: Math.floor(q.sec / 60), goal: 5,
+      { id: "time", icon: '<img src="art/icon_clock.png" class="ico" alt="">', title: "Практикуйтеся 5 хвилин", now: Math.floor(q.sec / 60), goal: 5,
         reward: "❤️ +2", gem: 0, life: 2 },
-      { id: "perfect", icon: "🎯", title: "Пройдіть 2 уроки без помилок", now: q.perfect, goal: 2,
+      { id: "perfect", icon: '<img src="art/icon_star.png" class="ico" alt="">', title: "Пройдіть 2 уроки без помилок", now: q.perfect, goal: 2,
         reward: "💎 +3", gem: 3, life: 0 }
     ];
   }
@@ -573,11 +628,16 @@
     { key: "profile", href: "profile.html", icon: "🐸", label: "Профіль" }
   ];
   function avatarMarkup(a, size) {
+    var p = load();
+    var acc = p.profile.accessory ? SHOP.filter(function (x) { return x.id === p.profile.accessory; })[0] : null;
+    var base;
     if (a && String(a).indexOf("/") > -1) {
-      return '<img src="' + esc(a) + '" alt="" style="width:' + size + 'px;height:' + size +
+      base = '<img src="' + esc(a) + '" alt="" style="width:' + size + 'px;height:' + size +
              'px;border-radius:50%;object-fit:cover;display:inline-block;vertical-align:middle">';
+    } else {
+      base = a || "🐸";
     }
-    return a || "🐸";
+    return '<span class="avwrap">' + base + (acc ? '<i class="acc">' + shopIconHTML(acc, 18) + '</i>' : '') + '</span>';
   }
 
   function renderSidebar(active) {
@@ -605,7 +665,7 @@
   function hudHTML() {
     var p = load();
     return '<span class="chip lives">❤️ <b id="hud-lives">' + p.lives + '</b></span>' +
-           '<span class="chip gems">💎 <b id="hud-gems">' + p.gems + '</b></span>' +
+           '<span class="chip gems"><img src="art/icon_gem.png" class="ico sm" alt=""> <b id="hud-gems">' + p.gems + '</b></span>' +
            '<span class="chip xp">⚡ <b id="hud-xp">' + p.xp + '</b></span>' +
            '<span class="chip streak">🔥 <b id="hud-streak">' + p.streak + '</b></span>' +
            '<span class="chip combo">💫 <b id="hud-combo">x' + (p.combo || 0) + '</b></span>';
@@ -646,6 +706,7 @@
     avatarMarkup: avatarMarkup,
     markRepeat: markRepeat, isRepeat: isRepeat, markMistake: markMistake, mistakes: mistakes,
     takeMistake: takeMistake, clearMistake: clearMistake, lessonSteps: lessonSteps,
-    sanitize: sanitize, SECTION_SHADE: SECTION_SHADE, LESSON_MODE: LESSON_MODE
+    sanitize: sanitize, SECTION_SHADE: SECTION_SHADE, LESSON_MODE: LESSON_MODE,
+    shopItems: shopItems, buyItem: buyItem, equipItem: equipItem, SHOP: SHOP, shopIconHTML: shopIconHTML
   };
 })();

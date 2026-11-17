@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Тренування — Тімолінго</title>
-<link rel="stylesheet" href="game.css?v=20261117m">
+<link rel="stylesheet" href="game.css?v=20261117n">
 <style>
   .modes { display: flex; gap: 8px; flex-wrap: wrap; margin: 6px 0 18px; }
   .mode { border: 2px solid #e5e5e5; border-bottom-width: 4px; background: #fff; border-radius: 14px;
@@ -49,18 +49,18 @@
 <main class="main">
   <div class="wrap">
     <div class="hud" id="hud"></div>
-    <h1 style="font-size:26px;margin:0 0 4px">✏️ Тренування</h1>
-    <p class="muted" style="font-weight:700;font-size:13px;margin:0 0 16px">
-      Приклади з підручників. Тут не знімаються серця ❤️ — просто тренуйся й заробляй бали ⚡.
-    </p>
+    <div class="story-banner">
+      <h1>✏️ Тренування</h1>
+      <p class="muted" style="font-weight:700;font-size:13px">Приклади з підручників. Тут не знімаються серця ❤️ — просто тренуйся й заробляй бали ⚡.</p>
+    </div>
     <div class="modes" id="modes"></div>
     <div id="train"></div>
   </div>
 </main>
 
 <div class="toast" id="toast"></div>
-<script src="train_bank.js?v=20261117m"></script>
-<script src="game.js?v=20261117m"></script>
+<script src="train_bank.js?v=20261117n"></script>
+<script src="game.js?v=20261117n"></script>
 <script>
 (function () {
   Game.renderSidebar("train");
