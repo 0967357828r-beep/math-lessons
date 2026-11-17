@@ -675,6 +675,39 @@ body {
 .kbig { color: var(--leaf) !important; }
 .kbig .eq { color:#cfe8a8 !important; }
 
+/* казкові вспливаючі вікна */
+.modal { position:fixed; inset:0; background:rgba(8,6,5,.72); backdrop-filter:blur(8px);
+         display:flex; align-items:center; justify-content:center; z-index:1000; padding:16px;
+         animation:modalIn .25s ease; }
+.modal-card { position:relative; width:min(430px,100%); background:linear-gradient(160deg,rgba(38,30,25,.98),rgba(24,18,15,.98));
+              border:2px solid var(--woodline); border-radius:26px; padding:26px 22px 22px; text-align:center;
+              box-shadow:0 24px 70px rgba(0,0,0,.55), inset 0 0 0 1px rgba(255,209,102,.10);
+              overflow:hidden; }
+.modal-card::before { content:""; position:absolute; inset:0;
+              background-image:linear-gradient(180deg,rgba(20,15,12,.74),rgba(20,15,12,.92)),url("art/header_forest.png");
+              background-size:cover; background-position:center 42%; opacity:.38; pointer-events:none; }
+.modal-card > * { position:relative; z-index:1; }
+.modal-glow { position:absolute; width:240px; height:240px; border-radius:50%; top:-80px; left:50%;
+              transform:translateX(-50%); z-index:0;
+              background:radial-gradient(circle,rgba(255,209,102,.38),transparent 65%); }
+.modal-art { width:118px; height:118px; object-fit:contain; margin-bottom:2px;
+             filter:drop-shadow(0 10px 20px rgba(0,0,0,.45)); }
+.modal-kicker { font-size:11px; font-weight:900; letter-spacing:2px; color:#d9b47a; text-transform:uppercase; }
+.modal-card h2 { margin:6px 0 4px; font-size:24px; color:var(--ink); }
+.modal-sub { font-weight:800; color:var(--muted); margin-bottom:14px; }
+.modal-reward { display:inline-flex; align-items:center; gap:8px; font-size:30px; font-weight:900;
+                color:var(--glow); margin-bottom:18px; text-shadow:0 0 18px rgba(255,209,102,.35); }
+.modal-btn { width:100%; justify-content:center; background:linear-gradient(135deg,var(--glow),#f59e0b) !important;
+             color:#3b2500 !important; border-color:#a86a12 !important; box-shadow:0 5px 0 #a86a12 !important; }
+.pick-card { max-height:80vh; overflow:auto; text-align:center; }
+.pick-card h3 { justify-content:center; margin-bottom:12px; }
+.pick-card .av-pick { background:rgba(255,255,255,.06); border:2px solid var(--line); border-radius:14px;
+                      padding:6px; cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:4px;
+                      color:var(--ink); }
+.pick-card .av-pick:hover { border-color:var(--leaf); background:rgba(156,204,101,.10); }
+.pick-card .av-name { font-size:9px; font-weight:800; color:var(--muted); line-height:1.1; text-align:center; }
+@keyframes modalIn { from { opacity:0; transform:scale(.94); } to { opacity:1; transform:none; } }
+
 /* художнє оформлення заголовків та іконок */
 .sec-head {
   background-image: linear-gradient(90deg, rgba(18,14,11,.62), rgba(18,14,11,.28)),

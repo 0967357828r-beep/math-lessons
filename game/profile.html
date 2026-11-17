@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Профіль — Тімолінго</title>
-<link rel="stylesheet" href="game.css?v=20261117p">
+<link rel="stylesheet" href="game.css?v=20261117q">
 </head>
 <body>
 <div class="story-deco" aria-hidden="true"><span>🍄</span><span>🌿</span><span>✨</span></div>
@@ -18,9 +18,9 @@
 </main>
 
 <div class="toast" id="toast"></div>
-<script src="tasks.js?v=20261117p"></script>
-<script src="avatars.js?v=20261117p"></script>
-<script src="game.js?v=20261117p"></script>
+<script src="tasks.js?v=20261117q"></script>
+<script src="avatars.js?v=20261117q"></script>
+<script src="game.js?v=20261117q"></script>
 <script>
 (function () {
   var EMOJI = ["🐸", "🦎", "🐛", "🐌", "🦋", "🐞", "🐢", "🐝", "🦊", "🐼", "🦄", "🐙", "🚀", "🌟"];
@@ -152,25 +152,18 @@
     document.getElementById("editAvatar").addEventListener("click", function () {
       var p2 = Game.load();
       var pick = document.createElement("div");
-      pick.style.cssText = "position:fixed;inset:0;background:rgba(0,0,0,.35);display:flex;" +
-        "align-items:center;justify-content:center;z-index:100";
+      pick.className = "modal";
       var box = document.createElement("div");
-      box.className = "card";
-      box.style.cssText = "max-width:340px;text-align:center";
-      box.style.maxWidth = "430px";
-      box.style.maxHeight = "78vh";
-      box.style.overflow = "auto";
-      box.innerHTML = '<h3 style="justify-content:center;margin-bottom:12px">Обери персонажа</h3>' +
+      box.className = "modal-card pick-card";
+      box.innerHTML = '<h3>Обери персонажа</h3>' +
         '<div id="avGrid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px"></div>';
       var grid = box.querySelector("#avGrid");
       AVATARS.forEach(function (a) {
         var b = document.createElement("button");
         b.type = "button";
-        b.style.cssText = "background:#f7f7f7;border:2px solid #e5e5e5;border-radius:14px;padding:6px;" +
-          "cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px";
+        b.className = "av-pick";
         b.innerHTML = avatarHTML(a.file, 58, "12px") +
-          '<span style="font-size:9px;font-weight:800;color:#777;line-height:1.1;text-align:center">' +
-          Game.esc(a.name) + '</span>';
+          '<span class="av-name">' + Game.esc(a.name) + '</span>';
         b.addEventListener("click", function () {
           var pp = Game.load(); pp.profile.avatar = a.file; Game.save(pp);
           pick.remove(); render(); Game.renderSidebar("profile");

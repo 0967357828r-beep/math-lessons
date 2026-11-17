@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Урок — Тімолінго</title>
-<link rel="stylesheet" href="game.css?v=20261117p">
+<link rel="stylesheet" href="game.css?v=20261117q">
 <style>
   .steps { display:flex; gap:6px; align-items:center; margin:10px 0 4px; }
   .steps i { width:24px; height:8px; border-radius:6px; background:#e5e5e5; display:block; }
@@ -48,9 +48,9 @@
 
 <audio id="ding" preload="auto" src="ding.mp3"></audio>
 <div class="toast" id="toast"></div>
-<script src="train_bank.js?v=20261117p"></script>
-<script src="tasks.js?v=20261117p"></script>
-<script src="game.js?v=20261117p"></script>
+<script src="train_bank.js?v=20261117q"></script>
+<script src="tasks.js?v=20261117q"></script>
+<script src="game.js?v=20261117q"></script>
 <script>
 (function () {
   Game.renderSidebar("learn");
@@ -363,20 +363,23 @@
 
   function showTrophy(t) {
     var ov = document.createElement("div");
-    ov.style.cssText = "position:fixed;inset:0;background:rgba(20,20,20,.55);display:flex;" +
-      "align-items:center;justify-content:center;z-index:1000;padding:16px";
-    ov.innerHTML = '<div style="background:#fff;border-radius:24px;padding:28px 24px;max-width:380px;' +
-      'text-align:center;box-shadow:0 18px 50px rgba(0,0,0,.3)">' +
-      '<div style="font-size:76px;line-height:1;margin-bottom:8px">🏆</div>' +
-      '<div style="font-size:11px;font-weight:900;letter-spacing:2px;color:#999;text-transform:uppercase">Кубок розділу</div>' +
-      '<h2 style="margin:6px 0 4px;font-size:22px">' + Game.esc(t.title) + '</h2>' +
-      '<div style="font-weight:800;color:#777;margin-bottom:14px">Розділ пройдено повністю!</div>' +
-      '<div style="font-size:30px;font-weight:900;color:#1cb0f6;margin-bottom:18px">+15 💎</div>' +
-      '<button id="trophyOk" style="border:0;border-radius:14px;padding:13px 22px;font:900 14px inherit;' +
-      'background:#58cc02;color:#fff;cursor:pointer">Забрати кубок</button></div>';
+    ov.className = "modal";
+    ov.innerHTML = '<div class="modal-card trophy-card">' +
+      '<div class="modal-glow"></div>' +
+      '<img class="modal-art" src="art/icon_trophy.png" alt="">' +
+      '<div class="modal-kicker">Кубок розділу</div>' +
+      '<h2>' + Game.esc(t.title) + '</h2>' +
+      '<div class="modal-sub">Розділ пройдено повністю!</div>' +
+      '<div class="modal-reward"><img src="art/icon_gem.png" class="ico" alt=""> +15</div>' +
+      '<button class="btn modal-btn" id="trophyOk">Забрати кубок</button></div>';
     document.body.appendChild(ov);
     try { document.getElementById("ding").play(); } catch (e) {}
-    document.getElementById("trophyOk").addEventListener("click", function () { ov.remove(); });
+    function close() { ov.remove(); }
+    document.getElementById("trophyOk").addEventListener("click", close);
+    ov.addEventListener("click", function (e) { if (e.target === ov) { close(); } });
+    document.addEventListener("keydown", function esc(e) {
+      if (e.key === "Escape") { close(); document.removeEventListener("keydown", esc); }
+    });
   }
 
   syncHud();
