@@ -391,7 +391,6 @@ body {
 
 @media (prefers-reduced-motion: reduce) {
   .sec-path::before, .lvl.open .dot { animation: none; }
-  .mascots3d { display: none; }
 }
 
 /* ================= тепла палітра (без синього фону) ================= */
