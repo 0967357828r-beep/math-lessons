@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Дошки пошани — Тімолінго</title>
-<link rel="stylesheet" href="game.css?v=20261117d">
+<link rel="stylesheet" href="game.css?v=20261117e">
 </head>
 <body>
 <aside class="side" id="side"></aside>
@@ -17,9 +17,9 @@
 </main>
 
 <div class="toast" id="toast"></div>
-<script src="tasks.js?v=20261117d"></script>
-<script src="avatars.js?v=20261117d"></script>
-<script src="game.js?v=20261117d"></script>
+<script src="tasks.js?v=20261117e"></script>
+<script src="avatars.js?v=20261117e"></script>
+<script src="game.js?v=20261117e"></script>
 <script>
 (function () {
   Game.renderSidebar("board");
@@ -60,12 +60,14 @@
         '<div class="x">' + row.xp + ' XP</div></div>';
     });
     html += '</div>';
+    html += '<div class="muted" style="font-size:11px;font-weight:700;margin:-6px 0 16px 4px">' +
+            'Місце в таблиці — за XP, заробленим цього тижня (' + (p.weekXp || 0) + ' XP). Ліга — за загальним XP.</div>';
 
     html += '<div class="card" style="margin-top:16px"><h3>Ліги</h3>';
     Game.LEAGUES.forEach(function (l, i) {
       html += '<div class="tier' + (i === lg.index ? " on" : "") + '" style="--tc:' + l.color + '">' +
         '<div class="te">' + l.emoji + '</div><div><b>' + l.name + ' ліга</b>' +
-        '<div class="muted" style="font-size:12px">' + (i === lg.index ? "твоя ліга зараз" : "потрібно " + l.need + " XP/тиждень") +
+        '<div class="muted" style="font-size:12px">' + (i === lg.index ? "твоя ліга зараз" : "потрібно " + l.need + " XP усього") +
         '</div></div><div class="need">' + l.need + ' XP</div></div>';
     });
     html += '</div>';

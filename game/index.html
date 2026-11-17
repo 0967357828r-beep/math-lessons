@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Навчання — Тімолінго</title>
-<link rel="stylesheet" href="game.css?v=20261117d">
+<link rel="stylesheet" href="game.css?v=20261117e">
 </head>
 <body>
 <aside class="side" id="side"></aside>
@@ -37,9 +37,9 @@
 </main>
 
 <div class="toast" id="toast"></div>
-<script src="tasks.js?v=20261117d"></script>
-<script src="avatars.js?v=20261117d"></script>
-<script src="game.js?v=20261117d"></script>
+<script src="tasks.js?v=20261117e"></script>
+<script src="avatars.js?v=20261117e"></script>
+<script src="game.js?v=20261117e"></script>
 <script>
 (function () {
   var p = Game.load();
@@ -196,7 +196,9 @@
     Game.SECTIONS.forEach(function (sec, si) {
       var prog = Game.sectionProgress(p, sec);
       var head = document.createElement("div");
-      head.className = "sec-head " + ["", "blue", "gold", "purple", "orange", "red"][si % 6];
+      head.className = "sec-head" + (sec.color === "#ffc800" ? " gold" : "");
+      head.style.background = sec.color;
+      head.style.boxShadow = "0 4px 0 " + (Game.SECTION_SHADE[sec.id] || "#46a302");
       head.innerHTML = '<div class="sh-emoji">' + sec.emoji + '</div>' +
         '<div><div class="sh-kicker">Частина 1 · Розділ ' + (si + 1) + '</div>' +
         '<h2>' + sec.title + '</h2></div>' +
@@ -220,6 +222,7 @@
         var done = Game.isDone(p, id);
         var open = (seqIdx === 0 || Game.isDone(p, Game.SEQ[seqIdx - 1].id)) && p.lives > 0;
         var perfect = Game.isPerfect(p, id);
+        var repeated = Game.isRepeat(p, id);
         var chest = chests.filter(function (c) { return c.i === seqIdx; })[0];
 
         var step = document.createElement("div");
@@ -238,10 +241,11 @@
           step.appendChild(cb);
         } else {
           var node = document.createElement(done || open ? "a" : "div");
-          node.className = "lvl " + (done ? "done" : open ? "open" : "locked") + (perfect ? " perfect" : "");
+          node.className = "lvl " + (done ? "done" : open ? "open" : "locked") + (perfect ? " perfect" : "") + (repeated ? " repeat" : "");
           if (done || open) { node.href = "level.html?id=" + encodeURIComponent(id); }
           node.innerHTML = '<div class="dot">' + (done ? (perfect ? "💎" : "✅") : open ? "▶️" : "🔒") + '</div>' +
-            '<div class="cap">' + Game.esc(task.title) + '</div>';
+            '<div class="cap">' + (repeated ? "🔁 " : "") + Game.esc(task.title) + '</div>' +
+            '<div class="st">' + (repeated ? "на завтра" : "") + '</div>';
           step.appendChild(node);
         }
 
@@ -315,7 +319,9 @@
       var r = new FileReader();
       r.onload = function () {
         try {
-          localStorage.setItem(Game.KEY, JSON.stringify(JSON.parse(r.result)));
+          var clean = Game.sanitize(JSON.parse(r.result));
+          if (!clean) { throw new Error("bad profile"); }
+          localStorage.setItem(Game.KEY, JSON.stringify(clean));
           render(); Game.toast("Прогрес завантажено");
         } catch (e) { Game.toast("Не вдалося прочитати файл"); }
       };
@@ -332,8 +338,8 @@
     Game.save(p2);
     setTimeout(function () {
       Game.toast(notice.from !== notice.to
-        ? ("😮 2 дні без занять — ліга знижена до «" + notice.to + "», −" + notice.lost + " XP")
-        : ("😮 2 дні без занять — −" + notice.lost + " XP"));
+        ? ("😮 " + notice.days + " днів без занять — ліга знижена до «" + notice.to + "», −" + notice.lost + " XP")
+        : ("😮 " + notice.days + " днів без занять — −" + notice.lost + " XP"));
     }, 600);
   }
 })();

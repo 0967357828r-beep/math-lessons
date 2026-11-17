@@ -118,6 +118,8 @@
     p.demotedFor = p.demotedFor || null;
     p.trainAt = p.trainAt || {};
     p.bestCombo = p.bestCombo || 0;
+    p.repeat = p.repeat || {};
+    p.mistakes = Array.isArray(p.mistakes) ? p.mistakes : [];
     Object.keys(p.levels).forEach(function (k) {
       var l = p.levels[k];
       if (typeof l.gems !== "number") { l.gems = l.stars || 0; }
@@ -141,12 +143,17 @@
     p.quests.sec = p.quests.sec || 0;
     p.quests.claimed = p.quests.claimed || {};
 
-    /* пониження ліги: 2+ дні без уроків — ліга на одну нижче, XP знімається */
+    /* місячний квест: лічильник окремий від щоденного */
+    var monthKey = t.slice(0, 7);
+    if (p.quests.month !== monthKey) { p.quests.month = monthKey; p.quests.monthDone = 0; }
+    p.quests.monthDone = p.quests.monthDone || 0;
+
+    /* пониження ліги: 7 днів без уроків — ліга на одну нижче, XP знімається */
     if (p.last && p.demotedFor !== p.last) {
       var lastD = new Date(p.last + "T00:00:00");
       var nowD = new Date(todayStr() + "T00:00:00");
       var idle = Math.round((nowD - lastD) / 86400000);
-      if (idle >= 2) {
+      if (idle >= 7) {
         var idx = 0;
         for (var li2 = 0; li2 < LEAGUES.length; li2++) { if ((p.xp || 0) >= LEAGUES[li2].need) { idx = li2; } }
         var oldXp = p.xp || 0;
@@ -157,7 +164,7 @@
         }
         p.weekXp = Math.min(p.weekXp || 0, p.xp);
         p.demotedFor = p.last;
-        p.leagueDropNotice = { lost: oldXp - p.xp, from: LEAGUES[idx].name,
+        p.leagueDropNotice = { lost: oldXp - p.xp, days: idle, from: LEAGUES[idx].name,
                                to: LEAGUES[Math.max(0, idx - (idx > 0 ? 1 : 0))].name };
         save(p);
       }
@@ -182,8 +189,9 @@
     var prev = p.levels[id] || { done: false, gems: 0 };
     var first = !prev.done;
     var gems = 0;
-    if (perfect && !prev.gems) { gems = 1; }          // 1 кристал лише за урок без помилок
-    p.levels[id] = { done: true, gems: Math.max(prev.gems || 0, perfect ? 1 : 0) };
+    if (perfect && !prev.gems) { gems = 2; }          // 2 кристали за урок без помилок
+    p.levels[id] = { done: true, gems: Math.max(prev.gems || 0, perfect ? 2 : 0) };
+    delete p.repeat[id];                              // урок пройдено — знімаємо мітку «повторити»
     var combo = perfect ? ((p.combo || 0) + 1) : 0;
     p.combo = combo;
     p.bestCombo = Math.max(p.bestCombo || 0, combo);
@@ -294,6 +302,126 @@
     return p.gems;
   }
 
+  /* ---------- повторення уроків і помилок ---------- */
+  function markRepeat(id) {
+    var p = load(); p.repeat = p.repeat || {}; p.repeat[id] = todayStr(); save(p); return true;
+  }
+  function isRepeat(p, id) { return !!(p && p.repeat && p.repeat[id]); }
+  function markMistake(mode, item) {
+    var p = load();
+    if (!item || !item.q) { return; }
+    p.mistakes = (p.mistakes || []).filter(function (m) { return m.q !== item.q; });
+    p.mistakes.unshift({ mode: mode || "", q: String(item.q).slice(0, 240), a: String(item.a).slice(0, 120) });
+    if (p.mistakes.length > 40) { p.mistakes.length = 40; }
+    save(p);
+  }
+  function mistakes(p) { return (p && p.mistakes) || []; }
+  function takeMistake(mode) {
+    var list = mistakes(load());
+    for (var i = 0; i < list.length; i++) { if (list[i].mode === mode) { return list[i]; } }
+    return list.length ? list[0] : null;
+  }
+  function clearMistake(q) {
+    var p = load();
+    p.mistakes = (p.mistakes || []).filter(function (m) { return m.q !== q; });
+    save(p);
+  }
+
+  var LESSON_MODE = { add: "add", mul: "mul", share: "div", money: "add", units: "add",
+                      time: "add", compound: "chain", multi: "chain", logic: "add", mul2: "div" };
+  /* 5 кроків уроку: головна задача → 3 приклади → повторення помилки → підсумок */
+  function lessonSteps(task) {
+    var pos = positionOf(task.id);
+    var mode = pos ? (LESSON_MODE[SECTIONS[pos.section].id] || "add") : "add";
+    var all = window.TRAIN_BANK || {};
+    var pool = (all[mode] || all.add || []).slice();
+    for (var i = pool.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1)), tmp = pool[i]; pool[i] = pool[j]; pool[j] = tmp;
+    }
+    var steps = [{ type: "main" }];
+    for (var k = 0; k < 3 && k < pool.length; k++) {
+      steps.push({ type: "num", q: String(pool[k].q), a: String(pool[k].a), mode: mode });
+    }
+    var m = takeMistake(mode);
+    if (m) { steps.push({ type: "num", q: m.q, a: m.a, mode: m.mode, again: true }); }
+    else if (pool.length > 3) { steps.push({ type: "num", q: String(pool[3].q), a: String(pool[3].a), mode: mode }); }
+    steps.push({ type: "finish" });
+    return steps;
+  }
+
+  /* ---------- безпечний імпорт прогресу ---------- */
+  function sanitize(raw) {
+    if (!raw || typeof raw !== "object" || Array.isArray(raw)) { return null; }
+    var t = todayStr();
+    function num(v, d, lo, hi) { v = Number(v); return isFinite(v) ? Math.max(lo, Math.min(hi, v)) : d; }
+    function date(v, d) { return (typeof v === "string" && /^\d{4}-\d{2}-\d{2}$/.test(v)) ? v : d; }
+    var out = {};
+    out.levels = {};
+    var src = (raw.levels && typeof raw.levels === "object") ? raw.levels : {};
+    Object.keys(src).forEach(function (k) {
+      if (!/^[a-z0-9_]{1,60}$/i.test(k) || !src[k] || typeof src[k] !== "object") { return; }
+      out.levels[k] = { done: !!src[k].done, gems: Math.round(num(src[k].gems, 0, 0, 2)) };
+    });
+    out.xp = Math.round(num(raw.xp, 0, 0, 100000));
+    out.weekXp = Math.round(num(raw.weekXp, 0, 0, 100000));
+    out.streak = Math.round(num(raw.streak, 0, 0, 3650));
+    out.last = date(raw.last, null);
+    out.gems = Math.round(num(raw.gems, 0, 0, 100000));
+    out.lives = Math.round(num(raw.lives, MAX_LIVES, 0, MAX_LIVES));
+    out.livesDate = date(raw.livesDate, t);
+    out.weekStart = date(raw.weekStart, mondayStr());
+    out.combo = Math.round(num(raw.combo, 0, 0, 3650));
+    out.bestCombo = Math.round(num(raw.bestCombo, 0, 0, 3650));
+    out.profile = {};
+    out.profile.name = String((raw.profile && raw.profile.name) || "Тімчик").replace(/<[^>]*>/g, "").slice(0, 20).trim() || "Тімчик";
+    var av = String((raw.profile && raw.profile.avatar) || "🐸");
+    out.profile.avatar = (av.indexOf("/") > -1 && /^[a-zA-Z0-9_./\-]{1,80}$/.test(av)) ? av
+                          : (/^[^<>"'\\]{1,8}$/.test(av) ? av : "🐸");
+    out.profile.joined = date(raw.profile && raw.profile.joined, t);
+    var st = (raw.stats && typeof raw.stats === "object") ? raw.stats : {};
+    out.stats = { lessons: Math.round(num(st.lessons, 0, 0, 100000)), perfect: Math.round(num(st.perfect, 0, 0, 100000)),
+                  sec: Math.round(num(st.sec, 0, 0, 1e9)), days: {}, sectionsDone: {} };
+    var days = (st.days && typeof st.days === "object") ? st.days : {};
+    Object.keys(days).forEach(function (k) {
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(k) || !days[k]) { return; }
+      out.stats.days[k] = { lessons: Math.round(num(days[k].lessons, 0, 0, 10000)),
+                            perfect: Math.round(num(days[k].perfect, 0, 0, 10000)),
+                            sec: Math.round(num(days[k].sec, 0, 0, 100000)),
+                            xp: Math.round(num(days[k].xp, 0, 0, 100000)) };
+    });
+    var sd = (st.sectionsDone && typeof st.sectionsDone === "object") ? st.sectionsDone : {};
+    SECTIONS.forEach(function (s) { if (sd[s.id]) { out.stats.sectionsDone[s.id] = true; } });
+    var q = (raw.quests && typeof raw.quests === "object") ? raw.quests : {};
+    out.quests = { date: date(q.date, t), points: Math.round(num(q.points, 0, 0, 100000)),
+                   lessons: Math.round(num(q.lessons, 0, 0, 10000)), perfect: Math.round(num(q.perfect, 0, 0, 10000)),
+                   sec: Math.round(num(q.sec, 0, 0, 100000)), done: Math.round(num(q.done, 0, 0, 100000)),
+                   monthDone: Math.round(num(q.monthDone, 0, 0, 100000)), claimed: {} };
+    var cl = (q.claimed && typeof q.claimed === "object") ? q.claimed : {};
+    ["points", "time", "perfect"].forEach(function (k) { if (cl[k]) { out.quests.claimed[k] = true; } });
+    var pr = (raw.practice && typeof raw.practice === "object") ? raw.practice : {};
+    out.practice = { rounds: Math.round(num(pr.rounds, 0, 0, 100000)), correct: Math.round(num(pr.correct, 0, 0, 1e6)),
+                     wrong: Math.round(num(pr.wrong, 0, 0, 1e6)), byMode: {} };
+    var bm = (pr.byMode && typeof pr.byMode === "object") ? pr.byMode : {};
+    MODES_OK.forEach(function (k) { if (bm[k]) { out.practice.byMode[k] = Math.round(num(bm[k], 0, 0, 1e6)); } });
+    out.repeat = {};
+    var rp = (raw.repeat && typeof raw.repeat === "object") ? raw.repeat : {};
+    Object.keys(rp).forEach(function (k) { if (/^[a-z0-9_]{1,60}$/i.test(k)) { out.repeat[k] = date(rp[k], t); } });
+    out.mistakes = [];
+    var ms = Array.isArray(raw.mistakes) ? raw.mistakes : [];
+    for (var mi = 0; mi < Math.min(ms.length, 40); mi++) {
+      if (ms[mi] && ms[mi].q) { out.mistakes.push({ mode: String(ms[mi].mode || "").slice(0, 20),
+                                                    q: String(ms[mi].q).slice(0, 240), a: String(ms[mi].a).slice(0, 120) }); }
+    }
+    out.trainAt = {};
+    var ta = (raw.trainAt && typeof raw.trainAt === "object") ? raw.trainAt : {};
+    MODES_OK.forEach(function (k) { if (ta[k]) { out.trainAt[k] = num(ta[k], 0, 0, Date.now()); } });
+    return out;
+  }
+  var MODES_OK = ["add", "sub", "mul", "div", "big", "chain", "times", "mix", "cmp"];
+  var SECTION_SHADE = { add: "#46a302", mul: "#1899d6", share: "#e6ac00", money: "#a568cc",
+                        units: "#cc7800", time: "#cc3c3c", compound: "#46a302", multi: "#1899d6",
+                        logic: "#e6ac00", mul2: "#1899d6" };
+
   /* тренування: один раунд на режим раз на TRAIN_COOLDOWN (5 хв) */
   var TRAIN_COOLDOWN = 5 * 60 * 1000;
   function trainReady(mode) {
@@ -343,6 +471,7 @@
     if (!q || q.now < q.goal || p.quests.claimed[id]) { return null; }
     p.quests.claimed[id] = true;
     p.quests.done += 1;
+    p.quests.monthDone = (p.quests.monthDone || 0) + 1;
     if (q.gem) { p.gems += q.gem; }
     if (q.life) { p.lives = Math.min(MAX_LIVES, p.lives + q.life); }
     save(p);
@@ -381,12 +510,12 @@
                  "Ропуха", "Грибчик", "Світлячок", "Комарик", "Тоня", "Бобер", "Черепашка",
                  "Павучок", "Мишка", "Жабеня Тім", "Дощик", "Каченя", "Лисичка",
                  "Їжачок", "Слимак", "Пташка", "Короп", "Кіт Барсик", "Уля", "Джміль", "Равлик", "Пінгвін"];
-    /* суперники зіставні з гравцем: трохи слабші й сильніші */
-    var base = Math.max(12, p.xp || 0);
+    /* суперники не залежать від гравця: єдина ціль тижня — p.weekXp */
+    var base = 40 + leagueOf(p).index * 45 + Math.floor(rnd() * 40);
     var arr = names.map(function (n, i) {
-      return { name: n, xp: Math.round(base * (0.15 + rnd() * 1.1)), me: false };
+      return { name: n, xp: Math.round(base * (0.55 + rnd() * 0.95)), me: false };
     });
-    arr.push({ name: p.profile.name + " (ви)", xp: p.xp, me: true });
+    arr.push({ name: p.profile.name + " (ви)", xp: p.weekXp || 0, me: true });
     arr.sort(function (a, b) { return b.xp - a.xp || (a.me ? -1 : 1); });
     var rank = 1;
     arr.forEach(function (x, i) { if (x.me) { rank = i + 1; } });
@@ -427,7 +556,7 @@
   ];
   function avatarMarkup(a, size) {
     if (a && String(a).indexOf("/") > -1) {
-      return '<img src="' + a + '" alt="" style="width:' + size + 'px;height:' + size +
+      return '<img src="' + esc(a) + '" alt="" style="width:' + size + 'px;height:' + size +
              'px;border-radius:50%;object-fit:cover;display:inline-block;vertical-align:middle">';
     }
     return a || "🐸";
@@ -496,6 +625,9 @@
     taskOfDay: taskOfDay, claimTaskOfDay: claimTaskOfDay,
     dailyChestState: dailyChestState, openDailyChest: openDailyChest, hudHTML: hudHTML, syncHud: syncHud,
     toast: toast, esc: esc, positionOf: positionOf, taskById: taskById, nextLessonId: nextLessonId,
-    avatarMarkup: avatarMarkup
+    avatarMarkup: avatarMarkup,
+    markRepeat: markRepeat, isRepeat: isRepeat, markMistake: markMistake, mistakes: mistakes,
+    takeMistake: takeMistake, clearMistake: clearMistake, lessonSteps: lessonSteps,
+    sanitize: sanitize, SECTION_SHADE: SECTION_SHADE, LESSON_MODE: LESSON_MODE
   };
 })();

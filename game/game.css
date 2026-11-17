@@ -78,6 +78,8 @@ b { font-weight: 800; }
 .dot { width: 70px; height: 70px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
        font-size: 28px; background: #e5e5e5; border: 0; box-shadow: 0 5px 0 #cfcfcf; transition: transform .1s; }
 .lvl:active .dot { transform: translateY(3px); box-shadow: 0 2px 0 #cfcfcf; }
+.lvl.repeat .dot { box-shadow: 0 5px 0 #cc7800, 0 0 0 5px #ffdfb0; }
+.lvl.repeat .st { color: #cc7800; font-weight: 900; }
 .lvl.done .dot { background: #ffc800; box-shadow: 0 5px 0 #e6ac00; }
 .lvl.done.perfect .dot { background: #ffc800; }
 .lvl.open .dot { background: #58cc02; box-shadow: 0 5px 0 #46a302; }

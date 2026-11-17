@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Тренування — Тімолінго</title>
-<link rel="stylesheet" href="game.css?v=20261117d">
+<link rel="stylesheet" href="game.css?v=20261117e">
 <style>
   .modes { display: flex; gap: 8px; flex-wrap: wrap; margin: 6px 0 18px; }
   .mode { border: 2px solid #e5e5e5; border-bottom-width: 4px; background: #fff; border-radius: 14px;
@@ -58,8 +58,8 @@
 </main>
 
 <div class="toast" id="toast"></div>
-<script src="train_bank.js?v=20261117d"></script>
-<script src="game.js?v=20261117d"></script>
+<script src="train_bank.js?v=20261117e"></script>
+<script src="game.js?v=20261117e"></script>
 <script>
 (function () {
   Game.renderSidebar("train");
@@ -207,13 +207,13 @@
     if (ok) {
       correct++;
       var gemMsg = "";
-      Game.addGems(5); gemsEarned += 5; gemMsg = " · +5 💎";
-      if (fb) { fb.className = "feedback ok"; fb.textContent = "Правильно! +" + gained + " XP" + gemMsg; }
+      if (fb) { fb.className = "feedback ok"; fb.textContent = "Правильно! +" + gained + " XP"; }
       var box = document.getElementById("answer");
       if (box) { box.className = "answer ok"; }
       setTimeout(function () { idx++; renderQuestion(); }, 850);
     } else {
       var right = cur.type === "cmp" ? cur.ans : cur.a;
+      Game.markMistake(mode, cur.type === "cmp" ? { q: cur.l + " ? " + cur.r, a: cur.ans } : cur);
       if (fb) { fb.className = "feedback bad"; fb.textContent = "Правильна відповідь: " + right; }
       var ab = document.getElementById("answer");
       if (ab) { ab.className = "answer bad"; }
@@ -268,6 +268,8 @@
   function renderResult() {
     Game.finishPracticeRound();
     Game.trainMark(mode);
+    gemsEarned = correct === ROUND ? 5 : 1;
+    Game.addGems(gemsEarned);
     var host = document.getElementById("train");
     var emoji = correct === ROUND ? "🏆" : correct >= 7 ? "🎉" : "💪";
     var nx = nextMode();
@@ -277,7 +279,7 @@
       host.innerHTML = '<div class="train-card result">' +
         '<div class="big">' + emoji + '</div>' +
         '<h2>' + correct + ' з ' + ROUND + '</h2>' +
-        '<div class="muted" style="font-weight:800;margin-bottom:6px">Зароблено ' + xp + ' XP і ' + gemsEarned + ' 💎 · по 5 за кожну правильну</div>' +
+        '<div class="muted" style="font-weight:800;margin-bottom:6px">Зароблено ' + xp + ' XP і ' + gemsEarned + ' 💎 · 5 💎 тільки за ідеальні 10/10</div>' +
         '<div style="font-weight:900;color:#ff9600;margin-bottom:16px">⏳ Цей розділ — через ' +
         (mm > 0 ? mm + ' хв ' : '') + (ss < 10 ? '0' : '') + ss + ' с</div>' +
         (nx ? '<button class="btn" id="nextMode">Далі: ' + nx.label + '</button> ' : '') +

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Квести — Тімолінго</title>
-<link rel="stylesheet" href="game.css?v=20261117d">
+<link rel="stylesheet" href="game.css?v=20261117e">
 </head>
 <body>
 <aside class="side" id="side"></aside>
@@ -17,8 +17,8 @@
 </main>
 
 <div class="toast" id="toast"></div>
-<script src="tasks.js?v=20261117d"></script>
-<script src="game.js?v=20261117d"></script>
+<script src="tasks.js?v=20261117e"></script>
+<script src="game.js?v=20261117e"></script>
 <script>
 (function () {
   Game.renderSidebar("quests");
@@ -39,7 +39,7 @@
     var qs = Game.quests(p);
     var host = document.getElementById("quests");
     var monthGoal = 30;
-    var monthNow = Math.min(monthGoal, p.quests.done);
+    var monthNow = Math.min(monthGoal, p.quests.monthDone || 0);
     var mpct = Math.round(monthNow / monthGoal * 100);
     var monthName = MONTH_NAMES[new Date().getMonth()];
 
@@ -72,9 +72,9 @@
 
     html += '<div class="card" style="margin-top:16px"><h3>Як це працює</h3>' +
       '<div class="muted" style="font-size:13px;line-height:1.6;font-weight:700">' +
-      'Бали ⚡ нараховуються за кожен пройдений урок. Хвилини ⏱️ рахуються, поки ти на сторінці уроку. ' +
-      'Урок «без помилок» — коли відповів правильно з першої спроби. ' +
-      'Кристали 💎 тепер дають лише за ідеальний урок (+1), за пройдений розділ (+3) і за квести — тому їх не так багато.' +
+      'Бали ⚡ нараховуються за кожен пройдений урок. Хвилини ⏱️ рахуються від початку до завершення уроку. ' +
+      'Урок «без помилок» — коли всі п\'ять кроків пройдено з першої спроби. ' +
+      'Кристали 💎: +2 за ідеальний урок, +15 за пройдений розділ, +5 за ідеальний раунд тренування (10/10), +1 за звичайний раунд і нагороди квестів.' +
       '</div></div>';
 
     host.innerHTML = html;

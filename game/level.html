@@ -4,7 +4,31 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Урок — Тімолінго</title>
-<link rel="stylesheet" href="game.css?v=20261117d">
+<link rel="stylesheet" href="game.css?v=20261117e">
+<style>
+  .steps { display:flex; gap:6px; align-items:center; margin:10px 0 4px; }
+  .steps i { width:24px; height:8px; border-radius:6px; background:#e5e5e5; display:block; }
+  .steps i.on { background:#58cc02; } .steps i.ok { background:#ffc800; }
+  .speak { float:right; border:2px solid #e5e5e5; background:#fff; border-radius:10px;
+           padding:2px 8px; font-size:17px; cursor:pointer; line-height:1.2; }
+  .step-label { font-size:12px; font-weight:900; color:#1cb0f6; text-transform:uppercase;
+                letter-spacing:1px; margin-bottom:10px; }
+  .kbig { font-size:clamp(26px,5vw,40px); font-weight:900; text-align:center; margin:12px 0; }
+  .kanswer { min-height:58px; border:3px solid #e5e5e5; border-radius:14px; display:flex;
+             align-items:center; justify-content:center; font-size:32px; font-weight:900;
+             color:#1cb0f6; margin:10px 0; background:#fafafa; }
+  .kanswer.ok { border-color:#58cc02; color:#3f8000; background:#f0fff4; }
+  .kanswer.bad { border-color:#ff4b4b; color:#ea2b2b; background:#fff5f5; }
+  .kpad { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; max-width:330px; margin:0 auto; }
+  .kpad button { border:2px solid #e5e5e5; border-bottom-width:4px; background:#fff;
+                 border-radius:12px; font:900 21px inherit; padding:11px 0; cursor:pointer; color:#3c3c3c; }
+  .kpad button.go { background:#58cc02; color:#fff; border-color:#46a302; }
+  .stage-msg { min-height:26px; font-weight:900; margin-top:10px; color:#58cc02; font-size:15px; }
+  .stage-msg.bad { color:#ff4b4b; }
+  .repeat-btn { background:#ff9600; box-shadow:0 4px 0 #cc7800; }
+  .lesson-done { text-align:center; padding:18px 10px; }
+  .lesson-done .big { font-size:52px; }
+</style>
 </head>
 <body>
 <aside class="side" id="side"></aside>
@@ -16,14 +40,16 @@
       <div class="bar"><i id="bar" style="width:0%"></i></div>
       <span class="chip lives">❤️ <b id="lives">10</b></span>
     </div>
+    <div class="hud" id="hud"></div>
     <div id="lesson"></div>
   </div>
 </main>
 
 <audio id="ding" preload="auto" src="ding.mp3"></audio>
 <div class="toast" id="toast"></div>
-<script src="tasks.js?v=20261117d"></script>
-<script src="game.js?v=20261117d"></script>
+<script src="train_bank.js?v=20261117e"></script>
+<script src="tasks.js?v=20261117e"></script>
+<script src="game.js?v=20261117e"></script>
 <script>
 (function () {
   Game.renderSidebar("learn");
@@ -83,98 +109,241 @@
 
   var pos = Game.positionOf(task.id);
   var sec = pos ? Game.SECTIONS[pos.section] : null;
+  var mode = pos ? (Game.LESSON_MODE[sec.id] || "add") : "add";
   var p0 = Game.load();
   document.title = task.title + " — Тімолінго";
+  var hud = document.getElementById("hud");
+  if (hud) { hud.innerHTML = Game.hudHTML(); }
+
   host.innerHTML =
     '<div class="lesson-kicker">' + (sec ? "Розділ " + (sec.index + 1) + " · " + Game.esc(sec.title) : "Урок") + '</div>' +
     '<h1>' + Game.esc(task.title) + '</h1>' +
-    '<p class="task">' + Game.esc(task.text) + '</p>' +
+    '<p class="task">' + Game.esc(task.text) +
+      ' <button type="button" class="speak" id="speak" title="Озвучити задачу">🔊</button></p>' +
     '<div class="video-box"><video id="video" controls playsinline preload="metadata"></video></div>' +
-    '<div class="quiz"><div class="qtitle">Обери відповідь: <span class="muted" style="font-weight:700;font-size:12px">натисни — перевіримо одразу</span></div>' +
-    '<div class="qopts" id="opts"></div><div class="qmsg" id="msg"></div></div>' +
-    '<div class="row"><button class="btn ghost" id="showAns" style="display:none">💡 Показати розв\'язок</button>' +
-    '<a class="btn next" id="next" href="index.html" style="display:none">Далі →</a>' +
-    '<a class="btn ghost" href="index.html">До карти</a></div>' +
-    '<div class="ansbox" id="ansbox"><ol id="steps"></ol><audio id="ansAudio" preload="none"></audio>' +
+    '<div class="steps" id="dots"></div>' +
+    '<div class="quiz" id="stage"></div>' +
+    '<div class="stage-msg" id="msg"></div>' +
+    '<div class="row" id="actionRow">' +
+      '<button class="btn ghost" id="showAns" style="display:none">💡 Показати розв\'язок</button>' +
+      '<a class="btn next" id="next" href="index.html" style="display:none">Далі →</a>' +
+      '<a class="btn ghost" href="index.html">До карти</a>' +
+    '</div>' +
+    '<div class="ansbox" id="ansbox"><ol id="stepsList"></ol><audio id="ansAudio" preload="none"></audio>' +
     '<div class="muted" style="font-size:12px;font-weight:800">🔊 Розв\'язок озвучений</div></div>';
 
   document.getElementById("video").src = task.video;
-  document.getElementById("steps").innerHTML = task.steps.map(function (s) { return "<li>" + Game.esc(s) + "</li>"; }).join("");
+  document.getElementById("stepsList").innerHTML = task.steps.map(function (s) { return "<li>" + Game.esc(s) + "</li>"; }).join("");
   document.getElementById("ansAudio").src = task.audio;
   var pct = 0;
   if (pos) { pct = Math.round((pos.lesson + 1) / sec.ids.length * 100); }
   document.getElementById("bar").style.width = Math.min(100, pct) + "%";
 
-  var lives = p0.lives;
-  if (lives <= 0) {
-    document.getElementById("showAns").style.display = "inline-flex";
-    document.getElementById("opts").innerHTML =
-      '<div style="grid-column:1/-1;font-weight:800;color:#ea2b2b">❤️ Життя закінчились. Відновляться завтра — або на карті за 35 💎.</div>';
-  }
-
-  var opts = document.getElementById("opts");
-  var items = task.options.map(function (text, i) { return { text: text, ok: i === task.correct }; });
-  for (var i = items.length - 1; i > 0; i--) {
-    var j = Math.floor(Math.random() * (i + 1));
-    var tmp = items[i]; items[i] = items[j]; items[j] = tmp;
-  }
-  var attempts = 0, solved = false;
-
-  items.forEach(function (item) {
-    var b = document.createElement("button");
-    b.className = "qopt"; b.type = "button"; b.textContent = item.text;
-    b.addEventListener("click", function () {
-      if (solved) { return; }
-      if (item.ok) {
-        solved = true;
-        b.classList.add("ok");
-        playDing();
-        var r = b.getBoundingClientRect();
-        confetti(r.left + r.width / 2, r.top + r.height / 2);
-        var seconds = Math.round((Date.now() - started) / 1000);
-        var reward = Game.awardLesson(task.id, attempts === 0, seconds);
-        var pr = Game.load();
-        var msg = "Молодець! 🎉 +" + reward.xp + " XP";
-        if (!reward.trophy && reward.gems === 1) {
-          msg += " · 💎 +1 за урок без помилок";
-        }
-        if (reward.combo >= 3) { msg += " · комбо x" + reward.combo + " (+" + reward.comboBonus + " XP)"; }
-        var dailyGain = Game.claimTaskOfDay(task.id);
-        if (dailyGain) { msg += " · +" + dailyGain + " 💎 за задачу дня"; }
-        document.getElementById("msg").textContent = msg;
-        if (reward.trophy) { showTrophy(reward.trophy); }
-        document.querySelectorAll(".qopt").forEach(function (o) { o.disabled = true; });
-        var ab = document.getElementById("ansbox");
-        var sb = document.getElementById("showAns");
-        ab.classList.add("show");
-        sb.style.display = "inline-flex";
-        sb.textContent = "🙈 Сховати розв'язок";
-        try {
-          var aa = document.getElementById("ansAudio");
-          aa.currentTime = 0;
-          var ap = aa.play(); if (ap && ap.catch) { ap.catch(function () {}); }
-        } catch (e) {}
-        var nx = document.getElementById("next");
-        var nid = Game.nextLessonId(task.id);
-        nx.href = nid ? "level.html?id=" + encodeURIComponent(nid) : "index.html";
-        nx.style.display = "inline-flex";
-        syncHud();
-        if (pr.lives <= 0) { Game.toast("Життя закінчились — віднови на карті"); }
-      } else {
-        attempts++;
-        b.classList.add("bad"); b.disabled = true;
-        var left = Game.loseLife();
-        syncHud();
-        if (left <= 0) {
-          document.querySelectorAll(".qopt").forEach(function (o) { o.disabled = true; });
-          document.getElementById("msg").textContent = "❤️ Життя закінчились. Відновляться завтра — або на карті за 35 💎.";
-        } else {
-          document.getElementById("msg").textContent = "Спробуй ще 🙂 ❤️ " + left;
-        }
-      }
-    });
-    opts.appendChild(b);
+  document.getElementById("speak").addEventListener("click", function () {
+    if (!("speechSynthesis" in window)) { Game.toast("Озвучення не підтримується цим браузером"); return; }
+    try {
+      window.speechSynthesis.cancel();
+      var u = new SpeechSynthesisUtterance(task.text);
+      u.lang = "uk-UA"; u.rate = 0.9;
+      window.speechSynthesis.speak(u);
+    } catch (e) { Game.toast("Не вдалося озвучити"); }
   });
+
+  var steps = Game.lessonSteps(task);
+  var totalQuestions = steps.filter(function (s) { return s.type !== "finish"; }).length;
+  var si = 0, attempts = 0, wrongAny = false, outOfLives = false, submitCurrent = null;
+
+  function dots() {
+    var h = "";
+    for (var i = 0; i < totalQuestions; i++) {
+      h += '<i class="' + (i < si ? "ok" : i === si ? "on" : "") + '"></i>';
+    }
+    document.getElementById("dots").innerHTML = h;
+  }
+  function msg(text, bad) {
+    var m = document.getElementById("msg");
+    if (m) { m.textContent = text; m.className = "stage-msg" + (bad ? " bad" : ""); }
+  }
+  function disableStage() {
+    Array.prototype.forEach.call(document.querySelectorAll("#stage button"), function (b) { b.disabled = true; });
+    submitCurrent = null;
+  }
+  function playAnswerAudio() {
+    try {
+      var aa = document.getElementById("ansAudio");
+      aa.currentTime = 0;
+      var ap = aa.play(); if (ap && ap.catch) { ap.catch(function () {}); }
+    } catch (e) {}
+  }
+  function revealAnswer() {
+    document.getElementById("ansbox").classList.add("show");
+    var sb = document.getElementById("showAns");
+    sb.style.display = "inline-flex";
+    sb.textContent = "🙈 Сховати розв'язок";
+    playAnswerAudio();
+  }
+
+  function showOutOfLives() {
+    if (outOfLives) { return; }
+    outOfLives = true;
+    disableStage();
+    msg("❤️ Життя закінчились. Відновляться завтра — або на карті за 35 💎.", true);
+    var row = document.getElementById("actionRow");
+    if (!document.getElementById("repeatTomorrow")) {
+      var rb = document.createElement("button");
+      rb.className = "btn repeat-btn";
+      rb.id = "repeatTomorrow";
+      rb.textContent = "🔁 Повторити завтра";
+      rb.addEventListener("click", function () {
+        Game.markRepeat(task.id);
+        Game.toast("Урок «" + task.title + "» у черзі на завтра 🔁");
+        location.href = "index.html";
+      });
+      row.insertBefore(rb, row.firstChild);
+    }
+    revealAnswer();
+  }
+
+  function advance() {
+    si++;
+    dots();
+    setTimeout(renderStep, 420);
+  }
+
+  function renderMain() {
+    var items = task.options.map(function (text, i) { return { text: text, ok: i === task.correct }; });
+    for (var i = items.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var tmp = items[i]; items[i] = items[j]; items[j] = tmp;
+    }
+    var stage = document.getElementById("stage");
+    stage.innerHTML = '<div class="step-label">Крок ' + (si + 1) + ' з ' + totalQuestions +
+      ' · головна задача</div><div class="qtitle">Обери відповідь: <span class="muted" style="font-weight:700;font-size:12px">натисни — перевіримо одразу</span></div>' +
+      '<div class="qopts" id="opts"></div>';
+    var opts = document.getElementById("opts");
+    items.forEach(function (item) {
+      var b = document.createElement("button");
+      b.className = "qopt"; b.type = "button"; b.textContent = item.text;
+      b.addEventListener("click", function () {
+        if (outOfLives || b.disabled) { return; }
+        if (item.ok) {
+          disableStage();
+          b.classList.add("ok");
+          playDing();
+          var r = b.getBoundingClientRect();
+          confetti(r.left + r.width / 2, r.top + r.height / 2);
+          Game.clearMistake(task.text);
+          attempts++;
+          advance();
+        } else {
+          attempts++;
+          wrongAny = true;
+          b.classList.add("bad"); b.disabled = true;
+          Game.markMistake(mode, { q: task.text, a: task.options[task.correct] });
+          var left = Game.loseLife();
+          syncHud();
+          if (left <= 0) { showOutOfLives(); }
+          else { msg("Спробуй ще 🙂 ❤️ " + left, true); }
+        }
+      });
+      opts.appendChild(b);
+    });
+  }
+
+  function renderNum(st) {
+    var typed = "";
+    var stage = document.getElementById("stage");
+    stage.innerHTML = '<div class="step-label">Крок ' + (si + 1) + ' з ' + totalQuestions +
+      (st.again ? ' · повторення помилки' : ' · приклад') + '</div>' +
+      '<div class="kbig">' + Game.esc(st.q) + ' <span style="color:#afafaf">=</span></div>' +
+      '<div class="kanswer" id="kanswer">&nbsp;</div>' +
+      '<div class="kpad">' +
+        [1,2,3,4,5,6,7,8,9].map(function (n) { return '<button type="button" data-k="' + n + '">' + n + '</button>'; }).join("") +
+        '<button type="button" data-k="back">⌫</button><button type="button" data-k="0">0</button>' +
+        '<button type="button" class="go" data-k="ok">✓</button>' +
+      '</div>';
+    var box = document.getElementById("kanswer");
+    function upd() { box.textContent = typed || " "; box.className = "kanswer"; }
+    Array.prototype.forEach.call(stage.querySelectorAll("[data-k]"), function (k) {
+      k.addEventListener("click", function () {
+        if (outOfLives || k.disabled) { return; }
+        var v = k.getAttribute("data-k");
+        if (v === "back") { typed = typed.slice(0, -1); }
+        else if (v === "ok") { submitCurrent(); return; }
+        else if (typed.length < 4) { typed += v; }
+        upd();
+      });
+    });
+    submitCurrent = function () {
+      if (outOfLives || !typed) { return; }
+      if (String(typed) === String(st.a)) {
+        submitCurrent = null;
+        disableStage();
+        box.className = "kanswer ok";
+        playDing();
+        if (st.again) { Game.clearMistake(st.q); }
+        msg("Правильно! +1 крок");
+        advance();
+      } else {
+        wrongAny = true;
+        box.className = "kanswer bad";
+        Game.markMistake(mode, st);
+        msg("Правильна відповідь: " + Game.esc(st.a), true);
+        submitCurrent = null;
+        disableStage();
+        var again = document.createElement("div");
+        again.style.cssText = "text-align:center;margin-top:12px";
+        again.innerHTML = '<button type="button" class="btn" id="numNext">Далі →</button>';
+        stage.appendChild(again);
+        document.getElementById("numNext").addEventListener("click", advance);
+      }
+    };
+  }
+
+  function finishLesson() {
+    disableStage();
+    var perfect = !wrongAny;
+    var seconds = Math.round((Date.now() - started) / 1000);
+    var reward = Game.awardLesson(task.id, perfect, seconds);
+    var pr = Game.load();
+    var text = "Молодець! 🎉 +" + reward.xp + " XP";
+    if (!reward.trophy && reward.gems) { text += " · 💎 +" + reward.gems + " за урок без помилок"; }
+    if (reward.combo >= 3) { text += " · комбо x" + reward.combo + " (+" + reward.comboBonus + " XP)"; }
+    var dailyGain = Game.claimTaskOfDay(task.id);
+    if (dailyGain) { text += " · +" + dailyGain + " 💎 за задачу дня"; }
+    msg(text);
+    document.getElementById("stage").innerHTML =
+      '<div class="lesson-done"><div class="big">' + (perfect ? "🏆" : "🎉") + '</div>' +
+      '<h2>Урок завершено!</h2><div class="muted" style="font-weight:800">' +
+      (perfect ? "П'ять кроків без помилок — ось так!" : "П'ять кроків пройдено. Помилки додамо у повторення.") +
+      '</div></div>';
+    if (reward.trophy) { showTrophy(reward.trophy); }
+    revealAnswer();
+    var nx = document.getElementById("next");
+    var nid = Game.nextLessonId(task.id);
+    nx.href = nid ? "level.html?id=" + encodeURIComponent(nid) : "index.html";
+    nx.style.display = "inline-flex";
+    syncHud();
+    if (pr.lives <= 0) { Game.toast("Життя закінчились — віднови на карті"); }
+  }
+
+  function renderStep() {
+    if (outOfLives) { return; }
+    if (si >= steps.length || steps[si].type === "finish") { finishLesson(); return; }
+    dots();
+    if (steps[si].type === "main") { renderMain(); }
+    else { renderNum(steps[si]); }
+  }
+
+  document.addEventListener("keydown", function (e) {
+    if (!submitCurrent) { return; }
+    if (e.key >= "0" && e.key <= "9") { e.preventDefault(); return; }
+    if (e.key === "Enter") { submitCurrent(); e.preventDefault(); }
+  });
+
+  renderStep();
+  if (p0.lives <= 0) { showOutOfLives(); }
+  syncHud();
 
   document.getElementById("showAns").addEventListener("click", function () {
     var box = document.getElementById("ansbox");

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Профіль — Тімолінго</title>
-<link rel="stylesheet" href="game.css?v=20261117d">
+<link rel="stylesheet" href="game.css?v=20261117e">
 </head>
 <body>
 <aside class="side" id="side"></aside>
@@ -17,9 +17,9 @@
 </main>
 
 <div class="toast" id="toast"></div>
-<script src="tasks.js?v=20261117d"></script>
-<script src="avatars.js?v=20261117d"></script>
-<script src="game.js?v=20261117d"></script>
+<script src="tasks.js?v=20261117e"></script>
+<script src="avatars.js?v=20261117e"></script>
+<script src="game.js?v=20261117e"></script>
 <script>
 (function () {
   var EMOJI = ["🐸", "🦎", "🐛", "🐌", "🦋", "🐞", "🐢", "🐝", "🦊", "🐼", "🦄", "🐙", "🚀", "🌟"];
@@ -29,7 +29,7 @@
 
   function avatarHTML(a, size, radius) {
     if (a && String(a).indexOf("/") > -1) {
-      return '<img src="' + a + '" alt="" style="width:' + size + 'px;height:' + size + 'px;' +
+      return '<img src="' + Game.esc(a) + '" alt="" style="width:' + size + 'px;height:' + size + 'px;' +
              'border-radius:' + (radius || "50%") + ';object-fit:cover;display:block">';
     }
     return a || "🐸";
@@ -79,7 +79,21 @@
               '<div class="ad">' + a.desc + ' · ' + badge + '</div>' +
               '<div class="bar"><i style="width:' + pct + '%"></i></div></div></div>';
     });
-    html += '</div>' +
+    var MODE_LABEL = { add: "Додавання", sub: "Віднімання", mul: "Множення", div: "Ділення",
+                       big: "Великі числа", chain: "Три дії", times: "Двоцифрові", mix: "Мішане", cmp: "Порівняння" };
+    var weakCount = {};
+    Game.mistakes(p).forEach(function (m) { if (m.mode) { weakCount[m.mode] = (weakCount[m.mode] || 0) + 1; } });
+    var weak = Object.keys(weakCount).sort(function (a, b) { return weakCount[b] - weakCount[a]; }).slice(0, 4);
+    var weakHtml = weak.length
+      ? weak.map(function (k) {
+          return '<div class="quest"><div class="qi">🎯</div><div class="qm"><div class="qt">' +
+                 (MODE_LABEL[k] || k) + '</div><div class="muted" style="font-size:11px;font-weight:700">помилок: ' +
+                 weakCount[k] + '</div></div></div>';
+        }).join("")
+      : '<div class="muted" style="font-size:13px;font-weight:700">Поки що без помилок — так тримати! 🌟</div>';
+
+    html += '</div><div class="card" style="margin-bottom:18px"><h3>Слабкі місця <span class="more">для тата</span></h3>' +
+            weakHtml + '</div>' +
 
       '<div class="card" style="margin-bottom:18px"><h3>' + lg.cur.name + ' ліга' +
       ' <a class="more" href="leaderboard.html">дошка</a></h3>' +
@@ -92,6 +106,8 @@
 
       '<div class="tools">' +
         '<button class="btn ghost" id="rename">✏️ Імʼя</button>' +
+        '<button class="btn ghost" id="shareCode">🔗 Код прогресу</button>' +
+        '<button class="btn ghost" id="useCode">⌨️ Ввести код</button>' +
         '<button class="btn ghost" id="export">⬇️ Зберегти прогрес</button>' +
         '<button class="btn ghost" id="import">⬆️ Завантажити</button>' +
         '<button class="btn danger" id="reset">♻️ Скинути</button>' +
@@ -139,6 +155,26 @@
         render(); Game.renderSidebar("profile");
       }
     });
+
+    document.getElementById("shareCode").addEventListener("click", function () {
+      try {
+        var raw = JSON.stringify(Game.load());
+        var code = "TIM1:" + btoa(unescape(encodeURIComponent(raw)));
+        window.prompt("Скопіюй код для іншого пристрою:", code);
+      } catch (e) { Game.toast("Не вдалося створити код"); }
+    });
+    document.getElementById("useCode").addEventListener("click", function () {
+      var code = window.prompt("Введи код прогресу:");
+      if (!code) { return; }
+      try {
+        code = code.replace(/^TIM1:/, "").trim();
+        var clean = Game.sanitize(JSON.parse(decodeURIComponent(escape(atob(code)))));
+        if (!clean) { throw new Error("bad profile"); }
+        localStorage.setItem(Game.KEY, JSON.stringify(clean));
+        render(); Game.renderSidebar("profile"); Game.toast("Прогрес завантажено");
+      } catch (e) { Game.toast("Код не підходить"); }
+    });
+
     document.getElementById("reset").addEventListener("click", function () {
       if (confirm("Скинути весь прогрес?")) { localStorage.removeItem(Game.KEY); render(); Game.renderSidebar("profile"); }
     });
@@ -156,7 +192,9 @@
         var r = new FileReader();
         r.onload = function () {
           try {
-            localStorage.setItem(Game.KEY, JSON.stringify(JSON.parse(r.result)));
+            var clean = Game.sanitize(JSON.parse(r.result));
+            if (!clean) { throw new Error("bad profile"); }
+            localStorage.setItem(Game.KEY, JSON.stringify(clean));
             render(); Game.renderSidebar("profile"); Game.toast("Прогрес завантажено");
           } catch (e) { Game.toast("Не вдалося прочитати файл"); }
         };
