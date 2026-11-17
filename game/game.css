@@ -686,7 +686,7 @@ body {
               box-shadow:0 24px 70px rgba(0,0,0,.55), inset 0 0 0 1px rgba(255,209,102,.10);
               overflow:hidden; }
 .modal-card::before { content:""; position:absolute; inset:0;
-              background-image:linear-gradient(180deg,rgba(20,15,12,.74),rgba(20,15,12,.92)),url("art/header_forest.png");
+              background-image:linear-gradient(180deg,rgba(20,15,12,.74),rgba(20,15,12,.92)),url("art/header_forest.png?v=20261117u");
               background-size:cover; background-position:center 42%; opacity:.38; pointer-events:none; }
 .modal-card > * { position:relative; z-index:1; }
 .modal-glow { position:absolute; width:240px; height:240px; border-radius:50%; top:-80px; left:50%;
@@ -716,14 +716,14 @@ body {
 /* художнє оформлення заголовків та іконок */
 .sec-head {
   background-image: linear-gradient(90deg, rgba(18,14,11,.62), rgba(18,14,11,.28)),
-                    url("art/header_forest.png") !important;
+                    url("art/header_forest.png?v=20261117u") !important;
   background-size: cover !important;
   background-position: center 46% !important;
   border-left: 9px solid var(--sec, var(--leaf)) !important;
 }
 .story-banner {
   background-image: linear-gradient(90deg, rgba(18,14,11,.55), rgba(18,14,11,.18)),
-                    url("art/header_forest.png");
+                    url("art/header_forest.png?v=20261117u");
   background-size: cover; background-position: center 46%;
   border: 3px solid rgba(0,0,0,.45); border-radius:22px; padding:26px 22px;
   min-height:132px; margin-bottom:18px; position:relative; overflow:hidden;

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Навчання — Тімолінго</title>
-<link rel="stylesheet" href="game.css?v=20261117u">
+<link rel="stylesheet" href="game.css?v=20261117v">
 </head>
 <body>
 <div class="story-deco" aria-hidden="true"><span>🍄</span><span>🌿</span><span>✨</span></div>
@@ -38,9 +38,9 @@
 </main>
 
 <div class="toast" id="toast"></div>
-<script src="tasks.js?v=20261117u"></script>
-<script src="avatars.js?v=20261117u"></script>
-<script src="game.js?v=20261117u"></script>
+<script src="tasks.js?v=20261117v"></script>
+<script src="avatars.js?v=20261117v"></script>
+<script src="game.js?v=20261117v"></script>
 <script>
 (function () {
   var p = Game.load();
@@ -233,7 +233,7 @@
           var reachable = seqIdx === 0 || Game.isDone(p, Game.SEQ[seqIdx - 1].id);
           var cb = document.createElement("button");
           cb.className = "lvl chest" + (reachable ? "" : " locked");
-          cb.innerHTML = '<div class="dot"><img src="art/icon_chest.png" class="ico" alt=""></div>' +
+          cb.innerHTML = '<div class="dot"><img src="art/icon_chest.png?v=20261117v" class="ico" alt=""></div>' +
             '<div class="cap">' + (reachable ? "Скриня!" : "Скриня") + '</div>' +
             '<div class="st">' + (chest.kind === "life" ? "❤️" : "💎") + '</div>';
           if (reachable) {
@@ -245,8 +245,8 @@
           node.className = "lvl " + (done ? "done" : open ? "open" : "locked") + (perfect ? " perfect" : "") + (repeated ? " repeat" : "");
           if (done || open) { node.href = "level.html?id=" + encodeURIComponent(id); }
           node.innerHTML = '<div class="dot">' +
-            (done ? (perfect ? '<img src="art/icon_gem.png" class="ico" alt="">' : "✅")
-                  : open ? "▶️" : '<img src="art/icon_lock.png" class="ico" alt="">') + '</div>' +
+            (done ? (perfect ? '<img src="art/icon_gem.png?v=20261117v" class="ico" alt="">' : "✅")
+                  : open ? "▶️" : '<img src="art/icon_lock.png?v=20261117v" class="ico" alt="">') + '</div>' +
             '<div class="cap">' + (repeated ? "🔁 " : "") + Game.esc(task.title) + '</div>' +
             '<div class="st">' + (repeated ? "на завтра" : "") + '</div>';
           step.appendChild(node);

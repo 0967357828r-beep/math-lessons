@@ -18,7 +18,7 @@
   function shopIconHTML(x, size) {
     if (!x) { return ""; }
     if (x.icon && x.icon.indexOf("/") > -1) {
-      return '<img src="' + esc(x.icon) + '" class="shopico" style="width:' + size + 'px;height:' + size + 'px" alt="">';
+      return '<img src="' + esc(x.icon) + '?v=20261117u" class="shopico" style="width:' + size + 'px;height:' + size + 'px" alt="">';
     }
     return x.icon || "";
   }
@@ -545,11 +545,11 @@
   function quests(p) {
     var q = p.quests;
     return [
-      { id: "points", icon: '<img src="art/icon_coin.png" class="ico" alt="">', title: "Отримайте 10 балів", now: q.points, goal: 10,
+      { id: "points", icon: '<img src="art/icon_coin.png?v=20261117u" class="ico" alt="">', title: "Отримайте 10 балів", now: q.points, goal: 10,
         reward: "💎 +2", gem: 2, life: 0 },
-      { id: "time", icon: '<img src="art/icon_clock.png" class="ico" alt="">', title: "Практикуйтеся 5 хвилин", now: Math.floor(q.sec / 60), goal: 5,
+      { id: "time", icon: '<img src="art/icon_clock.png?v=20261117u" class="ico" alt="">', title: "Практикуйтеся 5 хвилин", now: Math.floor(q.sec / 60), goal: 5,
         reward: "❤️ +2", gem: 0, life: 2 },
-      { id: "perfect", icon: '<img src="art/icon_star.png" class="ico" alt="">', title: "Пройдіть 2 уроки без помилок", now: q.perfect, goal: 2,
+      { id: "perfect", icon: '<img src="art/icon_star.png?v=20261117u" class="ico" alt="">', title: "Пройдіть 2 уроки без помилок", now: q.perfect, goal: 2,
         reward: "💎 +3", gem: 3, life: 0 }
     ];
   }
@@ -614,21 +614,21 @@
   function achievements(p) {
     var a = [];
     function add(o) { a.push(o); }
-    add({ id: "first", icon: '<img src="art/icon_star.png" class="ico" alt="">', title: "Перший крок", now: Math.min(p.stats.lessons, 1), goal: 1,
+    add({ id: "first", icon: '<img src="art/icon_star.png?v=20261117u" class="ico" alt="">', title: "Перший крок", now: Math.min(p.stats.lessons, 1), goal: 1,
           level: p.stats.lessons >= 1 ? 1 : 0, max: 1, desc: "Пройди перший урок" });
-    add({ id: "ten", icon: '<img src="art/ach_books.png" class="ico" alt="">', title: "Старанний", now: Math.min(p.stats.lessons, 10), goal: 10,
+    add({ id: "ten", icon: '<img src="art/ach_books.png?v=20261117u" class="ico" alt="">', title: "Старанний", now: Math.min(p.stats.lessons, 10), goal: 10,
           level: p.stats.lessons >= 10 ? 1 : 0, max: 1, desc: "Пройди 10 уроків" });
-    add({ id: "twentyfive", icon: '<img src="art/ach_boots.png" class="ico" alt="">', title: "Марафонець", now: Math.min(p.stats.lessons, 25), goal: 25,
+    add({ id: "twentyfive", icon: '<img src="art/ach_boots.png?v=20261117u" class="ico" alt="">', title: "Марафонець", now: Math.min(p.stats.lessons, 25), goal: 25,
           level: p.stats.lessons >= 25 ? 1 : 0, max: 1, desc: "Пройди 25 уроків" });
-    add({ id: "perfect5", icon: '<img src="art/ach_target.png" class="ico" alt="">', title: "Без помилок", now: Math.min(p.stats.perfect, 5), goal: 5,
+    add({ id: "perfect5", icon: '<img src="art/ach_target.png?v=20261117u" class="ico" alt="">', title: "Без помилок", now: Math.min(p.stats.perfect, 5), goal: 5,
           level: p.stats.perfect >= 5 ? 1 : 0, max: 1, desc: "5 ідеальних уроків" });
-    add({ id: "streak3", icon: '<img src="art/ach_fire.png" class="ico" alt="">', title: "Серія", now: Math.min(p.streak, 3), goal: 3,
+    add({ id: "streak3", icon: '<img src="art/ach_fire.png?v=20261117u" class="ico" alt="">', title: "Серія", now: Math.min(p.streak, 3), goal: 3,
           level: p.streak >= 7 ? 3 : p.streak >= 3 ? 1 : 0, max: 3, desc: "Займайся кілька днів підряд" });
-    add({ id: "xp500", icon: '<img src="art/ach_bolt.png" class="ico" alt="">', title: "Мудрий", now: Math.min(p.xp, 500), goal: 500,
+    add({ id: "xp500", icon: '<img src="art/ach_bolt.png?v=20261117u" class="ico" alt="">', title: "Мудрий", now: Math.min(p.xp, 500), goal: 500,
           level: p.xp >= 1000 ? 2 : p.xp >= 500 ? 1 : 0, max: 2, desc: "Зароби 500 балів" });
-    add({ id: "gems25", icon: '<img src="art/icon_gem.png" class="ico" alt="">', title: "Кристальний", now: Math.min(p.gems, 25), goal: 25,
+    add({ id: "gems25", icon: '<img src="art/icon_gem.png?v=20261117u" class="ico" alt="">', title: "Кристальний", now: Math.min(p.gems, 25), goal: 25,
           level: p.gems >= 50 ? 2 : p.gems >= 25 ? 1 : 0, max: 2, desc: "Збери 25 кристалів" });
-    add({ id: "league", icon: '<img src="art/icon_trophy.png" class="ico" alt="">', title: "Чемпіон", now: leagueOf(p).index, goal: 9,
+    add({ id: "league", icon: '<img src="art/icon_trophy.png?v=20261117u" class="ico" alt="">', title: "Чемпіон", now: leagueOf(p).index, goal: 9,
           level: leagueOf(p).index >= 9 ? 2 : leagueOf(p).index >= 5 ? 1 : 0, max: 2,
           desc: "Дійди до Діамантової ліги" });
     return a;
@@ -636,18 +636,18 @@
 
   /* ---------- сайдбар ---------- */
   var NAV = [
-    { key: "learn", href: "index.html", icon: '<img src="art/nav_home.png" class="navico" alt="">', label: "Навчання" },
-    { key: "train", href: "train.html", icon: '<img src="art/nav_train.png" class="navico" alt="">', label: "Тренування" },
-    { key: "quests", href: "quests.html", icon: '<img src="art/nav_quests.png" class="navico" alt="">', label: "Квести" },
-    { key: "board", href: "leaderboard.html", icon: '<img src="art/nav_board.png" class="navico" alt="">', label: "Дошки пошани" },
-    { key: "profile", href: "profile.html", icon: '<img src="art/nav_profile.png" class="navico" alt="">', label: "Профіль" }
+    { key: "learn", href: "index.html", icon: '<img src="art/nav_home.png?v=20261117u" class="navico" alt="">', label: "Навчання" },
+    { key: "train", href: "train.html", icon: '<img src="art/nav_train.png?v=20261117u" class="navico" alt="">', label: "Тренування" },
+    { key: "quests", href: "quests.html", icon: '<img src="art/nav_quests.png?v=20261117u" class="navico" alt="">', label: "Квести" },
+    { key: "board", href: "leaderboard.html", icon: '<img src="art/nav_board.png?v=20261117u" class="navico" alt="">', label: "Дошки пошани" },
+    { key: "profile", href: "profile.html", icon: '<img src="art/nav_profile.png?v=20261117u" class="navico" alt="">', label: "Профіль" }
   ];
   function avatarMarkup(a, size) {
     var p = load();
     var acc = p.profile.accessory ? SHOP.filter(function (x) { return x.id === p.profile.accessory; })[0] : null;
     var base;
     if (a && String(a).indexOf("/") > -1) {
-      base = '<img src="' + esc(a) + '" alt="" style="width:' + size + 'px;height:' + size +
+      base = '<img src="' + esc(a) + '?v=20261117u" alt="" style="width:' + size + 'px;height:' + size +
              'px;border-radius:50%;object-fit:cover;display:inline-block;vertical-align:middle">';
     } else {
       base = a || "🐸";
@@ -681,7 +681,7 @@
   function hudHTML() {
     var p = load();
     return '<span class="chip lives">❤️ <b id="hud-lives">' + p.lives + '</b></span>' +
-           '<span class="chip gems"><img src="art/icon_gem.png" class="ico sm" alt=""> <b id="hud-gems">' + p.gems + '</b></span>' +
+           '<span class="chip gems"><img src="art/icon_gem.png?v=20261117u" class="ico sm" alt=""> <b id="hud-gems">' + p.gems + '</b></span>' +
            '<span class="chip xp">⚡ <b id="hud-xp">' + p.xp + '</b></span>' +
            '<span class="chip streak">🔥 <b id="hud-streak">' + p.streak + '</b></span>' +
            '<span class="chip combo">💫 <b id="hud-combo">x' + (p.combo || 0) + '</b></span>';
