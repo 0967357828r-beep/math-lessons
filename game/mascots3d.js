@@ -53,6 +53,7 @@
     var g = new T.Group();
     var body = ball(g, 26, 0x54d46c, [0, -2, 0], 2);
     body.scale.set(1, 0.95, 0.92);
+    ball(g, 21, 0x8d6e63, [0, -9, 5], 1).scale.set(1, 0.5, 0.94);
     ball(g, 18, 0x9af0a8, [0, -6, 20], 1).scale.set(1, 0.7, 0.35);
     var head = ball(g, 21, 0x6ee08a, [0, 20, 5], 2);
     var eyes = [];
@@ -116,6 +117,17 @@
   bird.scale.setScalar(0.95);
   scene.add(frog); scene.add(bird);
 
+  /* золоті світлячки, як у відео */
+  var flies = new T.Group();
+  for (var fi = 0; fi < 28; fi++) {
+    var fm = new T.Mesh(new T.IcosahedronGeometry(1.8, 0),
+      new T.MeshBasicMaterial({ color: 0xffd85e, transparent: true, opacity: 0.85 }));
+    fm.position.set((Math.random() - 0.5) * innerWidth, (Math.random() - 0.5) * innerHeight, 12);
+    fm.userData = { s: Math.random() * 6.28, o: 0.45 + Math.random() * 0.5 };
+    flies.add(fm);
+  }
+  scene.add(flies);
+
   var actors = [frog, bird];
   var targets = { frog: null, bird: null };
   var current = { frog: { init: false, x: 0, y: 0 }, bird: { init: false, x: 0, y: 0 } };
@@ -177,6 +189,10 @@
         m.userData.wings.forEach(function (w, i) { w.rotation.x = Math.sin(t * 3 + i) * 0.18; });
       }
       if (m.userData.head && !reduce) { m.userData.head.rotation.y = Math.sin(t * 0.8 + m.userData.phase) * 0.22; }
+    });
+    flies.children.forEach(function (m) {
+      m.position.y += Math.sin(t * 0.8 + m.userData.s) * 0.25;
+      m.material.opacity = m.userData.o * (0.65 + 0.35 * Math.sin(t * 2 + m.userData.s));
     });
     renderer.render(scene, camera);
     requestAnimationFrame(tick);

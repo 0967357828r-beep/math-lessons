@@ -443,3 +443,118 @@ body {
 .cmp-row .qmark { color: var(--gold) !important; }
 .kanswer { color: var(--mint) !important; }
 
+/* ================= казкова атмосфера як у відео уроків ================= */
+:root {
+  --bg: #f7ecdb; --paper: #fffaf0; --wood: #6d4c41; --wood-dark: #3e2723;
+  --leaf: #7cb342; --leaf-dark: #558b2f; --berry: #c62828; --coral: #e05a47;
+  --glow: #ffca28; --ink: #3b2b20; --muted: #7a6a58; --line: rgba(109,76,65,.24);
+}
+html, body { background: var(--bg); color: var(--ink); }
+body {
+  background:
+    radial-gradient(700px 500px at 8% -5%, rgba(255,202,40,.24), transparent 60%),
+    radial-gradient(900px 700px at 100% 2%, rgba(124,179,66,.20), transparent 62%),
+    radial-gradient(800px 600px at 50% 110%, rgba(216,67,21,.08), transparent 60%),
+    repeating-linear-gradient(0deg, rgba(109,76,65,.025) 0 1px, transparent 1px 4px),
+    linear-gradient(160deg, #fff8e7, #f3e6d2 55%, #efdfc9);
+  background-attachment: fixed;
+}
+body::before {
+  content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 0;
+  background-image:
+    radial-gradient(circle at 14% 26%, rgba(255,202,40,.85) 0 2px, transparent 3px),
+    radial-gradient(circle at 38% 62%, rgba(255,202,40,.65) 0 1.5px, transparent 3px),
+    radial-gradient(circle at 72% 18%, rgba(255,202,40,.75) 0 2px, transparent 3px),
+    radial-gradient(circle at 88% 74%, rgba(255,202,40,.6) 0 1.5px, transparent 3px),
+    radial-gradient(circle at 55% 88%, rgba(255,202,40,.7) 0 2px, transparent 3px);
+  animation: fireflies 16s ease-in-out infinite alternate;
+}
+@keyframes fireflies { to { transform: translateY(-34px) translateX(12px); opacity: .55; } }
+.main { position: relative; z-index: 2; }
+.side { position: fixed; background: rgba(255,250,238,.92); border-right: 2px solid #d9c4a8;
+        box-shadow: 10px 0 34px rgba(62,39,35,.10); }
+.logo { background: linear-gradient(90deg, var(--leaf-dark), var(--glow)); -webkit-background-clip: text; background-clip: text; }
+.nav-item { color: var(--muted); }
+.nav-item.on { color: #2d4a17; border-color: var(--leaf); background: #eaf5d8; box-shadow: 0 3px 0 #b9d692; }
+.mini-league { background: #fff7e2; }
+.card { background: rgba(255,252,244,.90); border: 2px solid #e2cdb0;
+        box-shadow: 0 6px 0 rgba(109,76,65,.10), 0 14px 32px rgba(62,39,35,.10); }
+.card h3, .lesson h1, .lesson-done h2, .qtitle, .stat b, .profile-name,
+.lb-row .nm, .quest .qt, .mini-league b { color: var(--ink); }
+.muted, .mini-league .ml-xp, .sec-sub { color: var(--muted); }
+.chip { background: #fff7e6; border: 1px solid #e2cdb0; color: var(--ink); }
+.bar, .round-bar { background: #e8d8bd; }
+.bar > i { background: linear-gradient(90deg, var(--leaf), var(--glow)); }
+.btn { background: linear-gradient(135deg, var(--coral), var(--berry)); color: #fff8ee;
+       text-shadow: 0 1px 1px rgba(62,39,35,.35); border: 2px solid #8e231c;
+       box-shadow: 0 5px 0 #8e231c, 0 10px 22px rgba(198,40,40,.22); }
+.btn.ghost { background: #fffaf0; color: #4a6b25; border: 2px solid #cbd9ac; box-shadow: 0 4px 0 #b6c99a; }
+.btn.blue { background: linear-gradient(135deg, var(--leaf), var(--leaf-dark)); color: #fff;
+            border-color: #3f6b18; box-shadow: 0 5px 0 #3f6b18; }
+.repeat-btn { background: linear-gradient(135deg, var(--glow), #f59e0b); color: #4a2c00;
+              border-color: #a86a12; box-shadow: 0 5px 0 #a86a12; }
+.sec-head { background: linear-gradient(120deg, var(--sec, var(--leaf)), var(--sec-shade, var(--leaf-dark))) !important;
+            box-shadow: 0 8px 0 rgba(62,39,35,.18), 0 14px 32px rgba(62,39,35,.14) !important;
+            border: 3px solid rgba(62,39,35,.55); color: #fffdf4; text-shadow: 0 2px 1px rgba(62,39,35,.55); }
+.sec-path::before { width: 10px; border-radius: 8px;
+  background: repeating-linear-gradient(180deg, #a88056 0 13px, #e9d8bc 13px 28px);
+  box-shadow: inset 0 0 0 2px rgba(62,39,35,.12); }
+.dot { background: #f3e6ce; border: 3px solid #a88056; box-shadow: 0 6px 0 #a88056; color: var(--ink); }
+.lvl .cap { color: #5b4636; }
+.lvl.locked .cap { color: #8d7a66; }
+.lvl.locked .dot { opacity: .85; }
+.lvl.done .dot { background: linear-gradient(145deg, var(--glow), #f09a1a); border-color: #8a5a08;
+                 box-shadow: 0 6px 0 #8a5a08, 0 0 20px rgba(255,202,40,.35); color: #4a2c00; }
+.lvl.open .dot { background: linear-gradient(145deg, #9cdb5a, var(--leaf)); border-color: #3f6b18;
+                 box-shadow: 0 6px 0 #3f6b18, 0 0 0 6px rgba(124,179,66,.18), 0 0 28px rgba(255,202,40,.5);
+                 color: #183d06; }
+.lvl.repeat .dot { box-shadow: 0 6px 0 #8a5a08, 0 0 0 5px rgba(255,202,40,.35); }
+.lvl.trophy .dot { background: linear-gradient(145deg, #ffe9a8, #ffb703); border-color: #a86d00;
+                   box-shadow: 0 6px 0 #a86d00, 0 0 28px rgba(255,183,3,.45); }
+.char.char-img img { border-color: #fff6e0; box-shadow: 0 6px 18px rgba(62,39,35,.25); }
+.bubble { background: #fffaf0; border-color: #d9c4a8; color: #5b4636; }
+.task { background: #fffaf0; border-color: #e2cdb0; color: #4a3a2a; }
+.qopt { background: #fffaf0; border: 2px solid #dcc8a8; box-shadow: 0 4px 0 #d0b894; color: var(--ink); }
+.qopt.ok { background: #e9f7d2; border-color: var(--leaf); color: #2f5712; }
+.qopt.bad { background: #ffe0dc; border-color: var(--coral); color: #8e231c; }
+.ansbox { background: #f2fbe6; border-color: #bcd99a; }
+.ansbox li, .kbig { color: var(--ink) !important; }
+.kanswer { background: #fffaf0 !important; border-color: #dcc8a8 !important; color: #4a7a1f !important; }
+.kpad button { background: #fffaf0 !important; border-color: #dcc8a8 !important; color: var(--ink) !important; }
+.kpad button.go { background: linear-gradient(135deg, var(--leaf), var(--leaf-dark)) !important;
+                  color: #fff !important; border-color: #3f6b18 !important; }
+.train-card { background: rgba(255,252,244,.92); border-color: #e2cdb0; }
+.mode, .key, .cmp-btn, .answer { background: #fffaf0; border-color: #dcc8a8; color: var(--ink); }
+.mode.on { border-color: var(--leaf) !important; background: #eaf5d8 !important; color: #2f5712 !important; }
+.answer, .cmp-row .qmark { color: #4a7a1f !important; }
+.answer.ok, .cmp-btn.ok { background: #e9f7d2; border-color: var(--leaf); color: #2f5712; }
+.answer.bad, .cmp-btn.bad { background: #ffe0dc; border-color: var(--coral); color: #8e231c; }
+.hero { background: linear-gradient(135deg, #8bc34a, #689f38 55%, #33691e); }
+.stat, .ach, .tier { background: #fffaf0; border-color: #e2cdb0; }
+.lb-row.me { background: #eaf5d8; }
+.month-card { background: linear-gradient(135deg, #d2691e, #a8501a); }
+.daily-banner { background: linear-gradient(120deg, #fff3c4, #ffe2a8); border-color: var(--glow); color: #6b4a00; }
+.toast { background: #3e2723; color: #fff5e9; border-color: #6d4c41; }
+.story-deco { position: fixed; inset: 0; pointer-events: none; z-index: 1; }
+.story-deco span { position: absolute; font-size: 34px; filter: drop-shadow(0 3px 3px rgba(62,39,35,.25));
+                  animation: leafFloat 5s ease-in-out infinite alternate; }
+.story-deco span:nth-child(1) { left: 14px; bottom: 12px; }
+.story-deco span:nth-child(2) { right: 18px; bottom: 18px; animation-delay: 1.2s; }
+.story-deco span:nth-child(3) { right: 26px; top: 90px; font-size: 22px; animation-delay: 2.1s; }
+@keyframes leafFloat { to { transform: translateY(-10px) rotate(8deg); } }
+@media (prefers-reduced-motion: reduce) { body::before, .story-deco span { animation: none; } }
+
+/* останні штрихи: менше «дашборду», більше живої казки */
+.card, .train-card, .ansbox { border-radius: 22px 30px 24px 28px / 28px 22px 30px 24px; }
+.sec-head { border-radius: 22px 30px 24px 28px / 28px 22px 30px 24px; }
+.dot { border-radius: 50% 50% 45% 45% / 60% 60% 40% 40%; }
+.step.o1 .dot { transform: rotate(-5deg); }
+.step.o3 .dot { transform: rotate(5deg); }
+.btn { border-radius: 18px; transition: transform .15s ease, filter .15s ease; }
+.btn:hover { transform: translateY(-3px) scale(1.02); filter: brightness(1.05); }
+.side { background-image: repeating-linear-gradient(90deg, rgba(109,76,65,.035) 0 2px, transparent 2px 46px),
+                        linear-gradient(180deg, rgba(255,250,238,.94), rgba(247,236,219,.94)); }
+.story-deco span:nth-child(1) { font-size: 46px; }
+.story-deco span:nth-child(2) { font-size: 42px; }
+.story-deco span:nth-child(3) { text-shadow: 0 0 14px rgba(255,202,40,.9); }
+
