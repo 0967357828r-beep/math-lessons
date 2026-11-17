@@ -150,10 +150,13 @@
 
     /* місячний квест: лічильник окремий від щоденного */
     var monthKey = t.slice(0, 7);
-    if (typeof p.quests.monthDone !== "number") {
-      p.quests.monthDone = Math.min(30, p.quests.done || 0);
+    if (!p.quests.restoredLegacy && (p.quests.done || 0) > 0 &&
+        (p.quests.monthDone || 0) < Math.min(30, p.quests.done)) {
+      p.quests.monthDone = Math.min(30, p.quests.done);
       p.quests.month = monthKey;
+      p.quests.restoredLegacy = true;
     }
+    if (typeof p.quests.monthDone !== "number") { p.quests.monthDone = 0; }
     if (p.quests.month !== monthKey) { p.quests.month = monthKey; p.quests.monthDone = 0; }
     p.quests.monthDone = p.quests.monthDone || 0;
 
@@ -405,7 +408,12 @@
     out.quests = { date: date(q.date, t), points: Math.round(num(q.points, 0, 0, 100000)),
                    lessons: Math.round(num(q.lessons, 0, 0, 10000)), perfect: Math.round(num(q.perfect, 0, 0, 10000)),
                    sec: Math.round(num(q.sec, 0, 0, 100000)), done: Math.round(num(q.done, 0, 0, 100000)),
-                   monthDone: Math.round(num(q.monthDone, Math.min(30, num(q.done, 0, 0, 100000)), 0, 100000)), claimed: {} };
+                   monthDone: Math.round(num(q.monthDone, Math.min(30, num(q.done, 0, 0, 100000)), 0, 100000)),
+                   restoredLegacy: !!q.restoredLegacy, claimed: {} };
+    if (!out.quests.restoredLegacy && out.quests.done > 0 && out.quests.monthDone < Math.min(30, out.quests.done)) {
+      out.quests.monthDone = Math.min(30, out.quests.done);
+      out.quests.restoredLegacy = true;
+    }
     var cl = (q.claimed && typeof q.claimed === "object") ? q.claimed : {};
     ["points", "time", "perfect"].forEach(function (k) { if (cl[k]) { out.quests.claimed[k] = true; } });
     var pr = (raw.practice && typeof raw.practice === "object") ? raw.practice : {};
