@@ -671,6 +671,10 @@ body {
           color:#122006 !important; border-color:#3d5c20 !important; }
 .round-bar { background:rgba(255,255,255,.12) !important; }
 
+/* цифри в уроці (навчання) — теж зелені */
+.kbig { color: var(--leaf) !important; }
+.kbig .eq { color:#cfe8a8 !important; }
+
 /* художнє оформлення заголовків та іконок */
 .sec-head {
   background-image: linear-gradient(90deg, rgba(18,14,11,.62), rgba(18,14,11,.28)),
