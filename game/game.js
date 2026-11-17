@@ -5,14 +5,14 @@
   var KEY = "mathgame_v1";
   var MAX_LIVES = 10;
   var SHOP = [
-    { id: "leaf", icon: "art/icon_leaf.png", name: "Листок", cost: 10 },
-    { id: "mushroom", icon: "art/shop_mushroom.png", name: "Мухомор", cost: 15 },
-    { id: "scarf", icon: "art/shop_scarf.png", name: "Шарф", cost: 12 },
-    { id: "hat", icon: "art/shop_hat.png", name: "Капелюх", cost: 18 },
-    { id: "glasses", icon: "art/shop_glasses.png", name: "Окуляри", cost: 14 },
-    { id: "star", icon: "art/icon_star.png", name: "Зірка", cost: 20 },
-    { id: "lantern", icon: "art/shop_lantern.png", name: "Ліхтарик", cost: 25 },
-    { id: "crown", icon: "art/shop_crown.png", name: "Корона", cost: 35 }
+    { id: "leaf", icon: "art/icon_leaf.png", avatar: "art/avatar_leaf.png", name: "Листок", cost: 10 },
+    { id: "mushroom", icon: "art/shop_mushroom.png", avatar: "art/avatar_mushroom.png", name: "Мухомор", cost: 15 },
+    { id: "scarf", icon: "art/shop_scarf.png", avatar: "art/avatar_scarf.png", name: "Шарф", cost: 12 },
+    { id: "hat", icon: "art/shop_hat.png", avatar: "art/avatar_hat.png", name: "Капелюх", cost: 18 },
+    { id: "glasses", icon: "art/shop_glasses.png", avatar: "art/avatar_glasses.png", name: "Окуляри", cost: 14 },
+    { id: "star", icon: "art/icon_star.png", avatar: "art/avatar_star.png", name: "Зірка", cost: 20 },
+    { id: "lantern", icon: "art/shop_lantern.png", avatar: "art/avatar_lantern.png", name: "Ліхтарик", cost: 25 },
+    { id: "crown", icon: "art/shop_crown.png", avatar: "art/avatar_crown.png", name: "Корона", cost: 35 }
   ];
   var SHOP_IDS = SHOP.map(function (x) { return x.id; });
   function shopIconHTML(x, size) {
@@ -118,6 +118,9 @@
     p.profile = p.profile || {};
     p.profile.name = p.profile.name || "Тімчик";
     p.profile.avatar = p.profile.avatar || "🐸";
+    if (!p.profile.baseAvatar || String(p.profile.baseAvatar).indexOf("art/avatar_") === 0) {
+      p.profile.baseAvatar = String(p.profile.avatar).indexOf("art/avatar_") === 0 ? "🐸" : p.profile.avatar;
+    }
     p.profile.joined = p.profile.joined || todayStr();
     p.wardrobe = Array.isArray(p.wardrobe)
       ? p.wardrobe.filter(function (id) { return SHOP_IDS.indexOf(id) > -1; }) : [];
@@ -358,9 +361,17 @@
     if (SHOP_IDS.indexOf(id) < 0) { return null; }
     var p = load();
     if (p.wardrobe.indexOf(id) < 0) { return { error: "locked" }; }
-    p.profile.accessory = p.profile.accessory === id ? null : id;
+    var item = SHOP.filter(function (x) { return x.id === id; })[0];
+    if (p.profile.accessory === id) {
+      p.profile.accessory = null;
+      p.profile.avatar = p.profile.baseAvatar || "🐸";
+    } else {
+      if (!p.profile.baseAvatar) { p.profile.baseAvatar = p.profile.avatar; }
+      p.profile.accessory = id;
+      if (item && item.avatar) { p.profile.avatar = item.avatar; }
+    }
     save(p);
-    return { accessory: p.profile.accessory };
+    return { accessory: p.profile.accessory, avatar: p.profile.avatar };
   }
 
   /* ---------- повторення уроків і помилок ---------- */
@@ -439,6 +450,10 @@
     var av = String((raw.profile && raw.profile.avatar) || "🐸");
     out.profile.avatar = (av.indexOf("/") > -1 && /^[a-zA-Z0-9_./\-]{1,80}$/.test(av)) ? av
                           : (/^[^<>"'\\]{1,8}$/.test(av) ? av : "🐸");
+    var bav = String((raw.profile && raw.profile.baseAvatar) || "🐸");
+    out.profile.baseAvatar = (bav.indexOf("/") > -1 && bav.indexOf("art/avatar_") !== 0 &&
+                              /^[a-zA-Z0-9_./\-]{1,80}$/.test(bav)) ? bav
+                             : (/^[^<>"'\\]{1,8}$/.test(bav) ? bav : "🐸");
     out.profile.joined = date(raw.profile && raw.profile.joined, t);
     out.wardrobe = [];
     (Array.isArray(raw.wardrobe) ? raw.wardrobe : []).forEach(function (id) {
@@ -637,7 +652,8 @@
     } else {
       base = a || "🐸";
     }
-    return '<span class="avwrap">' + base + (acc ? '<i class="acc">' + shopIconHTML(acc, 18) + '</i>' : '') + '</span>';
+    var showAcc = acc && String(a).indexOf("art/avatar_") !== 0;
+    return '<span class="avwrap">' + base + (showAcc ? '<i class="acc">' + shopIconHTML(acc, 18) + '</i>' : '') + '</span>';
   }
 
   function renderSidebar(active) {

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Профіль — Тімолінго</title>
-<link rel="stylesheet" href="game.css?v=20261117t">
+<link rel="stylesheet" href="game.css?v=20261117u">
 </head>
 <body>
 <div class="story-deco" aria-hidden="true"><span>🍄</span><span>🌿</span><span>✨</span></div>
@@ -18,9 +18,9 @@
 </main>
 
 <div class="toast" id="toast"></div>
-<script src="tasks.js?v=20261117t"></script>
-<script src="avatars.js?v=20261117t"></script>
-<script src="game.js?v=20261117t"></script>
+<script src="tasks.js?v=20261117u"></script>
+<script src="avatars.js?v=20261117u"></script>
+<script src="game.js?v=20261117u"></script>
 <script>
 (function () {
   var EMOJI = ["🐸", "🦎", "🐛", "🐌", "🦋", "🐞", "🐢", "🐝", "🦊", "🐼", "🦄", "🐙", "🚀", "🌟"];
@@ -57,9 +57,10 @@
     var host = document.getElementById("profile");
     var doneLevels = Object.keys(p.levels).filter(function (k) { return p.levels[k].done; }).length;
     var acc = p.profile.accessory ? Game.SHOP.filter(function (x) { return x.id === p.profile.accessory; })[0] : null;
+    var showHeroAcc = acc && String(p.profile.avatar).indexOf("art/avatar_") !== 0;
 
     var html = '<div class="hero"><div class="avatar">' + avatarHTML(p.profile.avatar, 128) +
-      (acc ? '<span class="hero-acc">' + Game.shopIconHTML(acc, 52) + '</span>' : '') + '</div>' +
+      (showHeroAcc ? '<span class="hero-acc">' + Game.shopIconHTML(acc, 52) + '</span>' : '') + '</div>' +
       '<button class="edit" id="editAvatar">✏️ Змінити</button></div>' +
       '<h1 class="profile-name" id="pname">' + Game.esc(p.profile.name) + '</h1>' +
       '<div class="profile-sub">З нами з ' + dateUa(p.profile.joined) + ' · ' + daysJoined(p.profile.joined) +
@@ -165,7 +166,8 @@
         b.innerHTML = avatarHTML(a.file, 58, "12px") +
           '<span class="av-name">' + Game.esc(a.name) + '</span>';
         b.addEventListener("click", function () {
-          var pp = Game.load(); pp.profile.avatar = a.file; Game.save(pp);
+          var pp = Game.load(); pp.profile.avatar = a.file; pp.profile.baseAvatar = a.file;
+          pp.profile.accessory = null; Game.save(pp);
           pick.remove(); render(); Game.renderSidebar("profile");
         });
         grid.appendChild(b);
