@@ -294,16 +294,17 @@
     return p.gems;
   }
 
-  /* тренування: один раунд на режим раз на годину */
+  /* тренування: один раунд на режим раз на TRAIN_COOLDOWN (5 хв) */
+  var TRAIN_COOLDOWN = 5 * 60 * 1000;
   function trainReady(mode) {
     var p = load();
     var t = p.trainAt[mode] || 0;
-    return Date.now() - t >= 3600000;
+    return Date.now() - t >= TRAIN_COOLDOWN;
   }
   function trainLeft(mode) {
     var p = load();
     var t = p.trainAt[mode] || 0;
-    return Math.max(0, 3600000 - (Date.now() - t));
+    return Math.max(0, TRAIN_COOLDOWN - (Date.now() - t));
   }
   function trainMark(mode) {
     var p = load();
