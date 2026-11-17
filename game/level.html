@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Урок — Тімолінго</title>
-<link rel="stylesheet" href="game.css?v=20261117g">
+<link rel="stylesheet" href="game.css?v=20261117h">
 <style>
   .steps { display:flex; gap:6px; align-items:center; margin:10px 0 4px; }
   .steps i { width:24px; height:8px; border-radius:6px; background:#e5e5e5; display:block; }
@@ -48,9 +48,9 @@
 
 <audio id="ding" preload="auto" src="ding.mp3"></audio>
 <div class="toast" id="toast"></div>
-<script src="train_bank.js?v=20261117g"></script>
-<script src="tasks.js?v=20261117g"></script>
-<script src="game.js?v=20261117g"></script>
+<script src="train_bank.js?v=20261117h"></script>
+<script src="tasks.js?v=20261117h"></script>
+<script src="game.js?v=20261117h"></script>
 <script>
 (function () {
   Game.renderSidebar("learn");
@@ -176,12 +176,12 @@
       var ap = aa.play(); if (ap && ap.catch) { ap.catch(function () {}); }
     } catch (e) {}
   }
-  function revealAnswer() {
+  function revealAnswer(play) {
     document.getElementById("ansbox").classList.add("show");
     var sb = document.getElementById("showAns");
     sb.style.display = "inline-flex";
     sb.textContent = "🙈 Сховати розв'язок";
-    playAnswerAudio();
+    if (play !== false) { playAnswerAudio(); }
   }
 
   function showOutOfLives() {
@@ -235,6 +235,7 @@
           confetti(r.left + r.width / 2, r.top + r.height / 2);
           Game.clearMistake(task.text);
           attempts++;
+          revealAnswer(true);   /* розв'язок звучить одразу після задачі, ще до прикладів */
           advance();
         } else {
           attempts++;
@@ -319,7 +320,7 @@
       (perfect ? "П'ять кроків без помилок — ось так!" : "П'ять кроків пройдено. Помилки додамо у повторення.") +
       '</div></div>';
     if (reward.trophy) { showTrophy(reward.trophy); }
-    revealAnswer();
+    revealAnswer(false);   /* не повторюємо аудіо — воно вже пролунало після задачі */
     var nx = document.getElementById("next");
     var nid = Game.nextLessonId(task.id);
     nx.href = nid ? "level.html?id=" + encodeURIComponent(nid) : "index.html";
