@@ -118,6 +118,11 @@
     p.demotedFor = p.demotedFor || null;
     p.trainAt = p.trainAt || {};
     p.bestCombo = p.bestCombo || 0;
+    /* повертаємо комбо x3, якщо воно зникло після оновлення */
+    if (p.combo === 0 && p.bestCombo >= 3 && !p.comboRestored) {
+      p.combo = Math.min(3, p.bestCombo);
+      p.comboRestored = true;
+    }
     p.repeat = p.repeat || {};
     p.mistakes = Array.isArray(p.mistakes) ? p.mistakes : [];
     Object.keys(p.levels).forEach(function (k) {
@@ -376,6 +381,7 @@
     out.weekStart = date(raw.weekStart, mondayStr());
     out.combo = Math.round(num(raw.combo, 0, 0, 3650));
     out.bestCombo = Math.round(num(raw.bestCombo, 0, 0, 3650));
+    out.comboRestored = !!raw.comboRestored;
     out.profile = {};
     out.profile.name = String((raw.profile && raw.profile.name) || "Тімчик").replace(/<[^>]*>/g, "").slice(0, 20).trim() || "Тімчик";
     var av = String((raw.profile && raw.profile.avatar) || "🐸");
