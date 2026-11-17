@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Тренування — Тімолінго</title>
-<link rel="stylesheet" href="game.css?v=20261117r">
+<link rel="stylesheet" href="game.css?v=20261117s">
 <style>
   .modes { display: flex; gap: 8px; flex-wrap: wrap; margin: 6px 0 18px; }
   .mode { border: 2px solid #e5e5e5; border-bottom-width: 4px; background: #fff; border-radius: 14px;
@@ -59,8 +59,8 @@
 </main>
 
 <div class="toast" id="toast"></div>
-<script src="train_bank.js?v=20261117r"></script>
-<script src="game.js?v=20261117r"></script>
+<script src="train_bank.js?v=20261117s"></script>
+<script src="game.js?v=20261117s"></script>
 <script>
 (function () {
   Game.renderSidebar("train");
@@ -208,7 +208,8 @@
     if (ok) {
       correct++;
       var gemMsg = "";
-      if (fb) { fb.className = "feedback ok"; fb.textContent = "Правильно! +" + gained + " XP"; }
+      Game.addGems(3); gemsEarned += 3; gemMsg = " · +3 💎";
+      if (fb) { fb.className = "feedback ok"; fb.innerHTML = "Правильно! +" + gained + " XP · +3 <img src=\"art/icon_gem.png\" class=\"ico sm\" alt=\"\">"; }
       var box = document.getElementById("answer");
       if (box) { box.className = "answer ok"; }
       setTimeout(function () { idx++; renderQuestion(); }, 850);
@@ -269,8 +270,6 @@
   function renderResult() {
     Game.finishPracticeRound();
     Game.trainMark(mode);
-    gemsEarned = 3;
-    Game.addGems(gemsEarned);
     var host = document.getElementById("train");
     var emoji = correct === ROUND ? "🏆" : correct >= 7 ? "🎉" : "💪";
     var nx = nextMode();

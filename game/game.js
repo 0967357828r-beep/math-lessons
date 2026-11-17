@@ -621,11 +621,11 @@
 
   /* ---------- сайдбар ---------- */
   var NAV = [
-    { key: "learn", href: "index.html", icon: "🏠", label: "Навчання" },
-    { key: "train", href: "train.html", icon: "✏️", label: "Тренування" },
-    { key: "quests", href: "quests.html", icon: "🧰", label: "Квести" },
-    { key: "board", href: "leaderboard.html", icon: "🛡️", label: "Дошки пошани" },
-    { key: "profile", href: "profile.html", icon: "🐸", label: "Профіль" }
+    { key: "learn", href: "index.html", icon: '<img src="art/nav_home.png" class="navico" alt="">', label: "Навчання" },
+    { key: "train", href: "train.html", icon: '<img src="art/nav_train.png" class="navico" alt="">', label: "Тренування" },
+    { key: "quests", href: "quests.html", icon: '<img src="art/nav_quests.png" class="navico" alt="">', label: "Квести" },
+    { key: "board", href: "leaderboard.html", icon: '<img src="art/nav_board.png" class="navico" alt="">', label: "Дошки пошани" },
+    { key: "profile", href: "profile.html", icon: '<img src="art/nav_profile.png" class="navico" alt="">', label: "Профіль" }
   ];
   function avatarMarkup(a, size) {
     var p = load();
@@ -648,7 +648,7 @@
     var html = '<a class="logo" href="index.html">Тімолінго</a>';
     html += '<nav class="nav">';
     NAV.forEach(function (n) {
-      var ic = n.key === "profile" ? avatarMarkup(p.profile.avatar, 26) : n.icon;
+      var ic = n.icon;
       html += '<a class="nav-item' + (n.key === active ? " on" : "") + '" href="' + n.href + '">' +
               '<span class="ni">' + ic + '</span>' + n.label + "</a>";
     });
