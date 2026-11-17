@@ -655,6 +655,22 @@ body {
             filter:drop-shadow(0 4px 4px rgba(0,0,0,.35)); }
 @media (max-width:860px) { .shop-grid { grid-template-columns:repeat(2,1fr); } }
 
+/* тренування: інлайнові стилі train.html мають нижчий пріоритет */
+.qbig { color: var(--leaf) !important; }
+.qbig .eq { color: #cfe8a8 !important; }
+.qbig, .kbig { text-shadow: 0 0 20px rgba(156,204,101,.24) !important; }
+.answer { background:rgba(255,255,255,.06) !important; border-color:var(--line) !important;
+          color:var(--leaf) !important; }
+.answer.ok { background:rgba(156,204,101,.18) !important; border-color:var(--leaf) !important; color:#e2ffc8 !important; }
+.answer.bad { background:rgba(255,107,87,.16) !important; border-color:var(--berry) !important; color:#ffd0c6 !important; }
+.train-card { border-color:var(--line) !important; }
+.mode, .key, .cmp-btn { background:rgba(255,255,255,.06) !important; border-color:var(--line) !important;
+                        color:var(--ink) !important; }
+.mode.on { border-color:var(--leaf) !important; background:rgba(156,204,101,.14) !important; color:#e2ffc8 !important; }
+.key.go { background:linear-gradient(135deg,var(--leaf),var(--leaf-dark)) !important;
+          color:#122006 !important; border-color:#3d5c20 !important; }
+.round-bar { background:rgba(255,255,255,.12) !important; }
+
 /* художнє оформлення заголовків та іконок */
 .sec-head {
   background-image: linear-gradient(90deg, rgba(18,14,11,.62), rgba(18,14,11,.28)),
