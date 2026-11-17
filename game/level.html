@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Урок — Тімолінго</title>
-<link rel="stylesheet" href="game.css?v=20261117b">
+<link rel="stylesheet" href="game.css?v=20261117c">
 </head>
 <body>
 <aside class="side" id="side"></aside>
@@ -22,8 +22,8 @@
 
 <audio id="ding" preload="auto" src="ding.mp3"></audio>
 <div class="toast" id="toast"></div>
-<script src="tasks.js?v=20261117b"></script>
-<script src="game.js?v=20261117b"></script>
+<script src="tasks.js?v=20261117c"></script>
+<script src="game.js?v=20261117c"></script>
 <script>
 (function () {
   Game.renderSidebar("learn");
@@ -109,7 +109,7 @@
   if (lives <= 0) {
     document.getElementById("showAns").style.display = "inline-flex";
     document.getElementById("opts").innerHTML =
-      '<div style="grid-column:1/-1;font-weight:800;color:#ea2b2b">❤️ Життя закінчились. Відновляться завтра — або на карті за 10 💎.</div>';
+      '<div style="grid-column:1/-1;font-weight:800;color:#ea2b2b">❤️ Життя закінчились. Відновляться завтра — або на карті за 20 💎.</div>';
   }
 
   var opts = document.getElementById("opts");
@@ -167,7 +167,7 @@
         syncHud();
         if (left <= 0) {
           document.querySelectorAll(".qopt").forEach(function (o) { o.disabled = true; });
-          document.getElementById("msg").textContent = "❤️ Життя закінчились. Відновляться завтра — або на карті за 10 💎.";
+          document.getElementById("msg").textContent = "❤️ Життя закінчились. Відновляться завтра — або на карті за 20 💎.";
         } else {
           document.getElementById("msg").textContent = "Спробуй ще 🙂 ❤️ " + left;
         }

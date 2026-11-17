@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Навчання — Тімолінго</title>
-<link rel="stylesheet" href="game.css?v=20261117b">
+<link rel="stylesheet" href="game.css?v=20261117c">
 </head>
 <body>
 <aside class="side" id="side"></aside>
@@ -25,7 +25,7 @@
         <div class="card">
           <h3>Налаштування</h3>
           <div class="tools" style="margin-top:0">
-            <button class="btn ghost" id="heal">❤️ Відновити життя (10 💎)</button>
+            <button class="btn ghost" id="heal">❤️ Відновити життя (20 💎)</button>
             <button class="btn ghost" id="export">⬇️ Зберегти</button>
             <button class="btn ghost" id="import">⬆️ Завантажити</button>
             <button class="btn ghost" id="reset">♻️ Скинути</button>
@@ -37,9 +37,9 @@
 </main>
 
 <div class="toast" id="toast"></div>
-<script src="tasks.js?v=20261117b"></script>
-<script src="avatars.js?v=20261117b"></script>
-<script src="game.js?v=20261117b"></script>
+<script src="tasks.js?v=20261117c"></script>
+<script src="avatars.js?v=20261117c"></script>
+<script src="game.js?v=20261117c"></script>
 <script>
 (function () {
   var p = Game.load();
@@ -294,8 +294,8 @@
   document.getElementById("heal").addEventListener("click", function () {
     var p = Game.load();
     if (p.lives >= Game.MAX_LIVES) { Game.toast("Життя й так повні"); return; }
-    if (p.gems < 10) { Game.toast("Треба 10 кристалів"); return; }
-    p.gems -= 10; p.lives = Game.MAX_LIVES; p.livesDate = Game.todayStr();
+    if (p.gems < 20) { Game.toast("Треба 20 кристалів"); return; }
+    p.gems -= 20; p.lives = Game.MAX_LIVES; p.livesDate = Game.todayStr();
     Game.save(p); render(); Game.toast("Життя відновлено ❤️");
   });
   document.getElementById("reset").addEventListener("click", function () {
