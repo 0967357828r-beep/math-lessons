@@ -599,21 +599,21 @@
   function achievements(p) {
     var a = [];
     function add(o) { a.push(o); }
-    add({ id: "first", icon: "🌟", title: "Перший крок", now: Math.min(p.stats.lessons, 1), goal: 1,
+    add({ id: "first", icon: '<img src="art/icon_star.png" class="ico" alt="">', title: "Перший крок", now: Math.min(p.stats.lessons, 1), goal: 1,
           level: p.stats.lessons >= 1 ? 1 : 0, max: 1, desc: "Пройди перший урок" });
-    add({ id: "ten", icon: "📚", title: "Старанний", now: Math.min(p.stats.lessons, 10), goal: 10,
+    add({ id: "ten", icon: '<img src="art/ach_books.png" class="ico" alt="">', title: "Старанний", now: Math.min(p.stats.lessons, 10), goal: 10,
           level: p.stats.lessons >= 10 ? 1 : 0, max: 1, desc: "Пройди 10 уроків" });
-    add({ id: "twentyfive", icon: "🏃", title: "Марафонець", now: Math.min(p.stats.lessons, 25), goal: 25,
+    add({ id: "twentyfive", icon: '<img src="art/ach_boots.png" class="ico" alt="">', title: "Марафонець", now: Math.min(p.stats.lessons, 25), goal: 25,
           level: p.stats.lessons >= 25 ? 1 : 0, max: 1, desc: "Пройди 25 уроків" });
-    add({ id: "perfect5", icon: "🎯", title: "Без помилок", now: Math.min(p.stats.perfect, 5), goal: 5,
+    add({ id: "perfect5", icon: '<img src="art/ach_target.png" class="ico" alt="">', title: "Без помилок", now: Math.min(p.stats.perfect, 5), goal: 5,
           level: p.stats.perfect >= 5 ? 1 : 0, max: 1, desc: "5 ідеальних уроків" });
-    add({ id: "streak3", icon: "🔥", title: "Серія", now: Math.min(p.streak, 3), goal: 3,
+    add({ id: "streak3", icon: '<img src="art/ach_fire.png" class="ico" alt="">', title: "Серія", now: Math.min(p.streak, 3), goal: 3,
           level: p.streak >= 7 ? 3 : p.streak >= 3 ? 1 : 0, max: 3, desc: "Займайся кілька днів підряд" });
-    add({ id: "xp500", icon: "⚡", title: "Мудрий", now: Math.min(p.xp, 500), goal: 500,
+    add({ id: "xp500", icon: '<img src="art/ach_bolt.png" class="ico" alt="">', title: "Мудрий", now: Math.min(p.xp, 500), goal: 500,
           level: p.xp >= 1000 ? 2 : p.xp >= 500 ? 1 : 0, max: 2, desc: "Зароби 500 балів" });
-    add({ id: "gems25", icon: "💎", title: "Кристальний", now: Math.min(p.gems, 25), goal: 25,
+    add({ id: "gems25", icon: '<img src="art/icon_gem.png" class="ico" alt="">', title: "Кристальний", now: Math.min(p.gems, 25), goal: 25,
           level: p.gems >= 50 ? 2 : p.gems >= 25 ? 1 : 0, max: 2, desc: "Збери 25 кристалів" });
-    add({ id: "league", icon: "🏆", title: "Чемпіон", now: leagueOf(p).index, goal: 9,
+    add({ id: "league", icon: '<img src="art/icon_trophy.png" class="ico" alt="">', title: "Чемпіон", now: leagueOf(p).index, goal: 9,
           level: leagueOf(p).index >= 9 ? 2 : leagueOf(p).index >= 5 ? 1 : 0, max: 2,
           desc: "Дійди до Діамантової ліги" });
     return a;

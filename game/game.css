@@ -708,6 +708,9 @@ body {
                       color:var(--ink); }
 .pick-card .av-pick:hover { border-color:var(--leaf); background:rgba(156,204,101,.10); }
 .pick-card .av-name { font-size:9px; font-weight:800; color:var(--muted); line-height:1.1; text-align:center; }
+.ach .ai { background:rgba(255,255,255,.05); border:1px solid var(--line); }
+.ach .ai.on { background:rgba(255,209,102,.12); border-color:rgba(255,209,102,.35); }
+.ach .ai .ico { width:40px; height:40px; }
 @keyframes modalIn { from { opacity:0; transform:scale(.94); } to { opacity:1; transform:none; } }
 
 /* художнє оформлення заголовків та іконок */

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Профіль — Тімолінго</title>
-<link rel="stylesheet" href="game.css?v=20261117s">
+<link rel="stylesheet" href="game.css?v=20261117t">
 </head>
 <body>
 <div class="story-deco" aria-hidden="true"><span>🍄</span><span>🌿</span><span>✨</span></div>
@@ -18,9 +18,9 @@
 </main>
 
 <div class="toast" id="toast"></div>
-<script src="tasks.js?v=20261117s"></script>
-<script src="avatars.js?v=20261117s"></script>
-<script src="game.js?v=20261117s"></script>
+<script src="tasks.js?v=20261117t"></script>
+<script src="avatars.js?v=20261117t"></script>
+<script src="game.js?v=20261117t"></script>
 <script>
 (function () {
   var EMOJI = ["🐸", "🦎", "🐛", "🐌", "🦋", "🐞", "🐢", "🐝", "🦊", "🐼", "🦄", "🐙", "🚀", "🌟"];
@@ -76,7 +76,7 @@
     ach.forEach(function (a) {
       var pct = Math.min(100, Math.round(a.now / a.goal * 100));
       var badge = a.level > 0 ? "Рівень " + a.level : "Нове";
-      html += '<div class="ach"><div class="ai" style="background:' + (a.level ? "#fff3d6" : "#f2f2f2") + '">' +
+      html += '<div class="ach"><div class="ai' + (a.level ? " on" : "") + '">' +
               a.icon + '</div><div class="am"><div class="at">' + a.title +
               '<span>' + a.now + ' / ' + a.goal + '</span></div>' +
               '<div class="ad">' + a.desc + ' · ' + badge + '</div>' +
