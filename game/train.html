@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Тренування — Тімолінго</title>
-<link rel="stylesheet" href="game.css?v=20261118y">
+<link rel="stylesheet" href="game.css?v=20261118z">
 <style>
   .modes { display: flex; gap: 8px; flex-wrap: wrap; margin: 6px 0 18px; }
   .mode { border: 2px solid #e5e5e5; border-bottom-width: 4px; background: #fff; border-radius: 14px;
@@ -60,8 +60,8 @@
 </main>
 
 <div class="toast" id="toast"></div>
-<script src="train_bank.js?v=20261118y"></script>
-<script src="game.js?v=20261118y"></script>
+<script src="train_bank.js?v=20261118z"></script>
+<script src="game.js?v=20261118z"></script>
 <script>
 (function () {
   Game.renderSidebar("train");
@@ -71,7 +71,7 @@
     var city = document.getElementById("pageCity");
     if (city) {
       var cityFile = lg.cur.city.replace(/\.png$/, "") + "_train.webp";
-      city.style.backgroundImage = 'url("' + cityFile + '?v=20261118y")';
+      city.style.backgroundImage = 'url("' + cityFile + '?v=20261118z")';
     }
   })();
 
@@ -95,7 +95,10 @@
   function loadRetry() {
     try {
       var o = JSON.parse(localStorage.getItem(RETRY_KEY)) || {};
-      return { items: Array.isArray(o.items) ? o.items : [], since: typeof o.since === "number" ? o.since : 0 };
+      var items = Array.isArray(o.items) ? o.items.filter(function (it) {
+        return !(it && String(it.q || "").toLowerCase().indexOf("x") > -1);
+      }) : [];
+      return { items: items, since: typeof o.since === "number" ? o.since : 0 };
     } catch (e) { return { items: [], since: 0 }; }
   }
   function saveRetry(o) {
@@ -262,7 +265,7 @@
       removeRetry(cur);
       var gemMsg = "";
       Game.addGems(3); gemsEarned += 3; gemMsg = " · +3 💎";
-      if (fb) { fb.className = "feedback ok"; fb.innerHTML = "Правильно! +" + gained + " XP · +3 <img src=\"art/icon_gem.png?v=20261118y\" class=\"ico sm\" alt=\"\">"; }
+      if (fb) { fb.className = "feedback ok"; fb.innerHTML = "Правильно! +" + gained + " XP · +3 <img src=\"art/icon_gem.png?v=20261118z\" class=\"ico sm\" alt=\"\">"; }
       var box = document.getElementById("answer");
       if (box) { box.className = "answer ok"; }
       setTimeout(function () { idx++; maybeInsertRetry(); renderQuestion(); }, 850);
