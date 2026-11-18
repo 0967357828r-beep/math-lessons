@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Квести — Тімолінго</title>
-<link rel="stylesheet" href="game.css?v=20261118t">
+<link rel="stylesheet" href="game.css?v=20261118w">
 </head>
 <body>
 <div class="story-deco" aria-hidden="true"><span>🍄</span><span>🌿</span><span>✨</span></div>
@@ -19,8 +19,8 @@
 </main>
 
 <div class="toast" id="toast"></div>
-<script src="tasks.js?v=20261118t"></script>
-<script src="game.js?v=20261118t"></script>
+<script src="tasks.js?v=20261118w"></script>
+<script src="game.js?v=20261118w"></script>
 <script>
 (function () {
   Game.renderSidebar("quests");
@@ -30,7 +30,7 @@
     var city = document.getElementById("pageCity");
     if (city) {
       var cityFile = lg.cur.city.replace(/\.png$/, "") + "_quests.webp";
-      city.style.backgroundImage = 'url("' + cityFile + '?v=20261118t")';
+      city.style.backgroundImage = 'url("' + cityFile + '?v=20261118w")';
     }
   })();
 
@@ -84,7 +84,7 @@
       '<div class="muted" style="font-size:13px;line-height:1.6;font-weight:700">' +
       'Бали ⚡ нараховуються за кожен пройдений урок. Хвилини ⏱️ рахуються від початку до завершення уроку. ' +
       'Урок «без помилок» — коли всі п\'ять кроків пройдено з першої спроби. ' +
-      'Кристали 💎: +2 за ідеальний урок, +15 за пройдений розділ, +3 за кожен раунд тренування і нагороди квестів.' +
+      'Кристали 💎: +3 за кожну правильну відповідь, +2 за ідеальний урок, +15 за пройдений розділ і нагороди квестів.' +
       '</div></div>';
 
     host.innerHTML = html;
