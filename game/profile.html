@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Профіль — Тімолінго</title>
-<link rel="stylesheet" href="game.css?v=20261118f">
+<link rel="stylesheet" href="game.css?v=20261118g">
 </head>
 <body>
 <div class="story-deco" aria-hidden="true"><span>🍄</span><span>🌿</span><span>✨</span></div>
@@ -18,9 +18,9 @@
 </main>
 
 <div class="toast" id="toast"></div>
-<script src="tasks.js?v=20261118f"></script>
-<script src="avatars.js?v=20261118f"></script>
-<script src="game.js?v=20261118f"></script>
+<script src="tasks.js?v=20261118g"></script>
+<script src="avatars.js?v=20261118g"></script>
+<script src="game.js?v=20261118g"></script>
 <script>
 (function () {
   var EMOJI = ["🐸", "🦎", "🐛", "🐌", "🦋", "🐞", "🐢", "🐝", "🦊", "🐼", "🦄", "🐙", "🚀", "🌟"];
@@ -30,7 +30,7 @@
 
   function avatarHTML(a, size, radius) {
     if (a && String(a).indexOf("/") > -1) {
-      return '<img src="' + Game.esc(a) + '?v=20261118f" alt="" style="width:' + size + 'px;height:' + size + 'px;' +
+      return '<img src="' + Game.esc(a) + '?v=20261118g" alt="" style="width:' + size + 'px;height:' + size + 'px;' +
              'border-radius:' + (radius || "50%") + ';object-fit:cover;display:block">';
     }
     return a || "🐸";
@@ -68,7 +68,7 @@
       '<div class="stats">' +
         '<div class="stat"><div class="si">🔥</div><div><b>' + p.streak + '</b><span>денна серія</span></div></div>' +
         '<div class="stat"><div class="si">⚡</div><div><b>' + p.xp + '</b><span>усього балів</span></div></div>' +
-        '<div class="stat"><div class="si"><img class="league-crest sm" src="' + lg.cur.crest + '?v=20261118f" alt=""></div><div><b>' + lg.cur.name + '</b><span>поточна ліга</span></div></div>' +
+        '<div class="stat"><div class="si"><img class="league-crest sm" src="' + lg.cur.crest + '?v=20261118g" alt=""></div><div><b>' + lg.cur.name + '</b><span>поточна ліга</span></div></div>' +
         '<div class="stat"><div class="si">💎</div><div><b>' + p.gems + '</b><span>кристали</span></div></div>' +
       '</div>' +
 
@@ -96,26 +96,28 @@
         }).join("")
       : '<div class="muted" style="font-size:13px;font-weight:700">Поки що без помилок — так тримати! 🌟</div>';
 
-    var shopHtml = Game.shopItems().map(function (s) {
-      var label = s.equipped ? "Зняти" : s.owned ? "Вдягнути" : ("💎 " + s.cost);
-      var cls = s.equipped ? "btn" : "btn ghost";
-      return '<div class="shop-item' + (s.equipped ? " on" : "") + '">' +
-             '<div class="si">' + Game.shopIconHTML(s, 30) + '</div><div class="sn">' + s.name + '</div>' +
-             '<button class="' + cls + '" data-shop="' + s.id + '"' + (s.owned ? "" : ' data-buy="1"') + '>' + label + '</button></div>';
+    var shopHtml = Game.avatarShop().map(function (a) {
+      var label = a.selected ? "Обрано" : a.owned ? "Обрати" : ("💎 " + a.price);
+      var cls = a.selected ? "btn" : "btn ghost";
+      return '<div class="shop-item avatar-item' + (a.selected ? " on" : "") + '">' +
+             '<img class="shop-avatar" src="' + Game.esc(a.file) + '?v=20261118g" alt="">' +
+             '<div class="sn">' + (a.name ? Game.esc(a.name) : "&nbsp;") + '</div>' +
+             '<button class="' + cls + '" data-avatar="' + Game.esc(a.file) + '" data-price="' + a.price + '"' +
+             (a.selected ? " disabled" : "") + '>' + label + '</button></div>';
     }).join("");
 
     html += '</div><div class="card" style="margin-bottom:18px"><h3>Слабкі місця <span class="more">для тата</span></h3>' +
             weakHtml + '</div>' +
 
-      '<div class="card" style="margin-bottom:18px"><h3>Крамниця аватара <span class="more">💎 ' +
+      '<div class="card" style="margin-bottom:18px"><h3>Крамниця аватарів <span class="more">💎 ' +
             p.gems + '</span></h3><div class="shop-grid">' + shopHtml + '</div></div>' +
 
       '<div class="card" style="margin-bottom:18px"><h3>' + lg.cur.name + ' ліга' +
       ' <a class="more" href="leaderboard.html">дошка</a></h3>' +
       '<div class="league-city" style="background-image:linear-gradient(180deg,rgba(18,14,11,.15),rgba(18,14,11,.75)),url(\'' +
-      lg.cur.city + '?v=20261118f\')"></div>' +
+      lg.cur.city + '?v=20261118g\')"></div>' +
       '<div class="league-row"><div class="league-badge"><img class="league-crest" src="' +
-      lg.cur.crest + '?v=20261118f" alt=""></div><div><b>' + p.xp + ' XP усього</b>' +
+      lg.cur.crest + '?v=20261118g" alt=""></div><div><b>' + p.xp + ' XP усього</b>' +
       '<div class="muted">' + (lg.next ? "До ліги «" + lg.next.name + "»: " + (lg.next.need - p.xp) + " XP" : "Найвища ліга!") +
       '</div></div></div>' +
       '<div class="bar" style="margin-top:12px"><i style="width:' + Math.round(lg.pct * 100) + '%;background:' +
@@ -132,19 +134,20 @@
 
     host.innerHTML = html;
 
-    Array.prototype.forEach.call(document.querySelectorAll("[data-shop]"), function (b) {
+    Array.prototype.forEach.call(document.querySelectorAll("[data-avatar]"), function (b) {
       b.addEventListener("click", function () {
-        var id = b.getAttribute("data-shop");
-        if (b.getAttribute("data-buy") === "1") {
-          var r = Game.buyItem(id);
-          if (!r) { return; }
-          if (r.error === "gems") { Game.toast("Не вистачає кристалів — треба " + r.item.cost); return; }
-          if (r.error === "already") { return; }
-          Game.toast("Куплено: " + r.item.name + " · −" + r.item.cost + " 💎");
-        } else {
-          var e = Game.equipItem(id);
-          Game.toast(e && e.accessory ? "Вдягнуто " + id : "Знято з аватара");
+        var file = b.getAttribute("data-avatar");
+        var price = +b.getAttribute("data-price") || 0;
+        var p0 = Game.load();
+        if (price > 0 && p0.ownedAvatars.indexOf(file) < 0) {
+          var r = Game.buyAvatar(file);
+          if (!r || r.error === "gems") {
+            Game.toast("Не вистачає кристалів — треба " + price);
+            return;
+          }
         }
+        Game.selectAvatar(file);
+        Game.toast("Аватар обрано");
         render();
         Game.renderSidebar("profile");
         var hud = document.getElementById("hud");

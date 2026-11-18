@@ -15,6 +15,30 @@
     { id: "crown", icon: "art/shop_crown.png", avatar: "art/avatar_crown.png", name: "Корона", cost: 35 }
   ];
   var SHOP_IDS = SHOP.map(function (x) { return x.id; });
+
+  /* ---------- крамниця аватарів ---------- */
+  var AVATAR_BASE = [
+    "avatars/boy-tymko.webp", "avatars/boy-petryk.webp", "avatars/boy-yarema.webp", "avatars/boy-danylo.webp",
+    "avatars/anne-boonchuy.webp", "avatars/sasha-waybright.webp", "avatars/marcy-wu.webp", "avatars/polly-plantar.webp"
+  ];
+  var AVATAR_PRICE = {
+    "avatars/boy-matviy.webp": 200, "avatars/boy-ostap.webp": 200,
+    "avatars/girl-halya.webp": 200, "avatars/girl-olesya.webp": 200,
+    "avatars/girl-zoryana.webp": 200, "avatars/girl-ivanka.webp": 200,
+    "avatars/chuck.webp": 300, "avatars/felicia-sundew.webp": 300,
+    "avatars/hop-pop-plantar.webp": 300, "avatars/ivy-sundew.webp": 300,
+    "avatars/leif.webp": 300, "avatars/loggle.webp": 300,
+    "avatars/maddie-flour.webp": 300, "avatars/mrs-croaker.webp": 300,
+    "avatars/sprig-plantar.webp": 300, "avatars/wally-ribbiton.webp": 300,
+    "avatars/braddock.webp": 400, "avatars/captain-grime.webp": 400,
+    "avatars/general-yunnan.webp": 400, "avatars/king-aldrich.webp": 400,
+    "avatars/king-andrias.webp": 400, "avatars/lady-olivia.webp": 400,
+    "avatars/mayor-toadstool.webp": 400, "avatars/mr-boonchuy.webp": 400,
+    "avatars/percy.webp": 400, "avatars/soggy-joe.webp": 400,
+    "avatars/stumpy.webp": 400, "avatars/toadie.webp": 400,
+    "avatars/barrel.webp": 500, "avatars/darcy.webp": 500,
+    "avatars/mother-olm.webp": 500, "avatars/the-core.webp": 500
+  };
   function shopIconHTML(x, size) {
     if (!x) { return ""; }
     if (x.icon && x.icon.indexOf("/") > -1) {
@@ -125,6 +149,18 @@
     p.wardrobe = Array.isArray(p.wardrobe)
       ? p.wardrobe.filter(function (id) { return SHOP_IDS.indexOf(id) > -1; }) : [];
     if (p.profile.accessory && SHOP_IDS.indexOf(p.profile.accessory) < 0) { p.profile.accessory = null; }
+    if (String(p.profile.avatar).indexOf("art/avatar_") === 0) {
+      p.profile.avatar = AVATAR_BASE[0];
+      p.profile.baseAvatar = AVATAR_BASE[0];
+      p.profile.accessory = null;
+    }
+    p.ownedAvatars = Array.isArray(p.ownedAvatars) ? p.ownedAvatars.filter(function (f) {
+      return typeof f === "string" && f.indexOf("avatars/") === 0;
+    }) : [];
+    AVATAR_BASE.forEach(function (f) { if (p.ownedAvatars.indexOf(f) < 0) { p.ownedAvatars.push(f); } });
+    if (String(p.profile.avatar).indexOf("avatars/") === 0 && p.ownedAvatars.indexOf(p.profile.avatar) < 0) {
+      p.ownedAvatars.push(p.profile.avatar);
+    }
     p.stats = p.stats || {};
     p.stats.lessons = p.stats.lessons || 0;
     p.stats.perfect = p.stats.perfect || 0;
@@ -374,6 +410,37 @@
     return { accessory: p.profile.accessory, avatar: p.profile.avatar };
   }
 
+  /* ---------- купівля аватарів ---------- */
+  function avatarShop() {
+    var p = load();
+    return (window.AVATARS || []).map(function (a) {
+      var base = AVATAR_BASE.indexOf(a.file) > -1;
+      var price = base ? 0 : (AVATAR_PRICE[a.file] || 200);
+      return { id: a.id, name: a.name || "", file: a.file, price: price, base: base,
+               owned: base || p.ownedAvatars.indexOf(a.file) > -1,
+               selected: p.profile.avatar === a.file };
+    });
+  }
+  function buyAvatar(file) {
+    var p = load();
+    if (AVATAR_BASE.indexOf(file) > -1 || p.ownedAvatars.indexOf(file) > -1) { return { error: "owned" }; }
+    var price = AVATAR_PRICE[file] || 200;
+    if (p.gems < price) { return { error: "gems", price: price }; }
+    p.gems -= price;
+    p.ownedAvatars.push(file);
+    save(p);
+    return { price: price };
+  }
+  function selectAvatar(file) {
+    var p = load();
+    if (AVATAR_BASE.indexOf(file) < 0 && p.ownedAvatars.indexOf(file) < 0) { return { error: "locked" }; }
+    p.profile.avatar = file;
+    p.profile.baseAvatar = file;
+    p.profile.accessory = null;
+    save(p);
+    return { file: file };
+  }
+
   /* ---------- повторення уроків і помилок ---------- */
   function markRepeat(id) {
     var p = load(); p.repeat = p.repeat || {}; p.repeat[id] = todayStr(); save(p); return true;
@@ -461,6 +528,13 @@
     });
     out.profile.accessory = (raw.profile && SHOP_IDS.indexOf(raw.profile.accessory) > -1 &&
                              out.wardrobe.indexOf(raw.profile.accessory) > -1) ? raw.profile.accessory : null;
+    out.ownedAvatars = [];
+    (Array.isArray(raw.ownedAvatars) ? raw.ownedAvatars : []).forEach(function (f) {
+      if (typeof f === "string" && f.indexOf("avatars/") === 0 && out.ownedAvatars.indexOf(f) < 0) {
+        out.ownedAvatars.push(f);
+      }
+    });
+    AVATAR_BASE.forEach(function (f) { if (out.ownedAvatars.indexOf(f) < 0) { out.ownedAvatars.push(f); } });
     var st = (raw.stats && typeof raw.stats === "object") ? raw.stats : {};
     out.stats = { lessons: Math.round(num(st.lessons, 0, 0, 100000)), perfect: Math.round(num(st.perfect, 0, 0, 100000)),
                   sec: Math.round(num(st.sec, 0, 0, 1e9)), days: {}, sectionsDone: {} };
@@ -723,6 +797,7 @@
     markRepeat: markRepeat, isRepeat: isRepeat, markMistake: markMistake, mistakes: mistakes,
     takeMistake: takeMistake, clearMistake: clearMistake, lessonSteps: lessonSteps,
     sanitize: sanitize, SECTION_SHADE: SECTION_SHADE, LESSON_MODE: LESSON_MODE,
-    shopItems: shopItems, buyItem: buyItem, equipItem: equipItem, SHOP: SHOP, shopIconHTML: shopIconHTML
+    shopItems: shopItems, buyItem: buyItem, equipItem: equipItem, SHOP: SHOP, shopIconHTML: shopIconHTML,
+    avatarShop: avatarShop, buyAvatar: buyAvatar, selectAvatar: selectAvatar
   };
 })();
