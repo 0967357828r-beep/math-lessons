@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Навчання — Тімолінго</title>
-<link rel="stylesheet" href="game.css?v=20261118t">
+<link rel="stylesheet" href="game.css?v=20261118u">
 <style>
 /* Анімований супутник на карті уроків — повний зріст, прозорий WebP */
 .timo-mascot { position: fixed; left: 272px; bottom: 6px; width: 120px; z-index: 6;
@@ -29,6 +29,32 @@
 }
 @media (prefers-reduced-motion: reduce) {
   .timo-mascot .tm-figure, .timo-mascot .tm-shadow { animation: none; }
+}
+/* фінальна скарбниця в самому кінці дороги */
+.finale-chest { position:relative; display:flex; flex-direction:column; align-items:center;
+                margin: 18px 0 44px; padding-top: 30px; z-index:1; cursor:pointer; }
+.finale-chest::before { content:""; position:absolute; top:0; left:50%; width:12px; height:46px;
+                transform:translateX(-50%); border-radius:10px;
+                background:repeating-linear-gradient(180deg, #cfcfcf 0 12px, #f4f4f4 12px 26px); }
+.finale-chest .fc-glow { position:absolute; left:50%; top:55%; width:min(540px,92vw); height:min(430px,72vw);
+                transform:translate(-50%,-50%); border-radius:50%; pointer-events:none;
+                background:radial-gradient(ellipse, rgba(255,209,102,.38), rgba(255,209,102,.09) 45%, transparent 70%);
+                animation: chestGlow 3.2s ease-in-out infinite; }
+.finale-chest .fc-img { position:relative; width:clamp(260px, 36vw, 390px); height:auto;
+                filter:drop-shadow(0 20px 26px rgba(0,0,0,.55)); animation: chestFloat 4s ease-in-out infinite; }
+.finale-chest .fc-cap { margin-top: 8px; font-size: clamp(18px, 2.2vw, 24px); font-weight:900;
+                color: var(--glow, #ffd166); text-shadow:0 2px 4px rgba(0,0,0,.65); letter-spacing:.5px; }
+.finale-chest .fc-sub { margin-top:4px; font-size:12px; font-weight:800; color:var(--muted); text-align:center; }
+.finale-chest.open .fc-glow { animation-duration: 2s; }
+@keyframes chestFloat { 0%,100% { transform:translateY(0) rotate(-.4deg); }
+                        50% { transform:translateY(-10px) rotate(.4deg); } }
+@keyframes chestGlow { 0%,100% { opacity:.65; transform:translate(-50%,-50%) scale(.96); }
+                       50% { opacity:1; transform:translate(-50%,-50%) scale(1.04); } }
+@media (max-width: 860px) {
+  .finale-chest .fc-img { width:min(280px, 72vw); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .finale-chest .fc-img, .finale-chest .fc-glow { animation:none; }
 }
 </style>
 </head>
@@ -67,14 +93,14 @@
 
 <div class="timo-mascot" id="timoMascot" aria-hidden="true">
   <div class="tm-bubble" id="tmBubble">Привіт! Гайда вчитися! 🌿</div>
-  <div class="tm-figure"><img src="art/mascot_tymko.webp?v=20261118t" alt=""></div>
+  <div class="tm-figure"><img src="art/mascot_tymko.webp?v=20261118u" alt=""></div>
   <div class="tm-shadow"></div>
 </div>
 
 <div class="toast" id="toast"></div>
-<script src="tasks.js?v=20261118t"></script>
-<script src="avatars.js?v=20261118t"></script>
-<script src="game.js?v=20261118t"></script>
+<script src="tasks.js?v=20261118u"></script>
+<script src="avatars.js?v=20261118u"></script>
+<script src="game.js?v=20261118u"></script>
 <script>
 (function () {
   var p = Game.load();
@@ -183,11 +209,11 @@
     var bg = document.getElementById("leagueBg");
     if (bg) {
       bg.style.backgroundImage = 'linear-gradient(180deg, rgba(18,14,11,.55), rgba(18,14,11,.84)), url("' +
-        lg.cur.city + '?v=20261118t")';
+        lg.cur.city + '?v=20261118u")';
     }
     el.innerHTML = '<h3>' + lg.cur.name + ' ліга <a class="more" href="leaderboard.html">переглянути</a></h3>' +
       '<div class="league-row"><div class="league-badge"><img class="league-crest" src="' +
-      lg.cur.crest + '?v=20261118t" alt=""></div><div><b>Ви на ' + lb.rank + ' місці</b>' +
+      lg.cur.crest + '?v=20261118u" alt=""></div><div><b>Ви на ' + lb.rank + ' місці</b>' +
       '<div class="muted">' + (lb.demote ? "Є ризик повернутися в нижчу лігу!"
                                           : lb.promote ? "Ви в зоні підвищення!" : "Тримайте темп!") + '</div></div></div>' +
       '<div style="margin-top:12px" class="bar"><i style="width:' + Math.round(lg.pct * 100) + '%;background:' +
@@ -203,7 +229,7 @@
     var banner = document.getElementById("dailyBanner");
     if (banner) {
       if (!rec.done && task) {
-        banner.innerHTML = '<span><img src="art/icon_star.png?v=20261118t" class="ico sm" alt=""> <b>Задача дня:</b> ' + Game.esc(task.title) + '</span>' +
+        banner.innerHTML = '<span><img src="art/icon_star.png?v=20261118u" class="ico sm" alt=""> <b>Задача дня:</b> ' + Game.esc(task.title) + '</span>' +
           '<a class="db-go" href="level.html?id=' + encodeURIComponent(rec.id) + '">Грати · +5 💎</a>';
         banner.style.display = "flex";
       } else {
@@ -213,12 +239,12 @@
     var card = document.getElementById("dailyCard");
     if (card) {
       card.innerHTML = '<h3>Бонуси дня</h3>' +
-        '<div class="quest"><div class="qi"><img src="art/icon_chest.png?v=20261118t" class="ico" alt=""></div><div class="qm">' +
+        '<div class="quest"><div class="qi"><img src="art/icon_chest.png?v=20261118u" class="ico" alt=""></div><div class="qm">' +
         '<div class="qt">Скриня дня</div><div class="muted" style="font-size:11px;font-weight:700">' +
         (chest.available ? "Одна на добу — кристали або життя" : "Вже відкрита сьогодні") + '</div></div>' +
         (chest.available ? '<button class="qbtn" id="dailyChest">Відкрити</button>'
                          : '<span class="qr muted">✓</span>') + '</div>' +
-        '<div class="quest"><div class="qi"><img src="art/icon_star.png?v=20261118t" class="ico" alt=""></div><div class="qm">' +
+        '<div class="quest"><div class="qi"><img src="art/icon_star.png?v=20261118u" class="ico" alt=""></div><div class="qm">' +
         '<div class="qt">Задача дня</div><div class="muted" style="font-size:11px;font-weight:700">' +
         (rec.done ? "Виконано! +5 💎" : (task ? Game.esc(task.title) : "")) + '</div></div>' +
         (rec.done ? '<span class="qr muted">✓</span>' : '<span class="qr">+5 💎</span>') + '</div>';
@@ -282,7 +308,7 @@
           var reachable = seqIdx === 0 || Game.isDone(p, Game.SEQ[seqIdx - 1].id);
           var cb = document.createElement("button");
           cb.className = "lvl chest" + (reachable ? "" : " locked");
-          cb.innerHTML = '<div class="dot"><img src="art/icon_chest.png?v=20261118t" class="ico" alt=""></div>' +
+          cb.innerHTML = '<div class="dot"><img src="art/icon_chest.png?v=20261118u" class="ico" alt=""></div>' +
             '<div class="cap">' + (reachable ? "Скриня!" : "Скриня") + '</div>' +
             '<div class="st">' + (chest.kind === "life" ? "❤️" : "💎") + '</div>';
           if (reachable) {
@@ -294,8 +320,8 @@
           node.className = "lvl " + (done ? "done" : open ? "open" : "locked") + (perfect ? " perfect" : "") + (repeated ? " repeat" : "");
           if (done || open) { node.href = "level.html?id=" + encodeURIComponent(id); }
           node.innerHTML = '<div class="dot">' +
-            (done ? (perfect ? '<img src="art/icon_gem.png?v=20261118t" class="ico" alt="">' : '<img src="art/icon_check.png?v=20261118t" class="ico" alt="">')
-                  : open ? "▶️" : '<img src="art/icon_lock.png?v=20261118t" class="ico" alt="">') + '</div>' +
+            (done ? (perfect ? '<img src="art/icon_gem.png?v=20261118u" class="ico" alt="">' : '<img src="art/icon_check.png?v=20261118u" class="ico" alt="">')
+                  : open ? "▶️" : '<img src="art/icon_lock.png?v=20261118u" class="ico" alt="">') + '</div>' +
             '<div class="cap">' + (repeated ? "🔁 " : "") + Game.esc(task.title) + '</div>' +
             '<div class="st">' + (repeated ? "на завтра" : "") + '</div>';
           step.appendChild(node);
@@ -321,6 +347,28 @@
       tstep.appendChild(tnode);
       steps.appendChild(tstep);
     });
+
+    /* фінальна скарбниця — у самому кінці дороги, після всіх розділів */
+    var doneCount = 0;
+    Game.SEQ.forEach(function (t) { if (Game.isDone(p, t.id)) { doneCount++; } });
+    var doneAll = doneCount === Game.SEQ.length;
+    var finale = document.createElement("div");
+    finale.className = "finale-chest" + (doneAll ? " open" : "");
+    finale.innerHTML = '<div class="fc-glow"></div>' +
+      '<img class="fc-img" src="art/final_chest.webp?v=20261118u" alt="Скарбниця курсу">' +
+      '<div class="fc-cap">Скарбниця курсу</div>' +
+      '<div class="fc-sub">' + (doneAll ? "Ти дійшов до кінця! Натисни, щоб відкрити"
+                                         : "Пройдено " + doneCount + " із " + Game.SEQ.length + " уроків") + '</div>';
+    finale.addEventListener("click", function () {
+      if (doneAll) {
+        finale.classList.add("open");
+        Game.toast("Скарбниця курсу відкрита! Ти пройшов усі " + Game.SEQ.length + " уроків 🏆");
+      } else {
+        Game.toast("Скарбниця відкриється, коли пройдеш усі уроки. Залишилось " +
+                   (Game.SEQ.length - doneCount) + ".");
+      }
+    });
+    path.appendChild(finale);
 
     renderDaily(p);
     leagueCard();
