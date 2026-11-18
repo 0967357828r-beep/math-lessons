@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Урок — Тімолінго</title>
-<link rel="stylesheet" href="game.css?v=20261118x">
+<link rel="stylesheet" href="game.css?v=20261118y">
 <style>
   .steps { display:flex; gap:6px; align-items:center; margin:10px 0 4px; }
   .steps i { width:24px; height:8px; border-radius:6px; background:#e5e5e5; display:block; }
@@ -48,9 +48,9 @@
 
 <audio id="ding" preload="auto" src="ding.mp3"></audio>
 <div class="toast" id="toast"></div>
-<script src="train_bank.js?v=20261118x"></script>
-<script src="tasks.js?v=20261118x"></script>
-<script src="game.js?v=20261118x"></script>
+<script src="train_bank.js?v=20261118y"></script>
+<script src="tasks.js?v=20261118y"></script>
+<script src="game.js?v=20261118y"></script>
 <script>
 (function () {
   Game.renderSidebar("learn");
@@ -155,11 +155,13 @@
   var si = 0, attempts = 0, wrongAny = false, outOfLives = false, submitCurrent = null;
 
   function dots() {
+    var el = document.getElementById("dots");
+    if (totalQuestions <= 1) { if (el) { el.style.display = "none"; } return; }
     var h = "";
     for (var i = 0; i < totalQuestions; i++) {
       h += '<i class="' + (i < si ? "ok" : i === si ? "on" : "") + '"></i>';
     }
-    document.getElementById("dots").innerHTML = h;
+    if (el) { el.innerHTML = h; }
   }
   function msg(text, bad) {
     var m = document.getElementById("msg");
@@ -218,8 +220,7 @@
       var tmp = items[i]; items[i] = items[j]; items[j] = tmp;
     }
     var stage = document.getElementById("stage");
-    stage.innerHTML = '<div class="step-label">Крок ' + (si + 1) + ' з ' + totalQuestions +
-      ' · головна задача</div><div class="qtitle">Обери відповідь: <span class="muted" style="font-weight:700;font-size:12px">натисни — перевіримо одразу</span></div>' +
+    stage.innerHTML = '<div class="step-label">Задача</div><div class="qtitle">Обери відповідь: <span class="muted" style="font-weight:700;font-size:12px">натисни — перевіримо одразу</span></div>' +
       '<div class="qopts" id="opts"></div>';
     var opts = document.getElementById("opts");
     items.forEach(function (item) {
@@ -371,11 +372,11 @@
     ov.className = "modal";
     ov.innerHTML = '<div class="modal-card trophy-card">' +
       '<div class="modal-glow"></div>' +
-      '<img class="modal-art" src="art/icon_trophy.png?v=20261118x" alt="">' +
+      '<img class="modal-art" src="art/icon_trophy.png?v=20261118y" alt="">' +
       '<div class="modal-kicker">Кубок розділу</div>' +
       '<h2>' + Game.esc(t.title) + '</h2>' +
       '<div class="modal-sub">Розділ пройдено повністю!</div>' +
-      '<div class="modal-reward"><img src="art/icon_gem.png?v=20261118x" class="ico" alt=""> +15</div>' +
+      '<div class="modal-reward"><img src="art/icon_gem.png?v=20261118y" class="ico" alt=""> +15</div>' +
       '<button class="btn modal-btn" id="trophyOk">Забрати кубок</button></div>';
     document.body.appendChild(ov);
     try { document.getElementById("ding").play(); } catch (e) {}
