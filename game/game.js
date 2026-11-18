@@ -680,11 +680,11 @@
 
   function hudHTML() {
     var p = load();
-    return '<span class="chip lives">❤️ <b id="hud-lives">' + p.lives + '</b></span>' +
-           '<span class="chip gems"><img src="art/icon_gem.png?v=20261117u" class="ico sm" alt=""> <b id="hud-gems">' + p.gems + '</b></span>' +
-           '<span class="chip xp">⚡ <b id="hud-xp">' + p.xp + '</b></span>' +
-           '<span class="chip streak">🔥 <b id="hud-streak">' + p.streak + '</b></span>' +
-           '<span class="chip combo">💫 <b id="hud-combo">x' + (p.combo || 0) + '</b></span>';
+    return '<span class="chip lives"><img src="art/icon_heart.png?v=20261118a" class="ico sm" alt=""> <b id="hud-lives">' + p.lives + '</b></span>' +
+           '<span class="chip gems"><img src="art/icon_gem.png?v=20261118a" class="ico sm" alt=""> <b id="hud-gems">' + p.gems + '</b></span>' +
+           '<span class="chip xp"><img src="art/ach_bolt.png?v=20261118a" class="ico sm" alt=""> <b id="hud-xp">' + p.xp + '</b></span>' +
+           '<span class="chip streak"><img src="art/ach_fire.png?v=20261118a" class="ico sm" alt=""> <b id="hud-streak">' + p.streak + '</b></span>' +
+           '<span class="chip combo"><img src="art/icon_star.png?v=20261118a" class="ico sm" alt=""> <b id="hud-combo">x' + (p.combo || 0) + '</b></span>';
   }
   function syncHud() {
     var p = load();
