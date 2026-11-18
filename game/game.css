@@ -696,6 +696,9 @@ body {
 .month-card .inner .bar > i { background: linear-gradient(90deg, var(--leaf), var(--glow)); }
 
 /* ліги: герби й казкові міста */
+.league-bg { position:fixed; inset:0; z-index:0; pointer-events:none;
+  background-size:cover; background-position:center 55%; background-repeat:no-repeat;
+  opacity:.95; transition:opacity .4s ease; }
 .league-scene { position:relative; min-height:190px; border-radius:26px; border:3px solid var(--woodline);
   background-size:cover; background-position:center 55%; margin-bottom:18px; padding:22px;
   display:flex; flex-direction:column; justify-content:flex-end; overflow:hidden;
