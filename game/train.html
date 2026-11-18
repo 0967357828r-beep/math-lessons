@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Тренування — Тімолінго</title>
-<link rel="stylesheet" href="game.css?v=20261118p">
+<link rel="stylesheet" href="game.css?v=20261118q">
 <style>
   .modes { display: flex; gap: 8px; flex-wrap: wrap; margin: 6px 0 18px; }
   .mode { border: 2px solid #e5e5e5; border-bottom-width: 4px; background: #fff; border-radius: 14px;
@@ -44,6 +44,7 @@
 </head>
 <body>
 <div class="story-deco" aria-hidden="true"><span>🍄</span><span>🌿</span><span>✨</span></div>
+<div class="league-bg page-city page-train" id="pageCity" aria-hidden="true"></div>
 <aside class="side" id="side"></aside>
 
 <main class="main">
@@ -59,12 +60,19 @@
 </main>
 
 <div class="toast" id="toast"></div>
-<script src="train_bank.js?v=20261118p"></script>
-<script src="game.js?v=20261118p"></script>
+<script src="train_bank.js?v=20261118q"></script>
+<script src="game.js?v=20261118q"></script>
 <script>
 (function () {
   Game.renderSidebar("train");
   document.getElementById("hud").innerHTML = Game.hudHTML();
+  (function () {
+    var lg = Game.leagueOf(Game.load());
+    var city = document.getElementById("pageCity");
+    if (city) {
+      city.style.backgroundImage = 'url("' + lg.cur.city + '?v=20261118q")';
+    }
+  })();
 
   var MODES = [
     { id: "add", label: "Додавання" },
@@ -313,7 +321,7 @@
       removeRetry(cur);
       var gemMsg = "";
       Game.addGems(3); gemsEarned += 3; gemMsg = " · +3 💎";
-      if (fb) { fb.className = "feedback ok"; fb.innerHTML = "Правильно! +" + gained + " XP · +3 <img src=\"art/icon_gem.png?v=20261118p\" class=\"ico sm\" alt=\"\">"; }
+      if (fb) { fb.className = "feedback ok"; fb.innerHTML = "Правильно! +" + gained + " XP · +3 <img src=\"art/icon_gem.png?v=20261118q\" class=\"ico sm\" alt=\"\">"; }
       var box = document.getElementById("answer");
       if (box) { box.className = "answer ok"; }
       setTimeout(function () { idx++; maybeInsertRetry(); renderQuestion(); }, 850);

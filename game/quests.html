@@ -4,10 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Квести — Тімолінго</title>
-<link rel="stylesheet" href="game.css?v=20261118p">
+<link rel="stylesheet" href="game.css?v=20261118q">
 </head>
 <body>
 <div class="story-deco" aria-hidden="true"><span>🍄</span><span>🌿</span><span>✨</span></div>
+<div class="league-bg page-city page-quests" id="pageCity" aria-hidden="true"></div>
 <aside class="side" id="side"></aside>
 
 <main class="main">
@@ -18,12 +19,19 @@
 </main>
 
 <div class="toast" id="toast"></div>
-<script src="tasks.js?v=20261118p"></script>
-<script src="game.js?v=20261118p"></script>
+<script src="tasks.js?v=20261118q"></script>
+<script src="game.js?v=20261118q"></script>
 <script>
 (function () {
   Game.renderSidebar("quests");
   document.getElementById("hud").innerHTML = Game.hudHTML();
+  (function () {
+    var lg = Game.leagueOf(Game.load());
+    var city = document.getElementById("pageCity");
+    if (city) {
+      city.style.backgroundImage = 'url("' + lg.cur.city + '?v=20261118q")';
+    }
+  })();
 
   var MONTH_NAMES = ["січня", "лютого", "березня", "квітня", "травня", "червня",
                      "липня", "серпня", "вересня", "жовтня", "листопада", "грудня"];

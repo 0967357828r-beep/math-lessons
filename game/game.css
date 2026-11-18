@@ -704,6 +704,17 @@ body {
 .league-bg { position:fixed; inset:0; z-index:0; pointer-events:none;
   background-size:cover; background-position:center 55%; background-repeat:no-repeat;
   opacity:.95; transition:opacity .4s ease; }
+/* місто ліги на внутрішніх вкладках — той самий казковий краєвид, але з іншим кадром */
+.page-city { z-index: 1; opacity: .58; filter: saturate(.95) contrast(1.04); }
+.page-city::after { content:""; position:absolute; inset:0; pointer-events:none; }
+.page-train { background-position: 72% 34%; }
+.page-train::after { background: linear-gradient(115deg, rgba(18,14,11,.26), rgba(18,14,11,.78)); }
+.page-quests { background-position: 26% 66%; }
+.page-quests::after { background: linear-gradient(245deg, rgba(18,14,11,.22), rgba(18,14,11,.82)); }
+.page-board { background-position: 54% 20%; }
+.page-board::after { background: linear-gradient(180deg, rgba(18,14,11,.16), rgba(18,14,11,.72)); }
+.page-profile { background-position: 40% 74%; }
+.page-profile::after { background: linear-gradient(135deg, rgba(18,14,11,.22), rgba(18,14,11,.8)); }
 .league-scene { position:relative; min-height:190px; border-radius:26px; border:3px solid var(--woodline);
   background-size:cover; background-position:center 55%; margin-bottom:18px; padding:22px;
   display:flex; flex-direction:column; justify-content:flex-end; overflow:hidden;

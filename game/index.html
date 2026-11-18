@@ -4,7 +4,33 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Навчання — Тімолінго</title>
-<link rel="stylesheet" href="game.css?v=20261118p">
+<link rel="stylesheet" href="game.css?v=20261118q">
+<style>
+/* Анімований супутник на карті уроків — повний зріст, прозорий WebP */
+.timo-mascot { position: fixed; left: 272px; bottom: 6px; width: 120px; z-index: 6;
+               pointer-events: none; filter: drop-shadow(0 8px 12px rgba(0,0,0,.45)); }
+.timo-mascot .tm-figure { animation: tmIdle 2.8s ease-in-out infinite; transform-origin: 50% 100%; }
+.timo-mascot .tm-figure img { display: block; width: 100%; height: auto; }
+.timo-mascot .tm-shadow { width: 78px; height: 12px; margin: -3px auto 0; border-radius: 50%;
+                          background: rgba(0,0,0,.38); filter: blur(4px);
+                          animation: tmShadow 2.8s ease-in-out infinite; }
+.timo-mascot .tm-bubble { position: absolute; left: 96%; top: 4px; max-width: 150px;
+                          background: rgba(32,25,20,.96); border: 1px solid rgba(255,224,190,.28);
+                          color: #fff1e2; border-radius: 12px; padding: 5px 9px;
+                          font: 800 11px/1.25 inherit; white-space: nowrap;
+                          box-shadow: 0 6px 16px rgba(0,0,0,.35); }
+@keyframes tmIdle { 0%,100% { transform: translateY(0) rotate(-1deg); }
+                    50% { transform: translateY(-7px) rotate(1deg); } }
+@keyframes tmShadow { 0%,100% { transform: scaleX(1); opacity: .55; }
+                      50% { transform: scaleX(.82); opacity: .3; } }
+@media (max-width: 860px) {
+  .timo-mascot { left: 8px; bottom: 2px; width: 84px; }
+  .timo-mascot .tm-bubble { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .timo-mascot .tm-figure, .timo-mascot .tm-shadow { animation: none; }
+}
+</style>
 </head>
 <body>
 <div class="story-deco" aria-hidden="true"><span>🍄</span><span>🌿</span><span>✨</span></div>
@@ -39,10 +65,16 @@
   </div>
 </main>
 
+<div class="timo-mascot" id="timoMascot" aria-hidden="true">
+  <div class="tm-bubble" id="tmBubble">Привіт! Гайда вчитися! 🌿</div>
+  <div class="tm-figure"><img src="art/mascot_tymko.webp?v=20261118q" alt=""></div>
+  <div class="tm-shadow"></div>
+</div>
+
 <div class="toast" id="toast"></div>
-<script src="tasks.js?v=20261118p"></script>
-<script src="avatars.js?v=20261118p"></script>
-<script src="game.js?v=20261118p"></script>
+<script src="tasks.js?v=20261118q"></script>
+<script src="avatars.js?v=20261118q"></script>
+<script src="game.js?v=20261118q"></script>
 <script>
 (function () {
   var p = Game.load();
@@ -80,6 +112,16 @@
 
   var CHARS = ["🐸", "🦎", "🐛", "🐌", "🦋", "🐞", "🐢", "🐝"];
   var PHRASES = ["Привіт!", "Молодець!", "Далі!", "Ура!", "Ти зможеш!", "Ще одна!", "Супер!", "Гайда!"];
+  /* оживляємо висловлювання маскота без перезавантаження сторінки */
+  (function () {
+    var bubble = document.getElementById("tmBubble");
+    if (!bubble || !PHRASES.length) { return; }
+    var i = 0;
+    setInterval(function () {
+      i = (i + 1) % PHRASES.length;
+      bubble.textContent = PHRASES[i];
+    }, 9000);
+  })();
   var charObserver = null;
   function observeChar(el) {
     if (!("IntersectionObserver" in window)) { el.classList.add("show"); return; }
@@ -141,11 +183,11 @@
     var bg = document.getElementById("leagueBg");
     if (bg) {
       bg.style.backgroundImage = 'linear-gradient(180deg, rgba(18,14,11,.55), rgba(18,14,11,.84)), url("' +
-        lg.cur.city + '?v=20261118p")';
+        lg.cur.city + '?v=20261118q")';
     }
     el.innerHTML = '<h3>' + lg.cur.name + ' ліга <a class="more" href="leaderboard.html">переглянути</a></h3>' +
       '<div class="league-row"><div class="league-badge"><img class="league-crest" src="' +
-      lg.cur.crest + '?v=20261118p" alt=""></div><div><b>Ви на ' + lb.rank + ' місці</b>' +
+      lg.cur.crest + '?v=20261118q" alt=""></div><div><b>Ви на ' + lb.rank + ' місці</b>' +
       '<div class="muted">' + (lb.demote ? "Є ризик повернутися в нижчу лігу!"
                                           : lb.promote ? "Ви в зоні підвищення!" : "Тримайте темп!") + '</div></div></div>' +
       '<div style="margin-top:12px" class="bar"><i style="width:' + Math.round(lg.pct * 100) + '%;background:' +
@@ -161,7 +203,7 @@
     var banner = document.getElementById("dailyBanner");
     if (banner) {
       if (!rec.done && task) {
-        banner.innerHTML = '<span><img src="art/icon_star.png?v=20261118p" class="ico sm" alt=""> <b>Задача дня:</b> ' + Game.esc(task.title) + '</span>' +
+        banner.innerHTML = '<span><img src="art/icon_star.png?v=20261118q" class="ico sm" alt=""> <b>Задача дня:</b> ' + Game.esc(task.title) + '</span>' +
           '<a class="db-go" href="level.html?id=' + encodeURIComponent(rec.id) + '">Грати · +5 💎</a>';
         banner.style.display = "flex";
       } else {
@@ -171,12 +213,12 @@
     var card = document.getElementById("dailyCard");
     if (card) {
       card.innerHTML = '<h3>Бонуси дня</h3>' +
-        '<div class="quest"><div class="qi"><img src="art/icon_chest.png?v=20261118p" class="ico" alt=""></div><div class="qm">' +
+        '<div class="quest"><div class="qi"><img src="art/icon_chest.png?v=20261118q" class="ico" alt=""></div><div class="qm">' +
         '<div class="qt">Скриня дня</div><div class="muted" style="font-size:11px;font-weight:700">' +
         (chest.available ? "Одна на добу — кристали або життя" : "Вже відкрита сьогодні") + '</div></div>' +
         (chest.available ? '<button class="qbtn" id="dailyChest">Відкрити</button>'
                          : '<span class="qr muted">✓</span>') + '</div>' +
-        '<div class="quest"><div class="qi"><img src="art/icon_star.png?v=20261118p" class="ico" alt=""></div><div class="qm">' +
+        '<div class="quest"><div class="qi"><img src="art/icon_star.png?v=20261118q" class="ico" alt=""></div><div class="qm">' +
         '<div class="qt">Задача дня</div><div class="muted" style="font-size:11px;font-weight:700">' +
         (rec.done ? "Виконано! +5 💎" : (task ? Game.esc(task.title) : "")) + '</div></div>' +
         (rec.done ? '<span class="qr muted">✓</span>' : '<span class="qr">+5 💎</span>') + '</div>';
@@ -240,7 +282,7 @@
           var reachable = seqIdx === 0 || Game.isDone(p, Game.SEQ[seqIdx - 1].id);
           var cb = document.createElement("button");
           cb.className = "lvl chest" + (reachable ? "" : " locked");
-          cb.innerHTML = '<div class="dot"><img src="art/icon_chest.png?v=20261118p" class="ico" alt=""></div>' +
+          cb.innerHTML = '<div class="dot"><img src="art/icon_chest.png?v=20261118q" class="ico" alt=""></div>' +
             '<div class="cap">' + (reachable ? "Скриня!" : "Скриня") + '</div>' +
             '<div class="st">' + (chest.kind === "life" ? "❤️" : "💎") + '</div>';
           if (reachable) {
@@ -252,8 +294,8 @@
           node.className = "lvl " + (done ? "done" : open ? "open" : "locked") + (perfect ? " perfect" : "") + (repeated ? " repeat" : "");
           if (done || open) { node.href = "level.html?id=" + encodeURIComponent(id); }
           node.innerHTML = '<div class="dot">' +
-            (done ? (perfect ? '<img src="art/icon_gem.png?v=20261118p" class="ico" alt="">' : '<img src="art/icon_check.png?v=20261118p" class="ico" alt="">')
-                  : open ? "▶️" : '<img src="art/icon_lock.png?v=20261118p" class="ico" alt="">') + '</div>' +
+            (done ? (perfect ? '<img src="art/icon_gem.png?v=20261118q" class="ico" alt="">' : '<img src="art/icon_check.png?v=20261118q" class="ico" alt="">')
+                  : open ? "▶️" : '<img src="art/icon_lock.png?v=20261118q" class="ico" alt="">') + '</div>' +
             '<div class="cap">' + (repeated ? "🔁 " : "") + Game.esc(task.title) + '</div>' +
             '<div class="st">' + (repeated ? "на завтра" : "") + '</div>';
           step.appendChild(node);
