@@ -724,22 +724,26 @@ body {
 /* літаючі світлячки на сторінці навчання */
 .fireflies { position:fixed; inset:0; z-index:1; pointer-events:none; opacity:.95;
   background-image:
-    radial-gradient(circle at 12% 22%, rgba(255,220,130,.95) 0 2px, transparent 3px),
-    radial-gradient(circle at 38% 64%, rgba(255,210,100,.85) 0 1.5px, transparent 3px),
-    radial-gradient(circle at 72% 18%, rgba(255,230,150,.9) 0 2px, transparent 3px),
-    radial-gradient(circle at 88% 72%, rgba(255,205,90,.8) 0 1.5px, transparent 3px),
-    radial-gradient(circle at 55% 88%, rgba(255,225,140,.9) 0 2px, transparent 3px),
-    radial-gradient(circle at 24% 86%, rgba(255,210,100,.75) 0 1.5px, transparent 3px),
-    radial-gradient(circle at 66% 42%, rgba(255,235,160,.8) 0 2px, transparent 3px),
+    radial-gradient(circle at 12% 22%, rgba(255,220,130,.95) 0 1px, transparent 2px),
+    radial-gradient(circle at 38% 64%, rgba(255,210,100,.85) 0 2.5px, transparent 4px),
+    radial-gradient(circle at 72% 18%, rgba(255,230,150,.9) 0 1.5px, transparent 3px),
+    radial-gradient(circle at 88% 72%, rgba(255,205,90,.8) 0 3.5px, transparent 5.5px),
+    radial-gradient(circle at 55% 88%, rgba(255,225,140,.9) 0 2px, transparent 3.5px),
+    radial-gradient(circle at 24% 86%, rgba(255,210,100,.75) 0 1px, transparent 2px),
+    radial-gradient(circle at 66% 42%, rgba(255,235,160,.8) 0 4px, transparent 6.5px),
     radial-gradient(circle at 92% 36%, rgba(255,215,110,.7) 0 1.5px, transparent 3px),
-    radial-gradient(circle at 46% 12%, rgba(255,240,170,.85) 0 2px, transparent 3px),
-    radial-gradient(circle at 6% 54%, rgba(255,205,95,.75) 0 1.5px, transparent 3px);
+    radial-gradient(circle at 46% 12%, rgba(255,240,170,.85) 0 2.5px, transparent 4px),
+    radial-gradient(circle at 6% 54%, rgba(255,205,95,.75) 0 5px, transparent 8px),
+    radial-gradient(circle at 30% 44%, rgba(255,228,145,.8) 0 1px, transparent 2px),
+    radial-gradient(circle at 80% 58%, rgba(255,212,105,.8) 0 3px, transparent 5px);
   background-size: 380px 320px, 440px 380px, 320px 300px, 500px 420px, 360px 340px,
-                   420px 360px, 300px 280px, 480px 400px, 340px 320px, 400px 360px;
+                   420px 360px, 300px 280px, 480px 400px, 340px 320px, 400px 360px,
+                   460px 380px, 520px 440px;
   animation: fireflyFloat 24s linear infinite; }
 @keyframes fireflyFloat {
   to { background-position: 36px -90px, -48px -120px, 22px -70px, -34px -100px, 44px -80px,
-                        -24px -110px, 28px -60px, -40px -130px, 18px -75px, -30px -95px; }
+                        -24px -110px, 28px -60px, -40px -130px, 18px -75px, -30px -95px,
+                        32px -85px, -26px -105px; }
 }
 @media (prefers-reduced-motion: reduce) { .fireflies { animation:none; } }
 
