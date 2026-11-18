@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Тренування — Тімолінго</title>
-<link rel="stylesheet" href="game.css?v=20261118t">
+<link rel="stylesheet" href="game.css?v=20261118x">
 <style>
   .modes { display: flex; gap: 8px; flex-wrap: wrap; margin: 6px 0 18px; }
   .mode { border: 2px solid #e5e5e5; border-bottom-width: 4px; background: #fff; border-radius: 14px;
@@ -60,8 +60,8 @@
 </main>
 
 <div class="toast" id="toast"></div>
-<script src="train_bank.js?v=20261118t"></script>
-<script src="game.js?v=20261118t"></script>
+<script src="train_bank.js?v=20261118x"></script>
+<script src="game.js?v=20261118x"></script>
 <script>
 (function () {
   Game.renderSidebar("train");
@@ -71,7 +71,7 @@
     var city = document.getElementById("pageCity");
     if (city) {
       var cityFile = lg.cur.city.replace(/\.png$/, "") + "_train.webp";
-      city.style.backgroundImage = 'url("' + cityFile + '?v=20261118t")';
+      city.style.backgroundImage = 'url("' + cityFile + '?v=20261118x")';
     }
   })();
 
@@ -224,7 +224,7 @@
       var j = Math.floor(Math.random() * (i + 1));
       var t = pool[i]; pool[i] = pool[j]; pool[j] = t;
     }
-    return addXQuestions(pool.slice(0, ROUND));
+    return pool.slice(0, ROUND);
   }
 
   function startRound() {
@@ -277,7 +277,7 @@
       host.innerHTML = '<div class="train-card">' +
         '<div class="round-bar"><i id="roundBar" style="width:' + Math.round(idx / Math.max(1, queue.length) * 100) + '%"></i></div>' +
         '<div class="muted" style="font-weight:800;font-size:12px;text-transform:uppercase;letter-spacing:1px">' +
-        (cur.q.indexOf("x") > -1 ? "Розв'яжи рівняння" : "Обчисли") + ' · ' + (idx + 1) + ' з ' + queue.length + '</div>' +
+        'Обчисли · ' + (idx + 1) + ' з ' + queue.length + '</div>' +
         '<div class="qbig">' + esc(cur.q) + (cur.q.indexOf("=") > -1 ? "" : '<span class="eq">=</span>') + '</div>' +
         '<div class="answer" id="answer">' + (typed || "&nbsp;") + '</div>' +
         '<div class="keypad" id="keypad">' +
@@ -286,7 +286,7 @@
         '<button class="key" data-k="ok" style="background:#58cc02;color:#fff;border-color:#46a302">✓</button>' +
         '</div>' +
         '<div class="feedback" id="fb"></div>' +
-        '<div class="hint">Введи відповідь і натисни ✓ (або Enter). x — невідоме число</div>' +
+        '<div class="hint">Введи відповідь і натисни ✓ (або Enter)</div>' +
         '</div>';
       document.getElementById("answer").innerHTML = typed || "&nbsp;";
       Array.prototype.forEach.call(host.querySelectorAll(".key"), function (k) {
@@ -322,7 +322,7 @@
       removeRetry(cur);
       var gemMsg = "";
       Game.addGems(3); gemsEarned += 3; gemMsg = " · +3 💎";
-      if (fb) { fb.className = "feedback ok"; fb.innerHTML = "Правильно! +" + gained + " XP · +3 <img src=\"art/icon_gem.png?v=20261118t\" class=\"ico sm\" alt=\"\">"; }
+      if (fb) { fb.className = "feedback ok"; fb.innerHTML = "Правильно! +" + gained + " XP · +3 <img src=\"art/icon_gem.png?v=20261118x\" class=\"ico sm\" alt=\"\">"; }
       var box = document.getElementById("answer");
       if (box) { box.className = "answer ok"; }
       setTimeout(function () { idx++; maybeInsertRetry(); renderQuestion(); }, 850);
