@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Дошки пошани — Тімолінго</title>
-<link rel="stylesheet" href="game.css?v=20261118e">
+<link rel="stylesheet" href="game.css?v=20261118f">
 </head>
 <body>
 <div class="story-deco" aria-hidden="true"><span>🍄</span><span>🌿</span><span>✨</span></div>
@@ -19,9 +19,9 @@
 </main>
 
 <div class="toast" id="toast"></div>
-<script src="tasks.js?v=20261118e"></script>
-<script src="avatars.js?v=20261118e"></script>
-<script src="game.js?v=20261118e"></script>
+<script src="tasks.js?v=20261118f"></script>
+<script src="avatars.js?v=20261118f"></script>
+<script src="game.js?v=20261118f"></script>
 <script>
 (function () {
   Game.renderSidebar("board");
@@ -46,13 +46,13 @@
     var scene = document.getElementById("leagueScene");
     if (scene) {
       scene.style.backgroundImage = 'linear-gradient(180deg, rgba(18,14,11,.12), rgba(18,14,11,.90)), url("' +
-        lg.cur.city + '?v=20261118e")';
+        lg.cur.city + '?v=20261118f")';
       scene.innerHTML = '<div class="ls-kicker">Казкове місто</div><h1>' + lg.cur.name + ' ліга</h1>' +
         '<div class="ls-sub">Ваш герб і ваше місто цього тижня</div>';
     }
 
     var html = '<div class="sec-head purple"><div class="sh-emoji"><img class="league-crest" src="' +
-      lg.cur.crest + '?v=20261118e" alt=""></div>' +
+      lg.cur.crest + '?v=20261118f" alt=""></div>' +
       '<div><div class="sh-kicker">Загальний залік</div>' +
       '<h2>' + lg.cur.name + ' ліга</h2></div>' +
       '<div class="sh-bar"><div>' + p.xp + ' XP</div></div></div>';
@@ -77,7 +77,7 @@
     html += '<div class="card" style="margin-top:16px"><h3>Ліги</h3>';
     Game.LEAGUES.forEach(function (l, i) {
       html += '<div class="tier' + (i === lg.index ? " on" : "") + '" style="--tc:' + l.color + '">' +
-        '<div class="te"><img class="league-crest sm" src="' + l.crest + '?v=20261118e" alt=""></div><div><b>' + l.name + ' ліга</b>' +
+        '<div class="te"><img class="league-crest sm" src="' + l.crest + '?v=20261118f" alt=""></div><div><b>' + l.name + ' ліга</b>' +
         '<div class="muted" style="font-size:12px">' + (i === lg.index ? "твоя ліга зараз" : "потрібно " + l.need + " XP усього") +
         '</div></div><div class="need">' + l.need + ' XP</div></div>';
     });
