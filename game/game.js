@@ -670,9 +670,9 @@
     });
     html += "</nav>";
     html += '<div class="side-foot">' +
-            '<a class="nav-item" href="../index.html"><span class="ni">📚</span>Бібліотека</a>' +
+            '<a class="nav-item" href="../index.html"><span class="ni"><img src="art/nav_library.png?v=20261118e" class="navico" alt=""></span>Бібліотека</a>' +
             '<div class="mini-league" style="--lc:' + lg.cur.color + '">' +
-            '<div class="ml-emoji">' + lg.cur.emoji + '</div><div><b>' + lg.cur.name + ' ліга</b>' +
+            '<div class="ml-emoji"><img class="league-crest sm" src="' + lg.cur.crest + '?v=20261118e" alt=""></div><div><b>' + lg.cur.name + ' ліга</b>' +
             '<div class="ml-xp">' + p.xp + ' XP усього</div></div></div>' +
             "</div>";
     host.innerHTML = html;
