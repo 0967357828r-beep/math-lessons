@@ -568,16 +568,16 @@
 
   /* ---------- ліги ---------- */
   var LEAGUES = [
-    { name: "Бронзова", emoji: "🥉", color: "#cd7f32", need: 0 },
-    { name: "Срібна", emoji: "🥈", color: "#9aa7b8", need: 100 },
-    { name: "Золота", emoji: "🥇", color: "#ffc800", need: 300 },
-    { name: "Сапфірова", emoji: "🔷", color: "#2ec4b6", need: 600 },
-    { name: "Смарагдова", emoji: "🟢", color: "#2ecc71", need: 1000 },
-    { name: "Рубінова", emoji: "🔺", color: "#ff4b4b", need: 1500 },
-    { name: "Аметистова", emoji: "🟣", color: "#a55eea", need: 2100 },
-    { name: "Перлинна", emoji: "🦪", color: "#ff86c8", need: 2800 },
-    { name: "Обсидіанова", emoji: "⚫", color: "#4b4b4b", need: 3600 },
-    { name: "Діамантова", emoji: "💎", color: "#00c2c7", need: 4500 }
+    { name: "Бронзова", emoji: "🥉", crest: "art/league_bronze.png", city: "art/city_bronze.png", color: "#cd7f32", need: 0 },
+    { name: "Срібна", emoji: "🥈", crest: "art/league_silver.png", city: "art/city_silver.png", color: "#9aa7b8", need: 100 },
+    { name: "Золота", emoji: "🥇", crest: "art/league_gold.png", city: "art/city_gold.png", color: "#ffc800", need: 300 },
+    { name: "Сапфірова", emoji: "🔷", crest: "art/league_sapphire.png", city: "art/city_sapphire.png", color: "#2ec4b6", need: 600 },
+    { name: "Смарагдова", emoji: "🟢", crest: "art/league_emerald.png", city: "art/city_emerald.png", color: "#2ecc71", need: 1000 },
+    { name: "Рубінова", emoji: "🔺", crest: "art/league_ruby.png", city: "art/city_ruby.png", color: "#ff4b4b", need: 1500 },
+    { name: "Аметистова", emoji: "🟣", crest: "art/league_amethyst.png", city: "art/city_amethyst.png", color: "#a55eea", need: 2100 },
+    { name: "Перлинна", emoji: "🦪", crest: "art/league_pearl.png", city: "art/city_pearl.png", color: "#ff86c8", need: 2800 },
+    { name: "Обсидіанова", emoji: "⚫", crest: "art/league_obsidian.png", city: "art/city_obsidian.png", color: "#4b4b4b", need: 3600 },
+    { name: "Діамантова", emoji: "💎", crest: "art/league_diamond.png", city: "art/city_diamond.png", color: "#00c2c7", need: 4500 }
   ];
   function leagueOf(p) {
     var li = 0;
