@@ -673,6 +673,25 @@ body {
           color:#122006 !important; border-color:#3d5c20 !important; }
 .round-bar { background:rgba(255,255,255,.12) !important; }
 
+/* картка квесту місяця — казкова рамка */
+.month-card {
+  background: linear-gradient(120deg, rgba(20,15,12,.58), rgba(20,15,12,.26)),
+              url("art/header_forest.png?v=20261117v") !important;
+  background-size: cover !important; background-position: center 42% !important;
+  border: 3px solid var(--woodline); border-radius: 26px;
+  box-shadow: 0 10px 0 rgba(0,0,0,.35), 0 22px 52px rgba(0,0,0,.40);
+  position: relative; overflow: hidden;
+}
+.month-card::after { content:""; position:absolute; inset:8px; border:1px solid rgba(255,209,102,.22);
+                     border-radius:20px; pointer-events:none; }
+.month-card .month { background: var(--glow); color:#3b2500; box-shadow:0 2px 0 #a86a12; }
+.month-card h2 { text-shadow:0 2px 2px rgba(0,0,0,.55); }
+.month-card .days { color:#ffe6a8; }
+.month-card .inner { background: rgba(18,13,10,.62); border:1px solid rgba(255,209,102,.22);
+                     color: var(--ink); backdrop-filter: blur(6px); border-radius:18px; }
+.month-card .inner .bar { background: rgba(255,255,255,.12); }
+.month-card .inner .bar > i { background: linear-gradient(90deg, var(--leaf), var(--glow)); }
+
 /* цифри в уроці (навчання) — теж зелені */
 .kbig { color: var(--leaf) !important; }
 .kbig .eq { color:#cfe8a8 !important; }
