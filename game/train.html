@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Тренування — Тімолінго</title>
-<link rel="stylesheet" href="game.css?v=20261118j">
+<link rel="stylesheet" href="game.css?v=20261118k">
 <style>
   .modes { display: flex; gap: 8px; flex-wrap: wrap; margin: 6px 0 18px; }
   .mode { border: 2px solid #e5e5e5; border-bottom-width: 4px; background: #fff; border-radius: 14px;
@@ -59,8 +59,8 @@
 </main>
 
 <div class="toast" id="toast"></div>
-<script src="train_bank.js?v=20261118j"></script>
-<script src="game.js?v=20261118j"></script>
+<script src="train_bank.js?v=20261118k"></script>
+<script src="game.js?v=20261118k"></script>
 <script>
 (function () {
   Game.renderSidebar("train");
@@ -145,7 +145,9 @@
   }
 
   function addXQuestions(pool) {
-    var need = Math.floor(ROUND / 3), made = 0, used = {};
+    var need = 0;
+    for (var n = 0; n < pool.length; n++) { if (pool[n].type === "num") { need++; } }
+    var made = 0, used = {};
     for (var i = 2; i < pool.length && made < need; i += 3) {
       if (pool[i].type !== "num") { continue; }
       var x = xify(pool[i]);
@@ -227,7 +229,7 @@
       host.innerHTML = '<div class="train-card">' +
         '<div class="round-bar"><i id="roundBar" style="width:' + Math.round(idx / ROUND * 100) + '%"></i></div>' +
         '<div class="muted" style="font-weight:800;font-size:12px;text-transform:uppercase;letter-spacing:1px">' +
-        'Обчисли · ' + (idx + 1) + ' з ' + ROUND + '</div>' +
+        (cur.q.indexOf("x") > -1 ? "Розв'яжи рівняння" : "Обчисли") + ' · ' + (idx + 1) + ' з ' + ROUND + '</div>' +
         '<div class="qbig">' + esc(cur.q) + '<span class="eq">=</span></div>' +
         '<div class="answer" id="answer">' + (typed || "&nbsp;") + '</div>' +
         '<div class="keypad" id="keypad">' +
@@ -267,7 +269,7 @@
       correct++;
       var gemMsg = "";
       Game.addGems(3); gemsEarned += 3; gemMsg = " · +3 💎";
-      if (fb) { fb.className = "feedback ok"; fb.innerHTML = "Правильно! +" + gained + " XP · +3 <img src=\"art/icon_gem.png?v=20261118j\" class=\"ico sm\" alt=\"\">"; }
+      if (fb) { fb.className = "feedback ok"; fb.innerHTML = "Правильно! +" + gained + " XP · +3 <img src=\"art/icon_gem.png?v=20261118k\" class=\"ico sm\" alt=\"\">"; }
       var box = document.getElementById("answer");
       if (box) { box.className = "answer ok"; }
       setTimeout(function () { idx++; renderQuestion(); }, 850);

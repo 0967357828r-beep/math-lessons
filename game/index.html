@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Навчання — Тімолінго</title>
-<link rel="stylesheet" href="game.css?v=20261118j">
+<link rel="stylesheet" href="game.css?v=20261118k">
 </head>
 <body>
 <div class="story-deco" aria-hidden="true"><span>🍄</span><span>🌿</span><span>✨</span></div>
@@ -40,9 +40,9 @@
 </main>
 
 <div class="toast" id="toast"></div>
-<script src="tasks.js?v=20261118j"></script>
-<script src="avatars.js?v=20261118j"></script>
-<script src="game.js?v=20261118j"></script>
+<script src="tasks.js?v=20261118k"></script>
+<script src="avatars.js?v=20261118k"></script>
+<script src="game.js?v=20261118k"></script>
 <script>
 (function () {
   var p = Game.load();
@@ -141,11 +141,11 @@
     var bg = document.getElementById("leagueBg");
     if (bg) {
       bg.style.backgroundImage = 'linear-gradient(180deg, rgba(18,14,11,.55), rgba(18,14,11,.84)), url("' +
-        lg.cur.city + '?v=20261118j")';
+        lg.cur.city + '?v=20261118k")';
     }
     el.innerHTML = '<h3>' + lg.cur.name + ' ліга <a class="more" href="leaderboard.html">переглянути</a></h3>' +
       '<div class="league-row"><div class="league-badge"><img class="league-crest" src="' +
-      lg.cur.crest + '?v=20261118j" alt=""></div><div><b>Ви на ' + lb.rank + ' місці</b>' +
+      lg.cur.crest + '?v=20261118k" alt=""></div><div><b>Ви на ' + lb.rank + ' місці</b>' +
       '<div class="muted">' + (lb.demote ? "Є ризик повернутися в нижчу лігу!"
                                           : lb.promote ? "Ви в зоні підвищення!" : "Тримайте темп!") + '</div></div></div>' +
       '<div style="margin-top:12px" class="bar"><i style="width:' + Math.round(lg.pct * 100) + '%;background:' +
@@ -161,7 +161,7 @@
     var banner = document.getElementById("dailyBanner");
     if (banner) {
       if (!rec.done && task) {
-        banner.innerHTML = '<span><img src="art/icon_star.png?v=20261118j" class="ico sm" alt=""> <b>Задача дня:</b> ' + Game.esc(task.title) + '</span>' +
+        banner.innerHTML = '<span><img src="art/icon_star.png?v=20261118k" class="ico sm" alt=""> <b>Задача дня:</b> ' + Game.esc(task.title) + '</span>' +
           '<a class="db-go" href="level.html?id=' + encodeURIComponent(rec.id) + '">Грати · +5 💎</a>';
         banner.style.display = "flex";
       } else {
@@ -171,12 +171,12 @@
     var card = document.getElementById("dailyCard");
     if (card) {
       card.innerHTML = '<h3>Бонуси дня</h3>' +
-        '<div class="quest"><div class="qi"><img src="art/icon_chest.png?v=20261118j" class="ico" alt=""></div><div class="qm">' +
+        '<div class="quest"><div class="qi"><img src="art/icon_chest.png?v=20261118k" class="ico" alt=""></div><div class="qm">' +
         '<div class="qt">Скриня дня</div><div class="muted" style="font-size:11px;font-weight:700">' +
         (chest.available ? "Одна на добу — кристали або життя" : "Вже відкрита сьогодні") + '</div></div>' +
         (chest.available ? '<button class="qbtn" id="dailyChest">Відкрити</button>'
                          : '<span class="qr muted">✓</span>') + '</div>' +
-        '<div class="quest"><div class="qi"><img src="art/icon_star.png?v=20261118j" class="ico" alt=""></div><div class="qm">' +
+        '<div class="quest"><div class="qi"><img src="art/icon_star.png?v=20261118k" class="ico" alt=""></div><div class="qm">' +
         '<div class="qt">Задача дня</div><div class="muted" style="font-size:11px;font-weight:700">' +
         (rec.done ? "Виконано! +5 💎" : (task ? Game.esc(task.title) : "")) + '</div></div>' +
         (rec.done ? '<span class="qr muted">✓</span>' : '<span class="qr">+5 💎</span>') + '</div>';
@@ -240,7 +240,7 @@
           var reachable = seqIdx === 0 || Game.isDone(p, Game.SEQ[seqIdx - 1].id);
           var cb = document.createElement("button");
           cb.className = "lvl chest" + (reachable ? "" : " locked");
-          cb.innerHTML = '<div class="dot"><img src="art/icon_chest.png?v=20261118j" class="ico" alt=""></div>' +
+          cb.innerHTML = '<div class="dot"><img src="art/icon_chest.png?v=20261118k" class="ico" alt=""></div>' +
             '<div class="cap">' + (reachable ? "Скриня!" : "Скриня") + '</div>' +
             '<div class="st">' + (chest.kind === "life" ? "❤️" : "💎") + '</div>';
           if (reachable) {
@@ -252,8 +252,8 @@
           node.className = "lvl " + (done ? "done" : open ? "open" : "locked") + (perfect ? " perfect" : "") + (repeated ? " repeat" : "");
           if (done || open) { node.href = "level.html?id=" + encodeURIComponent(id); }
           node.innerHTML = '<div class="dot">' +
-            (done ? (perfect ? '<img src="art/icon_gem.png?v=20261118j" class="ico" alt="">' : '<img src="art/icon_check.png?v=20261118j" class="ico" alt="">')
-                  : open ? "▶️" : '<img src="art/icon_lock.png?v=20261118j" class="ico" alt="">') + '</div>' +
+            (done ? (perfect ? '<img src="art/icon_gem.png?v=20261118k" class="ico" alt="">' : '<img src="art/icon_check.png?v=20261118k" class="ico" alt="">')
+                  : open ? "▶️" : '<img src="art/icon_lock.png?v=20261118k" class="ico" alt="">') + '</div>' +
             '<div class="cap">' + (repeated ? "🔁 " : "") + Game.esc(task.title) + '</div>' +
             '<div class="st">' + (repeated ? "на завтра" : "") + '</div>';
           step.appendChild(node);
