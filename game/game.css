@@ -53,7 +53,10 @@ b { font-weight: 800; }
 .sec-head.purple { background: #ce82ff; box-shadow: 0 4px 0 #a568cc; }
 .sec-head.orange { background: #ff9600; box-shadow: 0 4px 0 #cc7800; }
 .sec-head.red { background: #ff4b4b; box-shadow: 0 4px 0 #cc3c3c; }
-.sec-head .sh-emoji { font-size: 34px; }
+.sec-head .sh-emoji { font-size: 34px; width: 48px; height: 48px; display: flex; align-items: center;
+                      justify-content: center; flex: 0 0 auto; }
+.secico { width: 46px; height: 46px; object-fit: contain; display: block;
+          filter: drop-shadow(0 3px 4px rgba(0,0,0,.4)); }
 .sec-head .sh-kicker { font-size: 11px; font-weight: 900; letter-spacing: 1.4px; opacity: .9;
                        text-transform: uppercase; }
 .sec-head h2 { margin: 2px 0 0; font-size: 21px; font-weight: 900; }
