@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Тренування — Тімолінго</title>
-<link rel="stylesheet" href="game.css?v=20261118i">
+<link rel="stylesheet" href="game.css?v=20261118j">
 <style>
   .modes { display: flex; gap: 8px; flex-wrap: wrap; margin: 6px 0 18px; }
   .mode { border: 2px solid #e5e5e5; border-bottom-width: 4px; background: #fff; border-radius: 14px;
@@ -59,8 +59,8 @@
 </main>
 
 <div class="toast" id="toast"></div>
-<script src="train_bank.js?v=20261118i"></script>
-<script src="game.js?v=20261118i"></script>
+<script src="train_bank.js?v=20261118j"></script>
+<script src="game.js?v=20261118j"></script>
 <script>
 (function () {
   Game.renderSidebar("train");
@@ -101,6 +101,64 @@
     });
   }
 
+  function evalOp(a, op, b) {
+    if (op === "+") { return a + b; }
+    if (op === "-") { return a - b; }
+    if (op === "·" || op === "*") { return a * b; }
+    if (op === ":" || op === "÷") { return b ? a / b : null; }
+    return null;
+  }
+
+  function xify(item) {
+    var q = String(item.q || "").trim();
+
+    /* простий приклад: 12 + 5, 48 : 6, 7 · 8 */
+    var m = q.match(/^(\d+)\s*([+\-·*:÷])\s*(\d+)$/);
+    if (m) {
+      var a = +m[1], op = m[2], b = +m[3];
+      if (op === "-" && a < b) { return null; }
+      if ((op === "·" || op === "*") && (a === 0 || b === 0)) { return null; }
+      if ((op === ":" || op === "÷") && (a === 0 || b === 0 || a % b !== 0)) { return null; }
+      var res = evalOp(a, op, b);
+      if (res === null) { return null; }
+      if (Math.random() < 0.5) {
+        return { type: "num", key: item.key, q: "x " + op + " " + b + " = " + res, a: String(a) };
+      }
+      return { type: "num", key: item.key, q: a + " " + op + " x = " + res, a: String(b) };
+    }
+
+    /* ланцюжок: 12 + 8 - 5 */
+    var toks = q.match(/\d+|[+\-]/g);
+    if (!toks || toks.length < 5 || toks.length % 2 === 0) { return null; }
+    var total = +toks[0];
+    for (var i = 2; i < toks.length; i += 2) {
+      total = evalOp(total, toks[i - 1], +toks[i]);
+      if (total === null || total < 0) { return null; }
+    }
+    var slots = [];
+    for (var j = 0; j < toks.length; j += 2) { slots.push(j); }
+    var hide = slots[Math.floor(Math.random() * slots.length)];
+    var answer = toks[hide];
+    var copy = toks.slice();
+    copy[hide] = "x";
+    return { type: "num", key: item.key, q: copy.join(" "), a: answer };
+  }
+
+  function addXQuestions(pool) {
+    var need = Math.floor(ROUND / 3), made = 0, used = {};
+    for (var i = 2; i < pool.length && made < need; i += 3) {
+      if (pool[i].type !== "num") { continue; }
+      var x = xify(pool[i]);
+      if (x) { pool[i] = x; used[i] = 1; made++; }
+    }
+    for (var j = 0; j < pool.length && made < need; j++) {
+      if (used[j] || pool[j].type !== "num") { continue; }
+      var y = xify(pool[j]);
+      if (y) { pool[j] = y; used[j] = 1; made++; }
+    }
+    return pool;
+  }
+
   function pickQuestions(m) {
     var pool = [];
     if (m === "mix") {
@@ -116,7 +174,7 @@
       var j = Math.floor(Math.random() * (i + 1));
       var t = pool[i]; pool[i] = pool[j]; pool[j] = t;
     }
-    return pool.slice(0, ROUND);
+    return addXQuestions(pool.slice(0, ROUND));
   }
 
   function startRound() {
@@ -178,7 +236,7 @@
         '<button class="key" data-k="ok" style="background:#58cc02;color:#fff;border-color:#46a302">✓</button>' +
         '</div>' +
         '<div class="feedback" id="fb"></div>' +
-        '<div class="hint">Введи відповідь і натисни ✓ (або Enter)</div>' +
+        '<div class="hint">Введи відповідь і натисни ✓ (або Enter). x — невідоме число</div>' +
         '</div>';
       document.getElementById("answer").innerHTML = typed || "&nbsp;";
       Array.prototype.forEach.call(host.querySelectorAll(".key"), function (k) {
@@ -209,7 +267,7 @@
       correct++;
       var gemMsg = "";
       Game.addGems(3); gemsEarned += 3; gemMsg = " · +3 💎";
-      if (fb) { fb.className = "feedback ok"; fb.innerHTML = "Правильно! +" + gained + " XP · +3 <img src=\"art/icon_gem.png?v=20261118i\" class=\"ico sm\" alt=\"\">"; }
+      if (fb) { fb.className = "feedback ok"; fb.innerHTML = "Правильно! +" + gained + " XP · +3 <img src=\"art/icon_gem.png?v=20261118j\" class=\"ico sm\" alt=\"\">"; }
       var box = document.getElementById("answer");
       if (box) { box.className = "answer ok"; }
       setTimeout(function () { idx++; renderQuestion(); }, 850);
