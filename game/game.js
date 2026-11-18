@@ -664,7 +664,7 @@
     var html = '<a class="logo" href="index.html">Тімолінго</a>';
     html += '<nav class="nav">';
     NAV.forEach(function (n) {
-      var ic = n.icon;
+      var ic = n.key === "profile" ? avatarMarkup(p.profile.avatar, 26) : n.icon;
       html += '<a class="nav-item' + (n.key === active ? " on" : "") + '" href="' + n.href + '">' +
               '<span class="ni">' + ic + '</span>' + n.label + "</a>";
     });
