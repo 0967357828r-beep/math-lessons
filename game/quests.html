@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Квести — Тімолінго</title>
-<link rel="stylesheet" href="game.css?v=20261118q">
+<link rel="stylesheet" href="game.css?v=20261118s">
 </head>
 <body>
 <div class="story-deco" aria-hidden="true"><span>🍄</span><span>🌿</span><span>✨</span></div>
@@ -19,8 +19,8 @@
 </main>
 
 <div class="toast" id="toast"></div>
-<script src="tasks.js?v=20261118q"></script>
-<script src="game.js?v=20261118q"></script>
+<script src="tasks.js?v=20261118s"></script>
+<script src="game.js?v=20261118s"></script>
 <script>
 (function () {
   Game.renderSidebar("quests");
@@ -29,7 +29,8 @@
     var lg = Game.leagueOf(Game.load());
     var city = document.getElementById("pageCity");
     if (city) {
-      city.style.backgroundImage = 'url("' + lg.cur.city + '?v=20261118q")';
+      var cityFile = lg.cur.city.replace(/\.png$/, "") + "_quests.webp";
+      city.style.backgroundImage = 'url("' + cityFile + '?v=20261118s")';
     }
   })();
 
