@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Тренування — Тімолінго</title>
-<link rel="stylesheet" href="game.css?v=20261118o">
+<link rel="stylesheet" href="game.css?v=20261118p">
 <style>
   .modes { display: flex; gap: 8px; flex-wrap: wrap; margin: 6px 0 18px; }
   .mode { border: 2px solid #e5e5e5; border-bottom-width: 4px; background: #fff; border-radius: 14px;
@@ -59,8 +59,8 @@
 </main>
 
 <div class="toast" id="toast"></div>
-<script src="train_bank.js?v=20261118o"></script>
-<script src="game.js?v=20261118o"></script>
+<script src="train_bank.js?v=20261118p"></script>
+<script src="game.js?v=20261118p"></script>
 <script>
 (function () {
   Game.renderSidebar("train");
@@ -80,7 +80,46 @@
   var ROUND = 10;
   var bank = window.TRAIN_BANK || { add: [], sub: [], mul: [], div: [], cmp: [] };
   var mode = localStorage.getItem("train_mode") || "add";
-  var queue = [], idx = 0, correct = 0, xp = 0, gemsEarned = 0, answered = false, typed = "";
+  var queue = [], idx = 0, correct = 0, asked = 0, xp = 0, gemsEarned = 0, answered = false, typed = "";
+  var RETRY_KEY = "train_retry_v1";
+
+  function loadRetry() {
+    try {
+      var o = JSON.parse(localStorage.getItem(RETRY_KEY)) || {};
+      return { items: Array.isArray(o.items) ? o.items : [], since: typeof o.since === "number" ? o.since : 0 };
+    } catch (e) { return { items: [], since: 0 }; }
+  }
+  function saveRetry(o) {
+    try { localStorage.setItem(RETRY_KEY, JSON.stringify(o)); } catch (e) {}
+  }
+  function retryKey(item) {
+    return item.type === "cmp" ? "cmp:" + item.l + "?" + item.r : "num:" + item.q;
+  }
+  function addRetry(item) {
+    var o = loadRetry(), k = retryKey(item);
+    if (o.items.some(function (x) { return retryKey(x) === k && x.mode === mode; })) { return; }
+    o.items.push({ type: item.type, key: item.key, q: item.q, a: item.a,
+                   l: item.l, r: item.r, ans: item.ans, mode: mode });
+    saveRetry(o);
+  }
+  function removeRetry(item) {
+    var o = loadRetry(), k = retryKey(item);
+    o.items = o.items.filter(function (x) { return !(retryKey(x) === k && x.mode === mode); });
+    saveRetry(o);
+  }
+  function maybeInsertRetry() {
+    var o = loadRetry();
+    if (o.since < 15 + Math.floor(Math.random() * 6)) { return; }
+    var at = -1;
+    for (var i = 0; i < o.items.length; i++) {
+      if (o.items[i].mode === mode) { at = i; break; }
+    }
+    if (at < 0) { return; }
+    var item = o.items.splice(at, 1)[0];
+    o.since = 0;
+    saveRetry(o);
+    queue.splice(idx, 0, item);
+  }
 
   function esc(s) { return Game.esc(s); }
 
@@ -183,27 +222,27 @@
     clearInterval(window._trainTimer);
     if (!Game.trainReady(mode)) { renderLocked(); return; }
     queue = pickQuestions(mode);
-    idx = 0; correct = 0; xp = 0; gemsEarned = 0;
+    idx = 0; correct = 0; asked = 0; xp = 0; gemsEarned = 0;
     renderQuestion();
   }
 
   function updateBar() {
     var bar = document.getElementById("roundBar");
-    if (bar) { bar.style.width = Math.round(idx / ROUND * 100) + "%"; }
+    if (bar) { bar.style.width = Math.round(idx / Math.max(1, queue.length) * 100) + "%"; }
   }
 
   function renderQuestion() {
     var host = document.getElementById("train");
     answered = false; typed = "";
-    if (idx >= ROUND) { return renderResult(); }
+    if (idx >= queue.length) { return renderResult(); }
     var cur = queue[idx];
     var p = Game.load();
 
     if (cur.type === "cmp") {
       host.innerHTML = '<div class="train-card">' +
-        '<div class="round-bar"><i id="roundBar" style="width:' + Math.round(idx / ROUND * 100) + '%"></i></div>' +
+        '<div class="round-bar"><i id="roundBar" style="width:' + Math.round(idx / Math.max(1, queue.length) * 100) + '%"></i></div>' +
         '<div class="muted" style="font-weight:800;font-size:12px;text-transform:uppercase;letter-spacing:1px">' +
-        'Порівняй вирази · ' + (idx + 1) + ' з ' + ROUND + '</div>' +
+        'Порівняй вирази · ' + (idx + 1) + ' з ' + queue.length + '</div>' +
         '<div class="cmp-row"><span>' + esc(cur.l) + '</span><span class="qmark">?</span><span>' + esc(cur.r) + '</span></div>' +
         '<div class="cmp-opts"><button class="cmp-btn" data-op="&gt;">&gt;</button>' +
         '<button class="cmp-btn" data-op="&lt;">&lt;</button>' +
@@ -227,9 +266,9 @@
       });
     } else {
       host.innerHTML = '<div class="train-card">' +
-        '<div class="round-bar"><i id="roundBar" style="width:' + Math.round(idx / ROUND * 100) + '%"></i></div>' +
+        '<div class="round-bar"><i id="roundBar" style="width:' + Math.round(idx / Math.max(1, queue.length) * 100) + '%"></i></div>' +
         '<div class="muted" style="font-weight:800;font-size:12px;text-transform:uppercase;letter-spacing:1px">' +
-        (cur.q.indexOf("x") > -1 ? "Розв'яжи рівняння" : "Обчисли") + ' · ' + (idx + 1) + ' з ' + ROUND + '</div>' +
+        (cur.q.indexOf("x") > -1 ? "Розв'яжи рівняння" : "Обчисли") + ' · ' + (idx + 1) + ' з ' + queue.length + '</div>' +
         '<div class="qbig">' + esc(cur.q) + (cur.q.indexOf("=") > -1 ? "" : '<span class="eq">=</span>') + '</div>' +
         '<div class="answer" id="answer">' + (typed || "&nbsp;") + '</div>' +
         '<div class="keypad" id="keypad">' +
@@ -262,20 +301,26 @@
 
   function finished(ok, cur) {
     answered = true;
+    asked++;
+    var ro = loadRetry();
+    ro.since += 1;
+    saveRetry(ro);
     var fb = document.getElementById("fb");
     var gained = Game.awardPractice(ok, mode);
     xp += gained;
     if (ok) {
       correct++;
+      removeRetry(cur);
       var gemMsg = "";
       Game.addGems(3); gemsEarned += 3; gemMsg = " · +3 💎";
-      if (fb) { fb.className = "feedback ok"; fb.innerHTML = "Правильно! +" + gained + " XP · +3 <img src=\"art/icon_gem.png?v=20261118o\" class=\"ico sm\" alt=\"\">"; }
+      if (fb) { fb.className = "feedback ok"; fb.innerHTML = "Правильно! +" + gained + " XP · +3 <img src=\"art/icon_gem.png?v=20261118p\" class=\"ico sm\" alt=\"\">"; }
       var box = document.getElementById("answer");
       if (box) { box.className = "answer ok"; }
-      setTimeout(function () { idx++; renderQuestion(); }, 850);
+      setTimeout(function () { idx++; maybeInsertRetry(); renderQuestion(); }, 850);
     } else {
       var right = cur.type === "cmp" ? cur.ans : cur.a;
       Game.markMistake(mode, cur.type === "cmp" ? { q: cur.l + " ? " + cur.r, a: cur.ans } : cur);
+      addRetry(cur);
       if (fb) { fb.className = "feedback bad"; fb.textContent = "Правильна відповідь: " + right; }
       var ab = document.getElementById("answer");
       if (ab) { ab.className = "answer bad"; }
@@ -284,7 +329,7 @@
       btn.style.cssText = "text-align:center;margin-top:14px";
       btn.innerHTML = '<button class="btn" id="nextQ">Далі →</button>';
       host.querySelector(".train-card").appendChild(btn);
-      document.getElementById("nextQ").addEventListener("click", function () { idx++; renderQuestion(); });
+      document.getElementById("nextQ").addEventListener("click", function () { idx++; maybeInsertRetry(); renderQuestion(); });
     }
     Game.syncHud();
   }
@@ -331,15 +376,15 @@
     Game.finishPracticeRound();
     Game.trainMark(mode);
     var host = document.getElementById("train");
-    var emoji = correct === ROUND ? "🏆" : correct >= 7 ? "🎉" : "💪";
+    var emoji = correct === asked ? "🏆" : correct >= Math.ceil(asked * 0.7) ? "🎉" : "💪";
     var nx = nextMode();
     function draw() {
       var left = Math.ceil(Game.trainLeft(mode) / 1000);
       var mm = Math.floor(left / 60), ss = left % 60;
       host.innerHTML = '<div class="train-card result">' +
         '<div class="big">' + emoji + '</div>' +
-        '<h2>' + correct + ' з ' + ROUND + '</h2>' +
-        '<div class="muted" style="font-weight:800;margin-bottom:6px">Зароблено ' + xp + ' XP і ' + gemsEarned + ' 💎 · 3 💎 за кожен раунд тренування</div>' +
+        '<h2>' + correct + ' з ' + queue.length + '</h2>' +
+        '<div class="muted" style="font-weight:800;margin-bottom:6px">Зароблено ' + xp + ' XP і ' + gemsEarned + ' 💎 · 3 💎 за кожну правильну</div>' +
         '<div style="font-weight:900;color:#ff9600;margin-bottom:16px">⏳ Цей розділ — через ' +
         (mm > 0 ? mm + ' хв ' : '') + (ss < 10 ? '0' : '') + ss + ' с</div>' +
         (nx ? '<button class="btn" id="nextMode">Далі: ' + nx.label + '</button> ' : '') +
