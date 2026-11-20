@@ -112,6 +112,12 @@
       sub: "Сотні, кілька дій поспіль, непряма форма",
       ids: ["am18_juice2_js", "am18_raspberry_ml", "am18_milk_bd", "am18_dolls_mt", "am18_napkins_sv",
             "am18_bookshop_bk", "am18_drawings_nd", "am18_pines_ps", "am18_cows_kr", "am18_pies_pr"] }
+
+    ,
+    { id: "big4", emoji: '<img src="art/sec_logic.png?v=20261120b" class="secico" alt="">', title: "Великі числа · 2", color: "#c39cff",
+      sub: "Рух, порівняння, кілька дій з трицифровими",
+      ids: ["am19_bus_bs", "am19_ships_sh", "am19_fish_fh", "am19_parcels_pc", "am19_rain_rn",
+            "am19_birches_br", "am19_strawberry_sb", "am19_linen_ln", "am19_chestnuts_ch", "am19_snowplow_sp"] }
   ];
 
   var SEQ = [];
