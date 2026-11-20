@@ -72,17 +72,6 @@
 @media (prefers-reduced-motion: reduce) {
   .finale-chest .fc-img, .finale-chest .fc-glow { animation:none; }
 }
-/* швидкий перехід до скарбниці в кінці дороги */
-.chest-jump { position:fixed; right:18px; bottom:86px; z-index:40; display:flex; align-items:center; gap:8px;
-  border:2px solid rgba(255,209,102,.55); border-bottom-width:4px; border-radius:14px;
-  background:linear-gradient(180deg, rgba(52,38,26,.97), rgba(32,23,17,.97)); color:#ffe6a8;
-  font:900 13px inherit; padding:10px 14px; cursor:pointer;
-  box-shadow:0 10px 24px rgba(0,0,0,.45); }
-.chest-jump:hover { transform:translateY(-2px); }
-.chest-jump img { width:22px; height:22px; object-fit:contain; }
-@media (max-width: 860px) {
-  .chest-jump { right:10px; bottom:76px; font-size:12px; padding:9px 11px; }
-}
 </style>
 </head>
 <body>
@@ -130,9 +119,6 @@
 </div>
 
 <div class="toast" id="toast"></div>
-<button class="chest-jump" id="chestJump" type="button">
-  <img src="art/icon_chest.webp?v=20261120b" alt=""> Скарбниця курсу
-</button>
 <script src="tasks.js?v=20261120b"></script>
 <script src="avatars.js?v=20261120b"></script>
 <script src="game.js?v=20261120b"></script>
@@ -467,11 +453,6 @@
     questsCard();
     document.getElementById("hud").innerHTML = Game.hudHTML();
   }
-
-  document.getElementById("chestJump").addEventListener("click", function () {
-    var el = document.querySelector(".finale-chest");
-    if (el) { el.scrollIntoView({ behavior: "smooth", block: "center" }); }
-  });
 
   document.getElementById("heal").addEventListener("click", function () {
     var p = Game.load();
