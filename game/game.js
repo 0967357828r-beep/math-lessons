@@ -100,6 +100,18 @@
       sub: "Ділення на частини, кратне порівняння, кілька дій",
       ids: ["am16_garlands_gl", "am16_dresses_dr2", "am16_peas_ps", "am16_stools_st3", "am16_panda_pd",
             "am16_reserve_rv", "am16_entrances_en3", "am16_age_ag", "am16_money2_tm", "am16_sugar2_sg2"] }
+
+    ,
+    { id: "add2", emoji: '<img src="art/sec_add.png?v=20261118i" class="secico" alt="">', title: "Додавання й віднімання · 2", color: "#58cc02",
+      sub: "Великі числа й кілька дій",
+      ids: ["am17_pencils_pn", "am17_asters_as2", "am17_vegetables_vg", "am17_theatre_th", "am17_pumpkins_pk",
+            "am17_pastries_pt3", "am17_lindens_ld", "am17_school_sc", "am17_bricks_br", "am17_village_vl"] }
+
+    ,
+    { id: "big3", emoji: '<img src="art/sec_add.png?v=20261120a" class="secico" alt="">', title: "Великі числа й кілька дій", color: "#ff9f68",
+      sub: "Сотні, кілька дій поспіль, непряма форма",
+      ids: ["am18_juice2_js", "am18_raspberry_ml", "am18_milk_bd", "am18_dolls_mt", "am18_napkins_sv",
+            "am18_bookshop_bk", "am18_drawings_nd", "am18_pines_ps", "am18_cows_kr", "am18_pies_pr"] }
   ];
 
   var SEQ = [];
