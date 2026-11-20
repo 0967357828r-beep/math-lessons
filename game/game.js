@@ -5,14 +5,14 @@
   var KEY = "mathgame_v1";
   var MAX_LIVES = 10;
   var SHOP = [
-    { id: "leaf", icon: "art/icon_leaf.png", avatar: "art/avatar_leaf.png", name: "Листок", cost: 10 },
-    { id: "mushroom", icon: "art/shop_mushroom.png", avatar: "art/avatar_mushroom.png", name: "Мухомор", cost: 15 },
-    { id: "scarf", icon: "art/shop_scarf.png", avatar: "art/avatar_scarf.png", name: "Шарф", cost: 12 },
-    { id: "hat", icon: "art/shop_hat.png", avatar: "art/avatar_hat.png", name: "Капелюх", cost: 18 },
-    { id: "glasses", icon: "art/shop_glasses.png", avatar: "art/avatar_glasses.png", name: "Окуляри", cost: 14 },
-    { id: "star", icon: "art/icon_star.png", avatar: "art/avatar_star.png", name: "Зірка", cost: 20 },
-    { id: "lantern", icon: "art/shop_lantern.png", avatar: "art/avatar_lantern.png", name: "Ліхтарик", cost: 25 },
-    { id: "crown", icon: "art/shop_crown.png", avatar: "art/avatar_crown.png", name: "Корона", cost: 35 }
+    { id: "leaf", icon: "art/icon_leaf.webp?v=20261120b", avatar: "art/avatar_leaf.webp?v=20261120b", name: "Листок", cost: 10 },
+    { id: "mushroom", icon: "art/shop_mushroom.webp?v=20261120b", avatar: "art/avatar_mushroom.webp?v=20261120b", name: "Мухомор", cost: 15 },
+    { id: "scarf", icon: "art/shop_scarf.webp?v=20261120b", avatar: "art/avatar_scarf.webp?v=20261120b", name: "Шарф", cost: 12 },
+    { id: "hat", icon: "art/shop_hat.webp?v=20261120b", avatar: "art/avatar_hat.webp?v=20261120b", name: "Капелюх", cost: 18 },
+    { id: "glasses", icon: "art/shop_glasses.webp?v=20261120b", avatar: "art/avatar_glasses.webp?v=20261120b", name: "Окуляри", cost: 14 },
+    { id: "star", icon: "art/icon_star.webp?v=20261120b", avatar: "art/avatar_star.webp?v=20261120b", name: "Зірка", cost: 20 },
+    { id: "lantern", icon: "art/shop_lantern.webp?v=20261120b", avatar: "art/avatar_lantern.webp?v=20261120b", name: "Ліхтарик", cost: 25 },
+    { id: "crown", icon: "art/shop_crown.webp?v=20261120b", avatar: "art/avatar_crown.webp?v=20261120b", name: "Корона", cost: 35 }
   ];
   var SHOP_IDS = SHOP.map(function (x) { return x.id; });
 
@@ -67,54 +67,54 @@
 
   /* ---------- розділи: задачі, схожі за типом ---------- */
   var SECTIONS = [
-    { id: "add", emoji: '<img src="art/sec_add.png?v=20261117z" class="secico" alt="">', title: "Додавання й віднімання", color: "#58cc02",
+    { id: "add", emoji: '<img src="art/sec_add.webp?v=20261120b" class="secico" alt="">', title: "Додавання й віднімання", color: "#58cc02",
       sub: "Скільки всього, на скільки більше",
       ids: ["am8_pinecones_pc", "am11_pebbles_pb", "am10_wool_wl", "am10_buses_bs2", "am10_school_party_sv", "am7_checkers_ck", "pies_amphibia_video", "am8_cats_kt", "am9_baskets_bk", "am12_classes_cl2", "am12_beach_pb2", "am14_house_hs2"] },
-    { id: "mul", emoji: '<img src="art/sec_mul.png?v=20261117z" class="secico" alt="">', title: "Множення й ділення", color: "#ff7a6b",
+    { id: "mul", emoji: '<img src="art/sec_mul.webp?v=20261120b" class="secico" alt="">', title: "Множення й ділення", color: "#ff7a6b",
       sub: "У скільки разів, по скільки в кожному",
       ids: ["am11_potatoes_pt", "am6_turkey_tg", "am2_birds_b2", "am9_starch_st", "am8_aquarium_aq", "am8_paper_pp", "am9_notebooks_nb", "am9_polygons_pg", "am3_beads_bd", "am3_circus_cc", "am3_juggling_jg", "am9_squirrel_sq"] },
-    { id: "share", emoji: '<img src="art/sec_share.png?v=20261117z" class="secico" alt="">', title: "Поділ порівну", color: "#ffc800",
+    { id: "share", emoji: '<img src="art/sec_share.webp?v=20261120b" class="secico" alt="">', title: "Поділ порівну", color: "#ffc800",
       sub: "Розклали порівну, розділили на частини",
       ids: ["am12_toys_ty2", "am12_nuts_nt", "am12_bottles_bt", "am13_sweaters_sw2", "am13_trees_tr2", "am13_boats_bn", "am13_buttons_kn", "am14_onions_on", "am14_raspberry_rs", "am14_milk_ml", "am14_apples_ap2", "am15_currants_cr2"] },
-    { id: "money", emoji: '<img src="art/sec_money.png?v=20261117z" class="secico" alt="">', title: "Гроші та покупки", color: "#ce82ff",
+    { id: "money", emoji: '<img src="art/sec_money.webp?v=20261120b" class="secico" alt="">', title: "Гроші та покупки", color: "#ce82ff",
       sub: "Ціна, кількість, решта",
       ids: ["am8_candy_cn", "am8_marker_mk", "am8_balloons_bl", "am9_balls_bs", "am4_croissants_cr", "am5_sofia_sf", "am10_money_ol", "am2_bun_u2", "am13_sweets_cn2", "am13_stickers_st2", "am13_groceries_mm", "am7_tickets_tk"] },
-    { id: "units", emoji: '<img src="art/sec_units.png?v=20261117z" class="secico" alt="">', title: "Маса, об'єм, довжина", color: "#ff9600",
+    { id: "units", emoji: '<img src="art/sec_units.webp?v=20261120b" class="secico" alt="">', title: "Маса, об'єм, довжина", color: "#ff9600",
       sub: "Кілограми, літри, сантиметри",
       ids: ["am8_heron_hr", "am4_wolf_wf", "am3_kitten_kt", "am6_cistern_ct", "am6_engine_en", "am12_engine_en2", "am14_juice_jc", "am14_canteen_ct2", "am15_milking_mk2", "am15_jugs_jg2", "am15_potatoes_pt2", "am8_polyline_pl"] },
-    { id: "time", emoji: '<img src="art/sec_time.png?v=20261117z" class="secico" alt="">', title: "Час і відстань", color: "#ff4b4b",
+    { id: "time", emoji: '<img src="art/sec_time.webp?v=20261120b" class="secico" alt="">', title: "Час і відстань", color: "#ff4b4b",
       sub: "Години, хвилини, доби, швидше-повільніше",
       ids: ["am10_cat_sleep_cat2", "am10_vacation_kh", "am6_school_walk_sw", "am12_lviv_lv", "am13_lesson_ls", "am13_sandwiches_sd", "am15_dolls_dl", "am6_scooter_sc", "am13_medals_md", "am14_bus_bs3", "am15_carousel_cs", "am15_bikes_bk3"] },
-    { id: "compound", emoji: '<img src="art/sec_compound.png?v=20261117z" class="secico" alt="">', title: "Складені задачі", color: "#58cc02",
+    { id: "compound", emoji: '<img src="art/sec_compound.webp?v=20261120b" class="secico" alt="">', title: "Складені задачі", color: "#58cc02",
       sub: "Кілька дій поспіль — як у підручнику",
       ids: ["am11_weavers_wv", "am11_houses_hs", "am11_basket_bk2", "am11_sugar_sg", "am11_trains_tr", "am11_pears_pr", "am11_flamingo_fl2", "am11_nails_nl", "am8_cakes_ck2", "am10_herbarium_hb", "am10_flowerbed_fl", "am4_sewing_sw"] },
-    { id: "multi", emoji: '<img src="art/sec_multi.png?v=20261117z" class="secico" alt="">', title: "Задачі на кілька дій", color: "#c39cff",
+    { id: "multi", emoji: '<img src="art/sec_multi.webp?v=20261120b" class="secico" alt="">', title: "Задачі на кілька дій", color: "#c39cff",
       sub: "Спочатку одне, потім друге",
       ids: ["am2_parts_w2", "am6_dumplings_dm", "am12_garden_gr", "am12_concert_cc2", "am12_chestnuts_ch", "am14_rabbits_rb", "am15_fishermen_fs", "am15_newspapers_np", "am15_garages_gr2", "am9_hedgehog_hg", "am9_shirts_dr", "am9_haystacks_br"] },
-    { id: "logic", emoji: '<img src="art/sec_logic.png?v=20261117z" class="secico" alt="">', title: "Логіка й кмітливість", color: "#ffc800",
+    { id: "logic", emoji: '<img src="art/sec_logic.webp?v=20261120b" class="secico" alt="">', title: "Логіка й кмітливість", color: "#ffc800",
       sub: "Задачі-жарти й ті, де треба подумати",
       ids: ["am9_fruits_fr", "am9_numbers_nm", "am3_cheese_ch", "am_school_as", "am_school_as_b", "flowers_am_video", "am2_dress_d2", "am2_pencils_p2", "am6_recycle_rc", "am10_dogs_dog", "am10_kittens_kt2", "am14_classes2_cls"] }
 
     ,
-    { id: "mul2", emoji: '<img src="art/sec_mul2.png?v=20261117z" class="secico" alt="">', title: "Множення й ділення · 2", color: "#ff9f68",
+    { id: "mul2", emoji: '<img src="art/sec_mul2.webp?v=20261120b" class="secico" alt="">', title: "Множення й ділення · 2", color: "#ff9f68",
       sub: "Ділення на частини, кратне порівняння, кілька дій",
       ids: ["am16_garlands_gl", "am16_dresses_dr2", "am16_peas_ps", "am16_stools_st3", "am16_panda_pd",
             "am16_reserve_rv", "am16_entrances_en3", "am16_age_ag", "am16_money2_tm", "am16_sugar2_sg2"] }
 
     ,
-    { id: "add2", emoji: '<img src="art/sec_add.png?v=20261118i" class="secico" alt="">', title: "Додавання й віднімання · 2", color: "#58cc02",
+    { id: "add2", emoji: '<img src="art/sec_add.webp?v=20261120b" class="secico" alt="">', title: "Додавання й віднімання · 2", color: "#58cc02",
       sub: "Великі числа й кілька дій",
       ids: ["am17_pencils_pn", "am17_asters_as2", "am17_vegetables_vg", "am17_theatre_th", "am17_pumpkins_pk",
             "am17_pastries_pt3", "am17_lindens_ld", "am17_school_sc", "am17_bricks_br", "am17_village_vl"] }
 
     ,
-    { id: "big3", emoji: '<img src="art/sec_add.png?v=20261120a" class="secico" alt="">', title: "Великі числа й кілька дій", color: "#ff9f68",
+    { id: "big3", emoji: '<img src="art/sec_add.webp?v=20261120b" class="secico" alt="">', title: "Великі числа й кілька дій", color: "#ff9f68",
       sub: "Сотні, кілька дій поспіль, непряма форма",
       ids: ["am18_juice2_js", "am18_raspberry_ml", "am18_milk_bd", "am18_dolls_mt", "am18_napkins_sv",
             "am18_bookshop_bk", "am18_drawings_nd", "am18_pines_ps", "am18_cows_kr", "am18_pies_pr"] }
 
     ,
-    { id: "big4", emoji: '<img src="art/sec_logic.png?v=20261120b" class="secico" alt="">', title: "Великі числа · 2", color: "#c39cff",
+    { id: "big4", emoji: '<img src="art/sec_logic.webp?v=20261120b" class="secico" alt="">', title: "Великі числа · 2", color: "#c39cff",
       sub: "Рух, порівняння, кілька дій з трицифровими",
       ids: ["am19_bus_bs", "am19_ships_sh", "am19_fish_fh", "am19_parcels_pc", "am19_rain_rn",
             "am19_birches_br", "am19_strawberry_sb", "am19_linen_ln", "am19_chestnuts_ch", "am19_snowplow_sp"] }
@@ -637,11 +637,11 @@
   function quests(p) {
     var q = p.quests;
     return [
-      { id: "points", icon: '<img src="art/icon_coin.png?v=20261117u" class="ico" alt="">', title: "Отримайте 10 балів", now: q.points, goal: 10,
+      { id: "points", icon: '<img src="art/icon_coin.webp?v=20261120b" class="ico" alt="">', title: "Отримайте 10 балів", now: q.points, goal: 10,
         reward: "💎 +2", gem: 2, life: 0 },
-      { id: "time", icon: '<img src="art/icon_clock.png?v=20261117u" class="ico" alt="">', title: "Практикуйтеся 5 хвилин", now: Math.floor(q.sec / 60), goal: 5,
+      { id: "time", icon: '<img src="art/icon_clock.webp?v=20261120b" class="ico" alt="">', title: "Практикуйтеся 5 хвилин", now: Math.floor(q.sec / 60), goal: 5,
         reward: "❤️ +2", gem: 0, life: 2 },
-      { id: "perfect", icon: '<img src="art/icon_star.png?v=20261117u" class="ico" alt="">', title: "Пройдіть 2 уроки без помилок", now: q.perfect, goal: 2,
+      { id: "perfect", icon: '<img src="art/icon_star.webp?v=20261120b" class="ico" alt="">', title: "Пройдіть 2 уроки без помилок", now: q.perfect, goal: 2,
         reward: "💎 +3", gem: 3, life: 0 }
     ];
   }
@@ -660,16 +660,16 @@
 
   /* ---------- ліги ---------- */
   var LEAGUES = [
-    { name: "Бронзова", emoji: "🥉", crest: "art/league_bronze.png", city: "art/city_bronze.png", color: "#cd7f32", need: 0 },
-    { name: "Срібна", emoji: "🥈", crest: "art/league_silver.png", city: "art/city_silver.png", color: "#9aa7b8", need: 100 },
-    { name: "Золота", emoji: "🥇", crest: "art/league_gold.png", city: "art/city_gold.png", color: "#ffc800", need: 300 },
-    { name: "Сапфірова", emoji: "🔷", crest: "art/league_sapphire.png", city: "art/city_sapphire.png", color: "#2ec4b6", need: 600 },
-    { name: "Смарагдова", emoji: "🟢", crest: "art/league_emerald.png", city: "art/city_emerald.png", color: "#2ecc71", need: 1000 },
-    { name: "Рубінова", emoji: "🔺", crest: "art/league_ruby.png", city: "art/city_ruby.png", color: "#ff4b4b", need: 1500 },
-    { name: "Аметистова", emoji: "🟣", crest: "art/league_amethyst.png", city: "art/city_amethyst.png", color: "#a55eea", need: 2100 },
-    { name: "Перлинна", emoji: "🦪", crest: "art/league_pearl.png", city: "art/city_pearl.png", color: "#ff86c8", need: 2800 },
-    { name: "Обсидіанова", emoji: "⚫", crest: "art/league_obsidian.png", city: "art/city_obsidian.png", color: "#4b4b4b", need: 3600 },
-    { name: "Діамантова", emoji: "💎", crest: "art/league_diamond.png", city: "art/city_diamond.png", color: "#00c2c7", need: 4500 }
+    { name: "Бронзова", emoji: "🥉", crest: "art/league_bronze.webp?v=20261120b", city: "art/city_bronze.webp?v=20261120b", color: "#cd7f32", need: 0 },
+    { name: "Срібна", emoji: "🥈", crest: "art/league_silver.webp?v=20261120b", city: "art/city_silver.webp?v=20261120b", color: "#9aa7b8", need: 100 },
+    { name: "Золота", emoji: "🥇", crest: "art/league_gold.webp?v=20261120b", city: "art/city_gold.webp?v=20261120b", color: "#ffc800", need: 300 },
+    { name: "Сапфірова", emoji: "🔷", crest: "art/league_sapphire.webp?v=20261120b", city: "art/city_sapphire.webp?v=20261120b", color: "#2ec4b6", need: 600 },
+    { name: "Смарагдова", emoji: "🟢", crest: "art/league_emerald.webp?v=20261120b", city: "art/city_emerald.webp?v=20261120b", color: "#2ecc71", need: 1000 },
+    { name: "Рубінова", emoji: "🔺", crest: "art/league_ruby.webp?v=20261120b", city: "art/city_ruby.webp?v=20261120b", color: "#ff4b4b", need: 1500 },
+    { name: "Аметистова", emoji: "🟣", crest: "art/league_amethyst.webp?v=20261120b", city: "art/city_amethyst.webp?v=20261120b", color: "#a55eea", need: 2100 },
+    { name: "Перлинна", emoji: "🦪", crest: "art/league_pearl.webp?v=20261120b", city: "art/city_pearl.webp?v=20261120b", color: "#ff86c8", need: 2800 },
+    { name: "Обсидіанова", emoji: "⚫", crest: "art/league_obsidian.webp?v=20261120b", city: "art/city_obsidian.webp?v=20261120b", color: "#4b4b4b", need: 3600 },
+    { name: "Діамантова", emoji: "💎", crest: "art/league_diamond.webp?v=20261120b", city: "art/city_diamond.webp?v=20261120b", color: "#00c2c7", need: 4500 }
   ];
   function leagueOf(p) {
     var li = 0;
@@ -706,21 +706,21 @@
   function achievements(p) {
     var a = [];
     function add(o) { a.push(o); }
-    add({ id: "first", icon: '<img src="art/icon_star.png?v=20261117u" class="ico" alt="">', title: "Перший крок", now: Math.min(p.stats.lessons, 1), goal: 1,
+    add({ id: "first", icon: '<img src="art/icon_star.webp?v=20261120b" class="ico" alt="">', title: "Перший крок", now: Math.min(p.stats.lessons, 1), goal: 1,
           level: p.stats.lessons >= 1 ? 1 : 0, max: 1, desc: "Пройди перший урок" });
-    add({ id: "ten", icon: '<img src="art/ach_books.png?v=20261117u" class="ico" alt="">', title: "Старанний", now: Math.min(p.stats.lessons, 10), goal: 10,
+    add({ id: "ten", icon: '<img src="art/ach_books.webp?v=20261120b" class="ico" alt="">', title: "Старанний", now: Math.min(p.stats.lessons, 10), goal: 10,
           level: p.stats.lessons >= 10 ? 1 : 0, max: 1, desc: "Пройди 10 уроків" });
-    add({ id: "twentyfive", icon: '<img src="art/ach_boots.png?v=20261117u" class="ico" alt="">', title: "Марафонець", now: Math.min(p.stats.lessons, 25), goal: 25,
+    add({ id: "twentyfive", icon: '<img src="art/ach_boots.webp?v=20261120b" class="ico" alt="">', title: "Марафонець", now: Math.min(p.stats.lessons, 25), goal: 25,
           level: p.stats.lessons >= 25 ? 1 : 0, max: 1, desc: "Пройди 25 уроків" });
-    add({ id: "perfect5", icon: '<img src="art/ach_target.png?v=20261117u" class="ico" alt="">', title: "Без помилок", now: Math.min(p.stats.perfect, 5), goal: 5,
+    add({ id: "perfect5", icon: '<img src="art/ach_target.webp?v=20261120b" class="ico" alt="">', title: "Без помилок", now: Math.min(p.stats.perfect, 5), goal: 5,
           level: p.stats.perfect >= 5 ? 1 : 0, max: 1, desc: "5 ідеальних уроків" });
-    add({ id: "streak3", icon: '<img src="art/ach_fire.png?v=20261117u" class="ico" alt="">', title: "Серія", now: Math.min(p.streak, 3), goal: 3,
+    add({ id: "streak3", icon: '<img src="art/ach_fire.webp?v=20261120b" class="ico" alt="">', title: "Серія", now: Math.min(p.streak, 3), goal: 3,
           level: p.streak >= 7 ? 3 : p.streak >= 3 ? 1 : 0, max: 3, desc: "Займайся кілька днів підряд" });
-    add({ id: "xp500", icon: '<img src="art/ach_bolt.png?v=20261117u" class="ico" alt="">', title: "Мудрий", now: Math.min(p.xp, 500), goal: 500,
+    add({ id: "xp500", icon: '<img src="art/ach_bolt.webp?v=20261120b" class="ico" alt="">', title: "Мудрий", now: Math.min(p.xp, 500), goal: 500,
           level: p.xp >= 1000 ? 2 : p.xp >= 500 ? 1 : 0, max: 2, desc: "Зароби 500 балів" });
-    add({ id: "gems25", icon: '<img src="art/icon_gem.png?v=20261117u" class="ico" alt="">', title: "Кристальний", now: Math.min(p.gems, 25), goal: 25,
+    add({ id: "gems25", icon: '<img src="art/icon_gem.webp?v=20261120b" class="ico" alt="">', title: "Кристальний", now: Math.min(p.gems, 25), goal: 25,
           level: p.gems >= 50 ? 2 : p.gems >= 25 ? 1 : 0, max: 2, desc: "Збери 25 кристалів" });
-    add({ id: "league", icon: '<img src="art/icon_trophy.png?v=20261117u" class="ico" alt="">', title: "Чемпіон", now: leagueOf(p).index, goal: 9,
+    add({ id: "league", icon: '<img src="art/icon_trophy.webp?v=20261120b" class="ico" alt="">', title: "Чемпіон", now: leagueOf(p).index, goal: 9,
           level: leagueOf(p).index >= 9 ? 2 : leagueOf(p).index >= 5 ? 1 : 0, max: 2,
           desc: "Дійди до Діамантової ліги" });
     return a;
@@ -728,11 +728,11 @@
 
   /* ---------- сайдбар ---------- */
   var NAV = [
-    { key: "learn", href: "index.html", icon: '<img src="art/nav_home.png?v=20261117u" class="navico" alt="">', label: "Навчання" },
-    { key: "train", href: "train.html", icon: '<img src="art/nav_train.png?v=20261117u" class="navico" alt="">', label: "Тренування" },
-    { key: "quests", href: "quests.html", icon: '<img src="art/nav_quests.png?v=20261117u" class="navico" alt="">', label: "Квести" },
-    { key: "board", href: "leaderboard.html", icon: '<img src="art/nav_board.png?v=20261117u" class="navico" alt="">', label: "Дошки пошани" },
-    { key: "profile", href: "profile.html", icon: '<img src="art/nav_profile.png?v=20261117u" class="navico" alt="">', label: "Профіль" }
+    { key: "learn", href: "index.html", icon: '<img src="art/nav_home.webp?v=20261120b" class="navico" alt="">', label: "Навчання" },
+    { key: "train", href: "train.html", icon: '<img src="art/nav_train.webp?v=20261120b" class="navico" alt="">', label: "Тренування" },
+    { key: "quests", href: "quests.html", icon: '<img src="art/nav_quests.webp?v=20261120b" class="navico" alt="">', label: "Квести" },
+    { key: "board", href: "leaderboard.html", icon: '<img src="art/nav_board.webp?v=20261120b" class="navico" alt="">', label: "Дошки пошани" },
+    { key: "profile", href: "profile.html", icon: '<img src="art/nav_profile.webp?v=20261120b" class="navico" alt="">', label: "Профіль" }
   ];
   function avatarMarkup(a, size) {
     var p = load();
@@ -762,7 +762,7 @@
     });
     html += "</nav>";
     html += '<div class="side-foot">' +
-            '<a class="nav-item" href="../index.html"><span class="ni"><img src="art/nav_library.png?v=20261118e" class="navico" alt=""></span>Бібліотека</a>' +
+            '<a class="nav-item" href="../index.html"><span class="ni"><img src="art/nav_library.webp?v=20261120b" class="navico" alt=""></span>Бібліотека</a>' +
             '<div class="mini-league" style="--lc:' + lg.cur.color + '">' +
             '<div class="ml-emoji"><img class="league-crest sm" src="' + lg.cur.crest + '?v=20261118e" alt=""></div><div><b>' + lg.cur.name + ' ліга</b>' +
             '<div class="ml-xp">' + p.xp + ' XP усього</div></div></div>' +
@@ -772,11 +772,11 @@
 
   function hudHTML() {
     var p = load();
-    return '<span class="chip lives"><img src="art/icon_heart.png?v=20261118a" class="ico sm" alt=""> <b id="hud-lives">' + p.lives + '</b></span>' +
-           '<span class="chip gems"><img src="art/icon_gem.png?v=20261118a" class="ico sm" alt=""> <b id="hud-gems">' + p.gems + '</b></span>' +
-           '<span class="chip xp"><img src="art/ach_bolt.png?v=20261118a" class="ico sm" alt=""> <b id="hud-xp">' + p.xp + '</b></span>' +
-           '<span class="chip streak"><img src="art/ach_fire.png?v=20261118a" class="ico sm" alt=""> <b id="hud-streak">' + p.streak + '</b></span>' +
-           '<span class="chip combo"><img src="art/icon_star.png?v=20261118a" class="ico sm" alt=""> <b id="hud-combo">x' + (p.combo || 0) + '</b></span>';
+    return '<span class="chip lives"><img src="art/icon_heart.webp?v=20261120b" class="ico sm" alt=""> <b id="hud-lives">' + p.lives + '</b></span>' +
+           '<span class="chip gems"><img src="art/icon_gem.webp?v=20261120b" class="ico sm" alt=""> <b id="hud-gems">' + p.gems + '</b></span>' +
+           '<span class="chip xp"><img src="art/ach_bolt.webp?v=20261120b" class="ico sm" alt=""> <b id="hud-xp">' + p.xp + '</b></span>' +
+           '<span class="chip streak"><img src="art/ach_fire.webp?v=20261120b" class="ico sm" alt=""> <b id="hud-streak">' + p.streak + '</b></span>' +
+           '<span class="chip combo"><img src="art/icon_star.webp?v=20261120b" class="ico sm" alt=""> <b id="hud-combo">x' + (p.combo || 0) + '</b></span>';
   }
   function syncHud() {
     var p = load();

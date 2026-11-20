@@ -684,7 +684,7 @@ body {
 /* картка квесту місяця — казкова рамка */
 .month-card {
   background: linear-gradient(120deg, rgba(20,15,12,.58), rgba(20,15,12,.26)),
-              url("art/header_forest.png?v=20261117v") !important;
+              url("art/header_forest.webp?v=20261120b") !important;
   background-size: cover !important; background-position: center 42% !important;
   border: 3px solid var(--woodline); border-radius: 26px;
   box-shadow: 0 10px 0 rgba(0,0,0,.35), 0 22px 52px rgba(0,0,0,.40);
@@ -771,7 +771,7 @@ body {
               box-shadow:0 24px 70px rgba(0,0,0,.55), inset 0 0 0 1px rgba(255,209,102,.10);
               overflow:hidden; }
 .modal-card::before { content:""; position:absolute; inset:0;
-              background-image:linear-gradient(180deg,rgba(20,15,12,.74),rgba(20,15,12,.92)),url("art/header_forest.png?v=20261117u");
+              background-image:linear-gradient(180deg,rgba(20,15,12,.74),rgba(20,15,12,.92)),url("art/header_forest.webp?v=20261120b");
               background-size:cover; background-position:center 42%; opacity:.38; pointer-events:none; }
 .modal-card > * { position:relative; z-index:1; }
 .modal-glow { position:absolute; width:240px; height:240px; border-radius:50%; top:-80px; left:50%;
@@ -801,14 +801,14 @@ body {
 /* художнє оформлення заголовків та іконок */
 .sec-head {
   background-image: linear-gradient(90deg, rgba(18,14,11,.62), rgba(18,14,11,.28)),
-                    url("art/header_forest.png?v=20261117u") !important;
+                    url("art/header_forest.webp?v=20261120b") !important;
   background-size: cover !important;
   background-position: center 46% !important;
   border-left: 9px solid var(--sec, var(--leaf)) !important;
 }
 .story-banner {
   background-image: linear-gradient(90deg, rgba(18,14,11,.55), rgba(18,14,11,.18)),
-                    url("art/header_forest.png?v=20261117u");
+                    url("art/header_forest.webp?v=20261120b");
   background-size: cover; background-position: center 46%;
   border: 3px solid rgba(0,0,0,.45); border-radius:22px; padding:26px 22px;
   min-height:132px; margin-bottom:18px; position:relative; overflow:hidden;
@@ -820,4 +820,31 @@ body {
 .ico.sm { width:18px; height:18px; }
 .qi .ico { width:26px; height:26px; }
 .shopico { object-fit:contain; display:inline-block; vertical-align:middle; }
+
+/* ================= мобільний фінальний шар =================
+   Темові шари вище (космос/казка/темна казкова) повторно задають .side{position:fixed}
+   і перебивають базове @media 860px — цей шар нижче всіх і з !important повертає
+   телефону нормальний каркас: сайдбар = верхня поличка, контент під ним. */
+@media (max-width: 860px) {
+  .side { position: static !important; inset: auto !important; width: auto !important; height: auto !important;
+          flex-direction: row !important; align-items: center !important; overflow-x: auto !important;
+          padding: 8px 10px !important; gap: 8px !important;
+          border-right: 0 !important; border-bottom: 2px solid var(--woodline, #d9c4a8) !important;
+          box-shadow: 0 8px 18px rgba(62,39,35,.10) !important; }
+  .side-foot { display: none !important; }
+  .main { margin-left: 0 !important; padding: 14px 12px 70px !important; }
+  .step.o0, .step.o1, .step.o2, .step.o3 { transform: none !important; }
+  .logo { padding: 4px 10px !important; font-size: 20px !important; flex: 0 0 auto !important; }
+  .nav-item { padding: 9px 10px !important; font-size: 0 !important; gap: 0 !important; white-space: nowrap !important; }
+  .nav-item .ni { font-size: 20px !important; width: auto !important; }
+  .daily-banner { flex-direction: column !important; align-items: flex-start !important; gap: 8px !important; }
+  /* зручні тап-цілі: пальцем у 38-42px, не 16px */
+  .qbtn, .db-go { min-height: 42px; }
+  .btn, button.edit { min-height: 42px; }
+  .card h3 .more { padding: 8px 2px; }
+  .lvl .dot { touch-action: manipulation; }
+}
+@media (hover: none) and (pointer: coarse) {
+  .key, .answer { touch-action: manipulation; }
+}
 
