@@ -27,8 +27,24 @@
   .timo-mascot { left: 8px; bottom: 2px; width: 84px; }
   .timo-mascot .tm-bubble { display: none; }
 }
+/* живі очі Тімка: оверлейні кадри кліпу/емоцій лягають поверх бази піксель-у-піксель */
+.timo-mascot .tm-figure { position: relative; }
+.timo-mascot .tm-lid { position: absolute; left: 0; top: 0; opacity: 0;
+                       transition: opacity 45ms linear; pointer-events: none; }
+.timo-mascot .tm-hit { position: absolute; left: 0; top: 0; width: 100%; height: 45%;
+                       pointer-events: auto; cursor: pointer; z-index: 3; }
+.timo-mascot .tm-figure.tm-hop { animation: tmHop .55s cubic-bezier(.3,1.6,.4,1); }
+@keyframes tmHop { 0% { transform: translateY(0) rotate(0deg); }
+                   35% { transform: translateY(-13px) rotate(2deg); }
+                   70% { transform: translateY(-2px) rotate(-1deg); }
+                   100% { transform: translateY(0) rotate(0deg); } }
+.timo-mascot .tm-bubble.tm-pop { animation: tmPop .35s ease-out; }
+@keyframes tmPop { 0% { transform: scale(.85); opacity: .4; }
+                   100% { transform: scale(1); opacity: 1; } }
 @media (prefers-reduced-motion: reduce) {
-  .timo-mascot .tm-figure, .timo-mascot .tm-shadow { animation: none; }
+  .timo-mascot .tm-figure, .timo-mascot .tm-shadow { animation: none !important; }
+  .timo-mascot .tm-lid { transition: none; }
+  .timo-mascot .tm-bubble.tm-pop { animation: none; }
 }
 /* фінальна скарбниця в самому кінці дороги */
 .finale-chest { position:relative; display:flex; flex-direction:column; align-items:center;
@@ -104,7 +120,12 @@
 
 <div class="timo-mascot" id="timoMascot" aria-hidden="true">
   <div class="tm-bubble" id="tmBubble">Привіт! Гайда вчитися! 🌿</div>
-  <div class="tm-figure"><img src="art/mascot_tymko.webp?v=20261118x" alt=""></div>
+  <div class="tm-figure">
+    <img src="art/mascot_tymko.webp?v=20261118x" alt="">
+    <img class="tm-lid" id="tmBlink" src="art/mascot_tymko_blink.webp?v=20261120a" alt="">
+    <img class="tm-lid" id="tmHappy" src="art/mascot_tymko_happy.webp?v=20261120a" alt="">
+    <div class="tm-hit" id="tmHit" title="Тімко"></div>
+  </div>
   <div class="tm-shadow"></div>
 </div>
 
@@ -151,16 +172,73 @@
   }
 
   var CHARS = ["🐸", "🦎", "🐛", "🐌", "🦋", "🐞", "🐢", "🐝"];
-  var PHRASES = ["Привіт!", "Молодець!", "Далі!", "Ура!", "Ти зможеш!", "Ще одна!", "Супер!", "Гайда!"];
-  /* оживляємо висловлювання маскота без перезавантаження сторінки */
+  var CALM = ["Привіт! Гайда вчитися! 🌿", "Далі!", "Ще одна задача?", "Як справи?", "Гайда!", "Ти майже там!"];
+  var HAPPY = ["Молодець!", "Ура!", "Супер!", "Ти зможеш!", "Круто!", "Так тримати!"];
+  var CLICKY = ["Гей, це я — Тімко!", "Ще раз!", "Клац! 😄", "Гайда до уроку!", "Хі-хі!"];
+  /* живий Тімко: кліпає очима у природному ритмі, радіє фразами, реагує на дотик */
   (function () {
     var bubble = document.getElementById("tmBubble");
-    if (!bubble || !PHRASES.length) { return; }
-    var i = 0;
-    setInterval(function () {
-      i = (i + 1) % PHRASES.length;
-      bubble.textContent = PHRASES[i];
-    }, 9000);
+    var blink = document.getElementById("tmBlink");
+    var happy = document.getElementById("tmHappy");
+    var hit = document.getElementById("tmHit");
+    var fig = document.querySelector(".timo-mascot .tm-figure");
+    var reduce = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (!blink || !happy) { return; }
+
+    function lid(el, on) { el.style.opacity = on ? 1 : 0; }
+
+    function closeLids(after) {
+      lid(blink, true);
+      setTimeout(function () { lid(blink, false); if (after) { after(); } }, 130);
+    }
+    function doubleBlink() { closeLids(function () { setTimeout(closeLids, 150); }); }
+
+    function scheduleBlink() {
+      var wait = 2400 + Math.random() * 4400;   /* природний ритм: 2.4–6.8 с */
+      setTimeout(function () {
+        (Math.random() < 0.22 ? doubleBlink : closeLids)();
+        scheduleBlink();
+      }, wait);
+    }
+
+    function happyLids(ms) {
+      if (reduce) { return; }
+      lid(happy, true);
+      setTimeout(function () { lid(happy, false); }, ms || 1500);
+    }
+    function hop() {
+      if (!fig || reduce) { return; }
+      fig.classList.remove("tm-hop");
+      void fig.offsetWidth;
+      fig.classList.add("tm-hop");
+      setTimeout(function () { fig.classList.remove("tm-hop"); }, 600);
+    }
+    function say(text, isHappy) {
+      if (!bubble) { return; }
+      bubble.textContent = text;
+      bubble.classList.remove("tm-pop");
+      void bubble.offsetWidth;
+      bubble.classList.add("tm-pop");
+      if (isHappy) { happyLids(1700); hop(); }
+    }
+    function pick(list) { return list[Math.floor(Math.random() * list.length)]; }
+
+    function idleChat() {
+      var isHappy = Math.random() < 0.35;
+      say(pick(isHappy ? HAPPY : CALM), isHappy);
+      setTimeout(idleChat, 7000 + Math.random() * 6000);
+    }
+
+    if (hit) {
+      hit.addEventListener("click", function () {
+        say(pick(CLICKY), true);
+        if (!reduce) { setTimeout(doubleBlink, 1800); }
+      });
+    }
+
+    if (reduce) { return; }   /* без анімації: спокійний Тімко з відкритими очима */
+    scheduleBlink();
+    setTimeout(idleChat, 6500);
   })();
   var charObserver = null;
   function observeChar(el) {
