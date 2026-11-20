@@ -26,6 +26,8 @@
 @media (max-width: 860px) {
   .timo-mascot { left: 8px; bottom: 2px; width: 84px; }
   .timo-mascot .tm-bubble { display: none; }
+  .timo-mascot.go-door { transform: translateX(56px); }
+  .tm-door { left: 58px; width: 92px; height: 172px; }
 }
 /* живі очі Тімка: оверлейні кадри кліпу/емоцій лягають поверх бази піксель-у-піксель */
 .timo-mascot .tm-figure { position: relative; }
@@ -41,9 +43,35 @@
 .timo-mascot .tm-bubble.tm-pop { animation: tmPop .35s ease-out; }
 @keyframes tmPop { 0% { transform: scale(.85); opacity: .4; }
                    100% { transform: scale(1); opacity: 1; } }
+/* кадри «рука вгору» — повна заміна базової фігури під час махання */
+.timo-mascot .tm-wave { position: absolute; left: 0; top: 0; opacity: 0; pointer-events: none; }
+/* дерев'яні дверцята для сцени входу/виходу */
+.tm-door { position: fixed; left: 344px; bottom: 6px; width: 130px; height: 248px; z-index: 7;
+           opacity: 0; pointer-events: none; transform-origin: left center;
+           transform: perspective(420px) rotateY(0deg);
+           transition: opacity .45s ease, transform .5s ease;
+           border: 3px solid #3e2723; border-radius: 14px 14px 4px 4px;
+           background: repeating-linear-gradient(90deg, #6d4c41 0 12px, #5d4037 12px 15px);
+           box-shadow: inset 0 0 24px rgba(0,0,0,.45), 0 10px 18px rgba(0,0,0,.4); }
+.tm-door.show { opacity: 1; }
+.tm-door.open { transform: perspective(420px) rotateY(-76deg); }
+.tm-door::after { content: ""; position: absolute; right: 10px; top: 46%; width: 13px; height: 13px;
+                  border-radius: 50%; background: radial-gradient(circle at 35% 35%, #ffe08a, #c9932a 70%);
+                  box-shadow: 0 2px 4px rgba(0,0,0,.5); }
+.tm-door::before { content: ""; position: absolute; inset: -60px; z-index: -1; border-radius: 50%;
+                   background: radial-gradient(ellipse, rgba(255,209,102,.45), transparent 62%);
+                   opacity: 0; transition: opacity .5s; }
+.tm-door.open::before { opacity: 1; }
+/* рух маскота до дверей і назад */
+.timo-mascot { transition: transform 1.15s ease-in-out; }
+.timo-mascot.go-door { transform: translateX(80px); }
+.timo-mascot .tm-figure, .timo-mascot .tm-shadow { transition: opacity .35s ease; }
+.timo-mascot .tm-gone { opacity: 0; }
 @media (prefers-reduced-motion: reduce) {
   .timo-mascot .tm-figure, .timo-mascot .tm-shadow { animation: none !important; }
-  .timo-mascot .tm-lid { transition: none; }
+  .timo-mascot .tm-lid, .timo-mascot .tm-wave { transition: none; }
+  .timo-mascot, .timo-mascot .tm-figure, .timo-mascot .tm-shadow,
+  .tm-door { transition: none !important; }
   .timo-mascot .tm-bubble.tm-pop { animation: none; }
 }
 /* фінальна скарбниця в самому кінці дороги */
@@ -120,14 +148,17 @@
 
 <div class="timo-mascot" id="timoMascot" aria-hidden="true">
   <div class="tm-bubble" id="tmBubble">Привіт! Гайда вчитися! 🌿</div>
-  <div class="tm-figure">
-    <img src="art/mascot_tymko.webp?v=20261120b" alt="">
+  <div class="tm-figure" id="tmFigure">
+    <img id="tmBase" src="art/mascot_tymko.webp?v=20261120b" alt="">
+    <img class="tm-wave" id="tmWaveA" src="art/mascot_tymko_wave_a.webp?v=20261120c" alt="">
+    <img class="tm-wave" id="tmWaveB" src="art/mascot_tymko_wave_b.webp?v=20261120c" alt="">
     <img class="tm-lid" id="tmBlink" src="art/mascot_tymko_blink.webp?v=20261120a" alt="">
     <img class="tm-lid" id="tmHappy" src="art/mascot_tymko_happy.webp?v=20261120a" alt="">
     <div class="tm-hit" id="tmHit" title="Тімко"></div>
   </div>
-  <div class="tm-shadow"></div>
+  <div class="tm-shadow" id="tmShadow"></div>
 </div>
+<div class="tm-door" id="tmDoor" aria-hidden="true"></div>
 
 <div class="toast" id="toast"></div>
 <button class="chest-jump" id="chestJump" type="button">
@@ -224,21 +255,95 @@
     function pick(list) { return list[Math.floor(Math.random() * list.length)]; }
 
     function idleChat() {
+      if (sceneRunning) { setTimeout(idleChat, 5000); return; }   /* сцена говорить сама */
       var isHappy = Math.random() < 0.35;
       say(pick(isHappy ? HAPPY : CALM), isHappy);
       setTimeout(idleChat, 7000 + Math.random() * 6000);
     }
 
+    var sceneRunning = false;
+    var base = document.getElementById("tmBase");
+    var waveA = document.getElementById("tmWaveA");
+    var waveB = document.getElementById("tmWaveB");
+    var door = document.getElementById("tmDoor");
+    var shadow = document.getElementById("tmShadow");
+    var mascot = document.getElementById("timoMascot");
+
     if (hit) {
       hit.addEventListener("click", function () {
+        if (sceneRunning) { return; }        /* сцена не переривається */
         say(pick(CLICKY), true);
         if (!reduce) { setTimeout(doubleBlink, 1800); }
       });
     }
 
+    /* ---------- сцена: махнув рукою → двері → зайшов → знову вийшов ---------- */
+    function showWave(frame) {
+      if (base) { base.style.opacity = frame ? 0 : 1; }
+      if (waveA) { waveA.style.opacity = frame === "a" ? 1 : 0; }
+      if (waveB) { waveB.style.opacity = frame === "b" ? 1 : 0; }
+    }
+
+    function playScene() {
+      if (sceneRunning || reduce) { return; }
+      sceneRunning = true;
+      say("Привіт! 👋", true);
+      showWave("a");
+      var flips = 0, up = true;
+      var wav = setInterval(function () {
+        up = !up;
+        showWave(up ? "a" : "b");
+        if (++flips >= 8) {
+          clearInterval(wav);
+          showWave(null);
+          setTimeout(step2, 450);
+        }
+      }, 330);
+
+      function step2() { if (door) { door.classList.add("show"); } setTimeout(step3, 550); }
+      function step3() { if (door) { door.classList.add("open"); } setTimeout(step4, 600); }
+      function step4() {
+        say("Зайду на хвилинку!", false);
+        if (mascot) { mascot.classList.add("go-door"); }
+        setTimeout(step5, 1250);
+      }
+      function step5() {
+        if (fig) { fig.classList.add("tm-gone"); }
+        if (shadow) { shadow.classList.add("tm-gone"); }
+        setTimeout(step6, 380);
+      }
+      function step6() { if (door) { door.classList.remove("open"); } setTimeout(step7, 1500); }
+      function step7() { if (door) { door.classList.add("open"); } setTimeout(step8, 600); }
+      function step8() {
+        if (fig) { fig.classList.remove("tm-gone"); }
+        if (shadow) { shadow.classList.remove("tm-gone"); }
+        say("Я повернувся! 😄", true);
+        hop();
+        if (mascot) { mascot.classList.remove("go-door"); }
+        setTimeout(step9, 1350);
+      }
+      function step9() {
+        if (door) { door.classList.remove("show"); }
+        setTimeout(function () {
+          if (door) { door.classList.remove("open"); }
+          sceneRunning = false;
+          say(pick(CALM), false);
+        }, 550);
+      }
+    }
+
+    function scheduleScene(first) {
+      var wait = first ? 2600 : 60000 + Math.random() * 45000;
+      setTimeout(function () {
+        if (!document.hidden && !sceneRunning) { playScene(); }
+        scheduleScene(false);
+      }, wait);
+    }
+
     if (reduce) { return; }   /* без анімації: спокійний Тімко з відкритими очима */
     scheduleBlink();
     setTimeout(idleChat, 6500);
+    scheduleScene(true);      /* перше привітання з маханням — одразу після загрузки */
   })();
   var charObserver = null;
   function observeChar(el) {
