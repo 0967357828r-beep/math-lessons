@@ -40,6 +40,13 @@
   .result .big { font-size: 56px; margin: 8px 0; }
   .result h2 { margin: 0 0 6px; }
   .hint { text-align: center; color: #999; font-weight: 700; font-size: 12px; margin-top: 12px; }
+  .assist { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-top: 6px; }
+  .assist .btn { font-size: 13px; }
+  .opt-opts { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; max-width: 330px; margin: 6px auto; }
+  .opt-btn { border: 2px solid #e5e5e5; border-bottom-width: 4px; background: #fff; border-radius: 14px;
+             padding: 16px 0; font: 900 28px inherit; color: #3c3c3c; cursor: pointer; }
+  .opt-btn.ok { background: #d7ffb8; border-color: #58cc02; color: #3f8000; }
+  .opt-btn.bad { background: #ffdfe0; border-color: #ff4b4b; color: #ea2b2b; }
 </style>
 </head>
 <body>
@@ -183,6 +190,125 @@
     if (bar) { bar.style.width = Math.round(idx / Math.max(1, queue.length) * 100) + "%"; }
   }
 
+  /* ---------- допомога за кристали: підказка і варіанти ---------- */
+  var HINTS = {
+    add:  "Якщо важко — додай спочатку до круглого десятка, а потім решту.",
+    sub:  "Якщо важко — відніми спочатку до круглого десятка, а потім решту.",
+    mul:  "Множення — це сума однакових доданків. Згадай таблицю множення.",
+    div:  "Ділення — обернена дія до множення: підбери число, яке при множенні на дільник дасть ділене.",
+    big:  "Рахуй порозрядно: спочатку десятки, потім одиниці.",
+    chain: "Роби дії по черзі, зліва направо. Спочатку множення й ділення, потім додавання й віднімання.",
+    times: "Згадай таблицю множення і ділення — вони обернені одне до одного.",
+    mix:  "Порядок дій: спочатку множення й ділення, потім додавання й віднімання, зліва направо.",
+    cmp:  "Обчисли кожен вираз окремо, потім порівняй результати. Дужки — завжди першими."
+  };
+
+  function distractors(a) {
+    var cand = [a + 1, a - 1, a + 2, a - 2, a + 10, a - 10, a + 5, a - 5, a + 3, a - 3];
+    for (var i = cand.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var t = cand[i]; cand[i] = cand[j]; cand[j] = t;
+    }
+    var out = [], seen = {};
+    for (var k = 0; k < cand.length && out.length < 3; k++) {
+      var n = cand[k];
+      if (n >= 0 && n !== a && !seen[n]) { seen[n] = 1; out.push(n); }
+    }
+    while (out.length < 3) { out.push(a + 10 + out.length); }
+    return out;
+  }
+
+  function renderNumOptions(cur) {
+    var zone = document.getElementById("answerZone");
+    if (!zone) { return []; }
+    var opts = distractors(cur.a).concat([cur.a]);
+    for (var i = opts.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var t = opts[i]; opts[i] = opts[j]; opts[j] = t;
+    }
+    zone.innerHTML = '<div class="opt-opts" id="numOpts">' +
+      opts.map(function (n) { return '<button type="button" class="opt-btn" data-n="' + n + '">' + n + '</button>'; }).join("") +
+      '</div>';
+    var btns = [];
+    Array.prototype.forEach.call(zone.querySelectorAll(".opt-btn"), function (b) {
+      var ok = String(b.getAttribute("data-n")) === String(cur.a);
+      b.addEventListener("click", function () {
+        if (answered || b.disabled) { return; }
+        b.classList.add(ok ? "ok" : "bad");
+        if (!ok) { b.disabled = true; }
+        finished(ok, cur);
+        if (!ok) {
+          Array.prototype.forEach.call(zone.querySelectorAll(".opt-btn"), function (x) {
+            if (String(x.getAttribute("data-n")) === String(cur.a)) { x.classList.add("ok"); }
+          });
+        }
+      });
+      btns.push({ b: b, ok: ok });
+    });
+    return btns;
+  }
+
+  function buildAssist(cur) {
+    var row = document.getElementById("assist");
+    if (!row) { return; }
+    row.innerHTML = "";
+    var hintB = document.createElement("button");
+    hintB.type = "button";
+    hintB.className = "btn ghost";
+    hintB.innerHTML = "🔊 Підказка · 2 💎";
+    var hintBought = false;
+    hintB.addEventListener("click", function () {
+      if (!("speechSynthesis" in window)) { Game.toast("Озвучення не підтримується цим браузером"); return; }
+      if (!hintBought) {
+        var p = Game.load();
+        if (p.gems < 2) { Game.toast("Не вистачає кристалів 💎 Правильна відповідь дає 3 💎!"); return; }
+        Game.addGems(-2); hintBought = true;
+        Game.syncHud();
+        hintB.innerHTML = "🔊 Повторити підказку";
+        Game.toast("Підказка · −2 💎");
+      }
+      try {
+        window.speechSynthesis.cancel();
+        var u = new SpeechSynthesisUtterance(HINTS[mode] || HINTS.add);
+        u.lang = "uk-UA"; u.rate = 0.9;
+        window.speechSynthesis.speak(u);
+      } catch (e) {}
+    });
+    row.appendChild(hintB);
+
+    if (cur.type === "cmp") { return; }  /* порівняння вже має три варіанти */
+
+    var optB = document.createElement("button");
+    optB.type = "button";
+    optB.className = "btn ghost";
+    optB.innerHTML = "🎲 Варіанти · 3 💎";
+    var stage = 0, curBtns = [];
+    optB.addEventListener("click", function () {
+      if (answered || stage >= 2) { return; }
+      if (stage === 0) {
+        var p = Game.load();
+        if (p.gems < 3) { Game.toast("Не вистачає кристалів 💎 Правильна відповідь дає 3 💎!"); return; }
+        Game.addGems(-3); stage = 1;
+        Game.syncHud(); Game.toast("Варіанти відкрито · −3 💎");
+        curBtns = renderNumOptions(cur);
+        optB.innerHTML = "✂️ 50:50 · +2 💎";
+      } else {
+        var p2 = Game.load();
+        if (p2.gems < 2) { Game.toast("Не вистачає кристалів 💎"); return; }
+        Game.addGems(-2); stage = 2;
+        Game.syncHud(); Game.toast("50:50 · −2 💎");
+        var wrong = curBtns.filter(function (x) { return !x.ok && document.body.contains(x.b); });
+        for (var i = wrong.length - 1; i > 0; i--) {
+          var j = Math.floor(Math.random() * (i + 1));
+          var t = wrong[i]; wrong[i] = wrong[j]; wrong[j] = t;
+        }
+        wrong.slice(0, 2).forEach(function (x) { x.b.remove(); });
+        optB.style.display = "none";
+      }
+    });
+    row.appendChild(optB);
+  }
+
   function renderQuestion() {
     var host = document.getElementById("train");
     answered = false; typed = "";
@@ -199,6 +325,7 @@
         '<div class="cmp-opts"><button class="cmp-btn" data-op="&gt;">&gt;</button>' +
         '<button class="cmp-btn" data-op="&lt;">&lt;</button>' +
         '<button class="cmp-btn" data-op="=">=</button></div>' +
+        '<div class="assist" id="assist"></div>' +
         '<div class="feedback" id="fb"></div>' +
         '<div class="hint">Помилка не забирає серце — просто спробуй ще</div>' +
         '</div>';
@@ -222,12 +349,15 @@
         '<div class="muted" style="font-weight:800;font-size:12px;text-transform:uppercase;letter-spacing:1px">' +
         'Обчисли · ' + (idx + 1) + ' з ' + queue.length + '</div>' +
         '<div class="qbig">' + esc(cur.q) + (cur.q.indexOf("=") > -1 ? "" : '<span class="eq">=</span>') + '</div>' +
+        '<div id="answerZone">' +
         '<div class="answer" id="answer">' + (typed || "&nbsp;") + '</div>' +
         '<div class="keypad" id="keypad">' +
         [1,2,3,4,5,6,7,8,9].map(function (n) { return '<button class="key" data-k="' + n + '">' + n + '</button>'; }).join("") +
         '<button class="key" data-k="back">⌫</button><button class="key" data-k="0">0</button>' +
         '<button class="key" data-k="ok" style="background:#58cc02;color:#fff;border-color:#46a302">✓</button>' +
         '</div>' +
+        '</div>' +
+        '<div class="assist" id="assist"></div>' +
         '<div class="feedback" id="fb"></div>' +
         '<div class="hint">Введи відповідь і натисни ✓ (або Enter)</div>' +
         '</div>';
@@ -244,6 +374,7 @@
         });
       });
     }
+    buildAssist(cur);
     updateBar();
     var stat = document.getElementById("statline");
     if (stat) {
