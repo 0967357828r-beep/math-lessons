@@ -26,6 +26,7 @@
   .repeat-btn { background:#ff9600; box-shadow:0 4px 0 #cc7800; }
   .lesson-done { text-align:center; padding:18px 10px; }
   .lesson-done .big { font-size:52px; }
+  .img-box img { width:100%; border-radius:14px; display:block; }
 </style>
 </head>
 <body>
@@ -118,7 +119,9 @@
     '<div class="lesson-kicker">' + (sec ? "Розділ " + (sec.index + 1) + " · " + Game.esc(sec.title) : "Урок") + '</div>' +
     '<h1>' + Game.esc(task.title) + '</h1>' +
     '<p class="task">' + Game.esc(task.text) + '</p>' +
-    '<div class="video-box"><video id="video" controls playsinline preload="metadata"></video></div>' +
+    (task.img
+      ? '<div class="video-box img-box"><img id="taskImg" alt=""><button type="button" class="btn ghost" id="playCond" style="margin:12px auto 0;max-width:300px;display:flex">🔊 Послухати умову</button></div>'
+      : '<div class="video-box"><video id="video" controls playsinline preload="metadata"></video></div>') +
     '<div class="steps" id="dots"></div>' +
     '<div class="quiz" id="stage"></div>' +
     '<div class="stage-msg" id="msg"></div>' +
@@ -130,7 +133,29 @@
     '<div class="ansbox" id="ansbox"><ol id="stepsList"></ol><audio id="ansAudio" preload="none"></audio>' +
     '<div class="muted" style="font-size:12px;font-weight:800">🔊 Розв\'язок озвучений</div></div>';
 
-  document.getElementById("video").src = task.video;
+  if (task.img) {
+    document.getElementById("taskImg").src = task.img;
+    var playCond = document.getElementById("playCond");
+    if (playCond) {
+      playCond.addEventListener("click", function () {
+        var el = document.getElementById("condAudio");
+        if (!el) {
+          el = document.createElement("audio");
+          el.id = "condAudio";
+          el.preload = "auto";
+          document.body.appendChild(el);
+        }
+        el.src = task.condAudio;
+        try {
+          el.currentTime = 0;
+          var pr = el.play();
+          if (pr && pr.catch) { pr.catch(function () { Game.toast("Аудіо недоступне"); }); }
+        } catch (e) { Game.toast("Аудіо недоступне"); }
+      });
+    }
+  } else {
+    document.getElementById("video").src = task.video;
+  }
   document.getElementById("stepsList").innerHTML = task.steps.map(function (s) { return "<li>" + Game.esc(s) + "</li>"; }).join("");
   document.getElementById("ansAudio").src = task.audio;
   var pct = 0;
