@@ -170,7 +170,39 @@
     b.className = "btn ghost";
     b.innerHTML = "🔊 Підказка · 2 💎";
     var bought = false;
-    var hintFile = "../hints/hint_" + (LESSON_HINTS[mode] ? mode : "universal") + ".mp3";
+    function tryAudio(src, onFail) {
+      var el = document.getElementById("hintAudio");
+      if (!el) {
+        el = document.createElement("audio");
+        el.id = "hintAudio";
+        el.preload = "auto";
+        document.body.appendChild(el);
+      }
+      var tried = false;
+      function fail() {
+        if (tried) { return; }
+        tried = true;
+        el.onerror = null;
+        onFail();
+      }
+      el.onerror = fail;
+      if (el.getAttribute("data-src") !== src) {
+        try { el.pause(); } catch (e) {}
+        el.src = src;
+        el.setAttribute("data-src", src);
+      }
+      try {
+        el.currentTime = 0;
+        var pr = el.play();
+        if (pr && pr.then) { pr.then(function () { el.onerror = null; }, fail); }
+      } catch (e) { fail(); }
+    }
+    function playHintAudio() {
+      /* персональна підказка задачі → універсальна розділу → телефонний голос → текст */
+      tryAudio("../hints/task_" + task.id + ".mp3", function () {
+        tryAudio("../hints/hint_" + (LESSON_HINTS[mode] ? mode : "universal") + ".mp3", speakFallback);
+      });
+    }
     function charge() {
       var p = Game.load();
       if (p.gems < 2) { Game.toast("Не вистачає кристалів 💎 Потренуйся — там їх заробиш!"); return false; }
@@ -204,24 +236,6 @@
           } catch (e) { showHintText(); }
         });
       } else { showHintText(); }
-    }
-    function playHintAudio() {
-      var el = document.getElementById("hintAudio");
-      if (!el) {
-        el = document.createElement("audio");
-        el.id = "hintAudio";
-        el.preload = "none";
-        document.body.appendChild(el);
-      }
-      if (el.getAttribute("data-file") !== hintFile) {
-        el.src = hintFile;
-        el.setAttribute("data-file", hintFile);
-      }
-      try {
-        el.currentTime = 0;
-        var pr = el.play();
-        if (pr && pr.catch) { pr.catch(speakFallback); }
-      } catch (e) { speakFallback(); }
     }
     b.addEventListener("click", function () {
       if (!bought) {
