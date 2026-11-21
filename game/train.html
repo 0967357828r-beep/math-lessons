@@ -248,6 +248,25 @@
     return btns;
   }
 
+  function ukVoice(cb) {
+    var settled = false;
+    function finish(v) { if (!settled) { settled = true; cb(v); } }
+    function look() {
+      var v = window.speechSynthesis.getVoices() || [];
+      var uk = v.filter(function (x) { return (x.lang || "").toLowerCase().indexOf("uk") === 0; });
+      if (uk.length) { finish(uk[0]); return true; }
+      if (v.length) { finish(null); return true; }
+      return false;
+    }
+    if (look()) { return; }
+    window.speechSynthesis.onvoiceschanged = function () {
+      window.speechSynthesis.onvoiceschanged = null;
+      look();
+    };
+    setTimeout(function () { finish(null); }, 1500);
+  }
+  try { window.speechSynthesis.getVoices(); } catch (e) {}   /* прогріваємо список голосів одразу */
+
   function buildAssist(cur) {
     var row = document.getElementById("assist");
     if (!row) { return; }
@@ -259,20 +278,23 @@
     var hintBought = false;
     hintB.addEventListener("click", function () {
       if (!("speechSynthesis" in window)) { Game.toast("Озвучення не підтримується цим браузером"); return; }
-      if (!hintBought) {
-        var p = Game.load();
-        if (p.gems < 2) { Game.toast("Не вистачає кристалів 💎 Правильна відповідь дає 3 💎!"); return; }
-        Game.addGems(-2); hintBought = true;
-        Game.syncHud();
-        hintB.innerHTML = "🔊 Повторити підказку";
-        Game.toast("Підказка · −2 💎");
-      }
-      try {
-        window.speechSynthesis.cancel();
-        var u = new SpeechSynthesisUtterance(HINTS[mode] || HINTS.add);
-        u.lang = "uk-UA"; u.rate = 0.9;
-        window.speechSynthesis.speak(u);
-      } catch (e) {}
+      ukVoice(function (voice) {
+        if (!voice) { Game.toast("Український голос не встановлено 🔇 Налаштування → Синтез мовлення → Українська"); return; }
+        if (!hintBought) {
+          var p = Game.load();
+          if (p.gems < 2) { Game.toast("Не вистачає кристалів 💎 Правильна відповідь дає 3 💎!"); return; }
+          Game.addGems(-2); hintBought = true;
+          Game.syncHud();
+          hintB.innerHTML = "🔊 Повторити підказку";
+          Game.toast("Підказка · −2 💎");
+        }
+        try {
+          window.speechSynthesis.cancel();
+          var u = new SpeechSynthesisUtterance(HINTS[mode] || HINTS.add);
+          u.voice = voice; u.lang = voice.lang; u.rate = 0.9;
+          window.speechSynthesis.speak(u);
+        } catch (e) {}
+      });
     });
     row.appendChild(hintB);
 

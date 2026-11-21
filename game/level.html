@@ -9,8 +9,6 @@
   .steps { display:flex; gap:6px; align-items:center; margin:10px 0 4px; }
   .steps i { width:24px; height:8px; border-radius:6px; background:#e5e5e5; display:block; }
   .steps i.on { background:#58cc02; } .steps i.ok { background:#ffc800; }
-  .speak { float:right; border:2px solid #e5e5e5; background:#fff; border-radius:10px;
-           padding:2px 8px; font-size:17px; cursor:pointer; line-height:1.2; }
   .step-label { font-size:12px; font-weight:900; color:#1cb0f6; text-transform:uppercase;
                 letter-spacing:1px; margin-bottom:10px; }
   .kbig { font-size:clamp(26px,5vw,40px); font-weight:900; text-align:center; margin:12px 0; }
@@ -119,8 +117,7 @@
   host.innerHTML =
     '<div class="lesson-kicker">' + (sec ? "Розділ " + (sec.index + 1) + " · " + Game.esc(sec.title) : "Урок") + '</div>' +
     '<h1>' + Game.esc(task.title) + '</h1>' +
-    '<p class="task">' + Game.esc(task.text) +
-      ' <button type="button" class="speak" id="speak" title="Озвучити задачу">🔊</button></p>' +
+    '<p class="task">' + Game.esc(task.text) + '</p>' +
     '<div class="video-box"><video id="video" controls playsinline preload="metadata"></video></div>' +
     '<div class="steps" id="dots"></div>' +
     '<div class="quiz" id="stage"></div>' +
@@ -140,15 +137,61 @@
   if (pos) { pct = Math.round((pos.lesson + 1) / sec.ids.length * 100); }
   document.getElementById("bar").style.width = Math.min(100, pct) + "%";
 
-  document.getElementById("speak").addEventListener("click", function () {
-    if (!("speechSynthesis" in window)) { Game.toast("Озвучення не підтримується цим браузером"); return; }
-    try {
-      window.speechSynthesis.cancel();
-      var u = new SpeechSynthesisUtterance(task.text);
-      u.lang = "uk-UA"; u.rate = 0.9;
-      window.speechSynthesis.speak(u);
-    } catch (e) { Game.toast("Не вдалося озвучити"); }
-  });
+  function ukVoice(cb) {
+    var settled = false;
+    function finish(v) { if (!settled) { settled = true; cb(v); } }
+    function look() {
+      var v = window.speechSynthesis.getVoices() || [];
+      var uk = v.filter(function (x) { return (x.lang || "").toLowerCase().indexOf("uk") === 0; });
+      if (uk.length) { finish(uk[0]); return true; }
+      if (v.length) { finish(null); return true; }
+      return false;
+    }
+    if (look()) { return; }
+    window.speechSynthesis.onvoiceschanged = function () {
+      window.speechSynthesis.onvoiceschanged = null;
+      look();
+    };
+    setTimeout(function () { finish(null); }, 1500);
+  }
+  try { window.speechSynthesis.getVoices(); } catch (e) {}   /* прогріваємо список голосів одразу */
+
+  var LESSON_HINTS = {
+    add: "Подумай: що в задачі відомо, а що треба знайти. Скільки всього — це додавання. На скільки більше чи менше — віднімання.",
+    mul: "У кілька разів більше — це множення. У кілька разів менше — ділення. По скільки в кожному і скільки разів — теж множення.",
+    div: "Розклали порівну — це ділення: загальну кількість поділи на кількість частин."
+  };
+  function hintText() {
+    return LESSON_HINTS[mode] || "Перечитай питання задачі. Що відомо? Що треба знайти? Подумай, яку дію зробити першою.";
+  }
+  function makeHintButton() {
+    var b = document.createElement("button");
+    b.type = "button";
+    b.className = "btn ghost";
+    b.innerHTML = "🔊 Підказка · 2 💎";
+    var bought = false;
+    b.addEventListener("click", function () {
+      if (!("speechSynthesis" in window)) { Game.toast("Озвучення не підтримується цим браузером"); return; }
+      ukVoice(function (voice) {
+        if (!voice) { Game.toast("Український голос не встановлено 🔇 Налаштування → Синтез мовлення → Українська"); return; }
+        if (!bought) {
+          var p = Game.load();
+          if (p.gems < 2) { Game.toast("Не вистачає кристалів 💎 Потренуйся — там їх заробиш!"); return; }
+          Game.addGems(-2); bought = true;
+          Game.syncHud();
+          b.innerHTML = "🔊 Повторити підказку";
+          Game.toast("Підказка · −2 💎");
+        }
+        try {
+          window.speechSynthesis.cancel();
+          var u = new SpeechSynthesisUtterance(hintText());
+          u.voice = voice; u.lang = voice.lang; u.rate = 0.9;
+          window.speechSynthesis.speak(u);
+        } catch (e) {}
+      });
+    });
+    return b;
+  }
 
   var steps = [{ type: "main" }, { type: "finish" }];
   var totalQuestions = steps.filter(function (s) { return s.type !== "finish"; }).length;
@@ -281,8 +324,10 @@
   function renderMainText() {
     var stage = document.getElementById("stage");
     stage.innerHTML = '<div class="step-label">Задача</div><div class="qtitle">Обери відповідь: <span class="muted" style="font-weight:700;font-size:12px">натисни — перевіримо одразу</span></div>' +
-      '<div id="mzone"></div>';
+      '<div id="mzone"></div>' +
+      '<div id="assist" style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:14px"></div>';
     buildMainOptions(document.getElementById("mzone"));
+    document.getElementById("assist").appendChild(makeHintButton());
   }
 
   /* головна задача: спершу поле вводу; варіанти і 50:50 — за кристали */
@@ -304,6 +349,7 @@
     var box = document.getElementById("manswer");
     var zone = document.getElementById("mzone");
     var assist = document.getElementById("assist");
+    var hintBtn = makeHintButton();
     var wrongTimer = null;
     var unitHTML = info.unit ? ' <span style="color:#afafaf">' + Game.esc(info.unit) + '</span>' : "";
     function upd() {
@@ -312,6 +358,7 @@
     }
     function drawAssist() {
       assist.innerHTML = "";
+      assist.appendChild(hintBtn);
       var wrongLeft = curBtns.filter(function (x) { return !x.ok && document.body.contains(x.b); }).length;
       if (fiftyBought || (optsBought && wrongLeft <= 2)) { return; }
       var b = document.createElement("button");
