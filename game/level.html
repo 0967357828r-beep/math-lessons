@@ -170,25 +170,64 @@
     b.className = "btn ghost";
     b.innerHTML = "🔊 Підказка · 2 💎";
     var bought = false;
+    var hintFile = "../hints/hint_" + (LESSON_HINTS[mode] ? mode : "universal") + ".mp3";
+    function charge() {
+      var p = Game.load();
+      if (p.gems < 2) { Game.toast("Не вистачає кристалів 💎 Потренуйся — там їх заробиш!"); return false; }
+      Game.addGems(-2); bought = true;
+      Game.syncHud();
+      b.innerHTML = "🔊 Повторити підказку";
+      Game.toast("Підказка · −2 💎");
+      return true;
+    }
+    function showHintText() {
+      var row = b.parentElement;
+      if (!row) { return; }
+      var old = document.getElementById("hintTextPanel");
+      if (old) { old.remove(); }
+      var t = document.createElement("div");
+      t.id = "hintTextPanel";
+      t.style.cssText = "width:100%;margin-top:6px;text-align:center;font-weight:800;font-size:14px;color:#3f8000";
+      t.textContent = "💡 " + hintText();
+      row.appendChild(t);
+    }
+    function speakFallback() {
+      /* страховка: mp3 не завантажився → телефонний голос; нема і його → текст */
+      if ("speechSynthesis" in window) {
+        ukVoice(function (voice) {
+          if (!voice) { showHintText(); return; }
+          try {
+            window.speechSynthesis.cancel();
+            var u = new SpeechSynthesisUtterance(hintText());
+            u.voice = voice; u.lang = voice.lang; u.rate = 0.9;
+            window.speechSynthesis.speak(u);
+          } catch (e) { showHintText(); }
+        });
+      } else { showHintText(); }
+    }
+    function playHintAudio() {
+      var el = document.getElementById("hintAudio");
+      if (!el) {
+        el = document.createElement("audio");
+        el.id = "hintAudio";
+        el.preload = "none";
+        document.body.appendChild(el);
+      }
+      if (el.getAttribute("data-file") !== hintFile) {
+        el.src = hintFile;
+        el.setAttribute("data-file", hintFile);
+      }
+      try {
+        el.currentTime = 0;
+        var pr = el.play();
+        if (pr && pr.catch) { pr.catch(speakFallback); }
+      } catch (e) { speakFallback(); }
+    }
     b.addEventListener("click", function () {
-      if (!("speechSynthesis" in window)) { Game.toast("Озвучення не підтримується цим браузером"); return; }
-      ukVoice(function (voice) {
-        if (!voice) { Game.toast("Український голос не встановлено 🔇 Налаштування → Синтез мовлення → Українська"); return; }
-        if (!bought) {
-          var p = Game.load();
-          if (p.gems < 2) { Game.toast("Не вистачає кристалів 💎 Потренуйся — там їх заробиш!"); return; }
-          Game.addGems(-2); bought = true;
-          Game.syncHud();
-          b.innerHTML = "🔊 Повторити підказку";
-          Game.toast("Підказка · −2 💎");
-        }
-        try {
-          window.speechSynthesis.cancel();
-          var u = new SpeechSynthesisUtterance(hintText());
-          u.voice = voice; u.lang = voice.lang; u.rate = 0.9;
-          window.speechSynthesis.speak(u);
-        } catch (e) {}
-      });
+      if (!bought) {
+        if (!charge()) { return; }
+      }
+      playHintAudio();
     });
     return b;
   }
