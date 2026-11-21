@@ -81,7 +81,7 @@
       ids: ["am8_candy_cn", "am8_marker_mk", "am8_balloons_bl", "am9_balls_bs", "am4_croissants_cr", "am5_sofia_sf", "am10_money_ol", "am2_bun_u2", "am13_sweets_cn2", "am13_stickers_st2", "am13_groceries_mm", "am7_tickets_tk", "gis79_5", "gis205_1", "gis213_6", "gis220_3", "ol1_p42_235", "ol1_p74_430"] },
     { id: "units", emoji: '<img src="art/sec_units.webp?v=20261120b" class="secico" alt="">', title: "Маса, об'єм, довжина", color: "#ff9600",
       sub: "Кілограми, літри, сантиметри",
-      ids: ["am8_heron_hr", "am4_wolf_wf", "am3_kitten_kt", "am6_cistern_ct", "am6_engine_en", "am12_engine_en2", "am14_juice_jc", "am14_canteen_ct2", "am15_milking_mk2", "am15_jugs_jg2", "am15_potatoes_pt2", "am8_polyline_pl", "gis140_9", "ol1_p14_56", "ol1_p43_239"] },
+      ids: ["am8_heron_hr", "am4_wolf_wf", "am3_kitten_kt", "am6_cistern_ct", "am6_engine_en", "am12_engine_en2", "am14_juice_jc", "am14_canteen_ct2", "am15_milking_mk2", "am15_jugs_jg2", "am15_potatoes_pt2", "am8_polyline_pl", "gis140_9", "ol1_p14_56", "ol1_p43_239", "am20_apples_ap", "am20_mandarins_mn", "am20_starch_st", "am20_pears_pe"] },
     { id: "time", emoji: '<img src="art/sec_time.webp?v=20261120b" class="secico" alt="">', title: "Час і відстань", color: "#ff4b4b",
       sub: "Години, хвилини, доби, швидше-повільніше",
       ids: ["am10_cat_sleep_cat2", "am10_vacation_kh", "am6_school_walk_sw", "am12_lviv_lv", "am13_lesson_ls", "am13_sandwiches_sd", "am15_dolls_dl", "am6_scooter_sc", "am13_medals_md", "am14_bus_bs3", "am15_carousel_cs", "am15_bikes_bk3", "gis96_1", "gis96_2", "gt2_p94_9", "gt2_p102_6", "gt2_p103_3", "gt2_p105_8", "gt2_p99_11", "ls2_p22_201", "ol1_p102_3", "bt1_p39_5", "bt1_p64_3", "bt1_p66_1", "bt1_p66_2", "bt1_p67_5", "bt1_p67_6", "bt1_p68_7", "bt2_p144_2a", "bt2_p144_2b", "bt2_p144_3", "bt2_p145_4", "bt2_p146_a", "bt2_p146_b", "za2_p87_1", "za2_p88_2", "bt1_p53_14", "bt1_p133_10", "bt1_p136_6"] },
@@ -90,7 +90,7 @@
       ids: ["am11_weavers_wv", "am11_houses_hs", "am11_basket_bk2", "am11_sugar_sg", "am11_trains_tr", "am11_pears_pr", "am11_flamingo_fl2", "am11_nails_nl", "am8_cakes_ck2", "am10_herbarium_hb", "am10_flowerbed_fl", "am4_sewing_sw", "gis22_2", "gis46_2", "gis63_5", "gis67_6", "gis71_6", "gis113_8", "gis166_8", "gis168_6", "gis171_7", "gis172_10", "gis210_3", "gis210_4", "gis228_14", "ol1_p10_31", "ol1_p27_151", "ol1_p34_191"] },
     { id: "multi", emoji: '<img src="art/sec_multi.webp?v=20261120b" class="secico" alt="">', title: "Задачі на кілька дій", color: "#c39cff",
       sub: "Спочатку одне, потім друге",
-      ids: ["am2_parts_w2", "am6_dumplings_dm", "am12_garden_gr", "am12_concert_cc2", "am12_chestnuts_ch", "am14_rabbits_rb", "am15_fishermen_fs", "am15_newspapers_np", "am15_garages_gr2", "am9_hedgehog_hg", "am9_shirts_dr", "am9_haystacks_br", "gis61_9", "gis215_4", "ol1_p36_202", "ol1_p46_256", "ol1_p63_364"] },
+      ids: ["am2_parts_w2", "am6_dumplings_dm", "am12_garden_gr", "am12_concert_cc2", "am12_chestnuts_ch", "am14_rabbits_rb", "am15_fishermen_fs", "am15_newspapers_np", "am15_garages_gr2", "am9_hedgehog_hg", "am9_shirts_dr", "am9_haystacks_br", "gis61_9", "gis215_4", "ol1_p36_202", "ol1_p46_256", "ol1_p63_364", "am20_notebooks_nb", "am20_jugs_ju"] },
     { id: "logic", emoji: '<img src="art/sec_logic.webp?v=20261120b" class="secico" alt="">', title: "Логіка й кмітливість", color: "#ffc800",
       sub: "Задачі-жарти й ті, де треба подумати",
       ids: ["am9_fruits_fr", "am9_numbers_nm", "am3_cheese_ch", "am_school_as", "am_school_as_b", "flowers_am_video", "am2_dress_d2", "am2_pencils_p2", "am6_recycle_rc", "am10_dogs_dog", "am10_kittens_kt2", "am14_classes2_cls", "gis215_5", "gis215_6", "gis215_8", "ol1_p67_389"] }
@@ -111,7 +111,7 @@
     { id: "big3", emoji: '<img src="art/sec_add.webp?v=20261120b" class="secico" alt="">', title: "Великі числа й кілька дій", color: "#ff9f68",
       sub: "Сотні, кілька дій поспіль, непряма форма",
       ids: ["am18_juice2_js", "am18_raspberry_ml", "am18_milk_bd", "am18_dolls_mt", "am18_napkins_sv",
-            "am18_bookshop_bk", "am18_drawings_nd", "am18_pines_ps", "am18_cows_kr", "am18_pies_pr", "gis152_8", "gis157_1", "ol1_p66_379", "ol1_p73_422"] }
+            "am18_bookshop_bk", "am18_drawings_nd", "am18_pines_ps", "am18_cows_kr", "am18_pies_pr", "gis152_8", "gis157_1", "ol1_p66_379", "ol1_p73_422", "am20_bears_br", "am20_windmill_wm", "am20_trees_tr", "am20_factory_fc"] }
 
     ,
     { id: "big4", emoji: '<img src="art/sec_logic.webp?v=20261120b" class="secico" alt="">', title: "Великі числа · 2", color: "#c39cff",
