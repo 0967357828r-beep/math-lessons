@@ -118,6 +118,10 @@
       sub: "Рух, порівняння, кілька дій з трицифровими",
       ids: ["am19_bus_bs", "am19_ships_sh", "am19_fish_fh", "am19_parcels_pc", "am19_rain_rn",
             "am19_birches_br", "am19_strawberry_sb", "am19_linen_ln", "am19_chestnuts_ch", "am19_snowplow_sp", "gis201_10", "gis205_6"] }
+    ,
+    { id: "swamp", emoji: '<img src="art/sec_multi.webp?v=20261120b" class="secico" alt="">', title: "Задачі в болоті", color: "#f4a259",
+      sub: "Разів менше, частини й кілька дій",
+      ids: ["am21_skate_st", "am21_bus_bs", "am21_flour_fl", "am21_tourists_tr", "am21_wire_wr", "am21_nursery_ns", "am21_fish_fs", "am21_tickets_tk", "am21_chairs_ch", "am21_post_ps"] }
   ];
 
   var SEQ = [];
