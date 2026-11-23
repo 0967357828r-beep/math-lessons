@@ -133,27 +133,63 @@
   var byId = {};
   TASKS.forEach(function (t) { byId[t.id] = t; });
 
+  /* ---------- скрині: рівномірно в КОЖНОМУ розділі, самі добираються ----------
+     v7: гра будує скрині від розділів, а не від випадкових індексів послідовності.
+     Тому кожен новий розділ/партія уроків автоматично отримує свої скрині,
+     а вже відкриті лишаються відкритими (нагороду не взяти двічі). */
+  var CHEST_V = 7;
   function chestsOf(p) {
-    if (p.chestsV === 6 && Array.isArray(p.chests)) { return p.chests; }
-    var n = Game.SEQ.length, list = [], used = {}, guard = 0, count = Math.max(4, Math.round(n / 6));
-    while (list.length < count && guard < 900) {
-      guard++;
-      var i = 2 + Math.floor(Math.random() * Math.max(1, n - 3));
-      if (used[i]) { continue; }
-      if (Game.isDone(p, Game.SEQ[i].id)) { continue; }
-      used[i] = 1;
-      list.push({ i: i, kind: Math.random() < 0.55 ? "life" : "gems", opened: false });
-    }
-    p.chests = list.sort(function (a, b) { return a.i - b.i; });
+    /* сигнатура: додали уроки чи розділ — розкладка сама перерахується */
+    var sig = Game.SEQ.length + ":" + Game.SECTIONS.length;
+    if (p.chestsV === CHEST_V && p.chestsSig === sig && Array.isArray(p.chests)) { return p.chests; }
+
+    var start = [], acc = 0;
+    Game.SECTIONS.forEach(function (s, i) { start[i] = acc; acc += s.ids.length; });
+
+    /* спадок: що гравець уже відкрив — не відроджуємо */
+    var opened = {}, kindOf = {};
+    (Array.isArray(p.chests) ? p.chests : []).forEach(function (c) {
+      if (!c) { return; }
+      var t = Game.SEQ[c.i];
+      if (!t) { return; }
+      kindOf[t.id] = c.kind;
+      if (c.opened) { opened[t.id] = 1; }
+    });
+
+    var list = [], used = {};
+    Game.SECTIONS.forEach(function (sec, si) {
+      var n = sec.ids.length;
+      if (!n) { return; }
+      var target = Math.max(2, Math.round(n / 6));   /* мінімум 2 скрині на розділ */
+      for (var k = 0; k < target; k++) {
+        var pos = start[si] + Math.min(n - 1, Math.floor((k + 0.5) * n / target));
+        /* не ховаємо пройдений урок, якщо в розділі ще є непройдені */
+        if (Game.isDone(p, Game.SEQ[pos].id)) {
+          for (var d = 1; d <= n; d++) {
+            var q = start[si] + (pos - start[si] + d) % n;
+            if (!used[q] && !Game.isDone(p, Game.SEQ[q].id)) { pos = q; break; }
+          }
+        }
+        if (used[pos]) { continue; }
+        used[pos] = 1;
+        var id = Game.SEQ[pos].id;
+        list.push({ i: pos, kind: kindOf[id] || (Math.random() < 0.55 ? "life" : "gems"), opened: !!opened[id] });
+      }
+    });
+
+    /* біля поточного уроку — скриня завжди в межах трьох кроків */
     var firstOpen = -1;
-    for (var k = 0; k < Game.SEQ.length; k++) {
-      if (!Game.isDone(p, Game.SEQ[k].id)) { firstOpen = k; break; }
+    for (var o = 0; o < Game.SEQ.length; o++) {
+      if (!Game.isDone(p, Game.SEQ[o].id)) { firstOpen = o; break; }
     }
-    if (firstOpen >= 0 && !p.chests.some(function (c) { return c.i >= firstOpen && c.i <= firstOpen + 4; })) {
-      p.chests.push({ i: Math.min(firstOpen + 2, n - 1), kind: "gems", opened: false });
-      p.chests.sort(function (a, b) { return a.i - b.i; });
+    if (firstOpen >= 0 && !list.some(function (c) { return c.i >= firstOpen && c.i <= firstOpen + 3; })) {
+      var at = Math.min(firstOpen + 2, Game.SEQ.length - 1);
+      if (!used[at]) { list.push({ i: at, kind: "gems", opened: !!opened[Game.SEQ[at].id] }); }
     }
-    p.chestsV = 6;
+
+    p.chests = list.sort(function (a, b) { return a.i - b.i; });
+    p.chestsV = CHEST_V;
+    p.chestsSig = sig;
     return p.chests;
   }
 
