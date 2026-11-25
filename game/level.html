@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Урок — Тімолінго</title>
-<link rel="stylesheet" href="game.css?v=20261125h">
+<link rel="stylesheet" href="game.css?v=20261125i">
 <style>
   .steps { display:flex; gap:6px; align-items:center; margin:10px 0 4px; }
   .steps i { width:24px; height:8px; border-radius:6px; background:#e5e5e5; display:block; }
@@ -51,9 +51,9 @@
 
 <audio id="ding" preload="auto" src="ding.mp3"></audio>
 <div class="toast" id="toast"></div>
-<script src="train_bank.js?v=20261125h"></script>
-<script src="tasks.js?v=20261125h"></script>
-<script src="game.js?v=20261125h"></script>
+<script src="train_bank.js?v=20261125i"></script>
+<script src="tasks.js?v=20261125i"></script>
+<script src="game.js?v=20261125i"></script>
 <script>
 (function () {
   Game.renderSidebar("learn");
@@ -621,11 +621,11 @@
     ov.className = "modal";
     ov.innerHTML = '<div class="modal-card trophy-card">' +
       '<div class="modal-glow"></div>' +
-      '<img class="modal-art" src="art/icon_trophy.webp?v=20261125h" alt="">' +
+      '<img class="modal-art" src="art/icon_trophy.webp?v=20261125i" alt="">' +
       '<div class="modal-kicker">Кубок розділу</div>' +
       '<h2>' + Game.esc(t.title) + '</h2>' +
       '<div class="modal-sub">Розділ пройдено повністю!</div>' +
-      '<div class="modal-reward"><img src="art/icon_gem.webp?v=20261125h" class="ico" alt=""> +15</div>' +
+      '<div class="modal-reward"><img src="art/icon_gem.webp?v=20261125i" class="ico" alt=""> +15</div>' +
       '<button class="btn modal-btn" id="trophyOk">Забрати кубок</button></div>';
     document.body.appendChild(ov);
     try { document.getElementById("ding").play(); } catch (e) {}
