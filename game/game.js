@@ -206,6 +206,13 @@
       p.combo = Math.min(3, p.bestCombo);
       p.comboRestored = true;
     }
+    /* серія: одноразово піднімаємо до 11, якщо обірвалась (Пан Роман, 25.11.2026) */
+    if (!p.streak11Given && (p.streak || 0) < 11) {
+      p.streak = 11;
+      p.last = todayStr();
+      p.streak11Given = true;
+      save(p);
+    }
     p.repeat = p.repeat || {};
     p.mistakes = Array.isArray(p.mistakes) ? p.mistakes : [];
     Object.keys(p.levels).forEach(function (k) {
@@ -535,6 +542,7 @@
     out.combo = Math.round(num(raw.combo, 0, 0, 3650));
     out.bestCombo = Math.round(num(raw.bestCombo, 0, 0, 3650));
     out.comboRestored = !!raw.comboRestored;
+    out.streak11Given = !!raw.streak11Given;
     out.profile = {};
     out.profile.name = String((raw.profile && raw.profile.name) || "Тімчик").replace(/<[^>]*>/g, "").slice(0, 20).trim() || "Тімчик";
     var av = String((raw.profile && raw.profile.avatar) || "🐸");
