@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Тренування — Тімолінго</title>
-<link rel="stylesheet" href="game.css?v=20261125e">
+<link rel="stylesheet" href="game.css?v=20261125f">
 <style>
   .modes { display: flex; gap: 8px; flex-wrap: wrap; margin: 6px 0 18px; }
   .mode { border: 2px solid #e5e5e5; border-bottom-width: 4px; background: #fff; border-radius: 14px;
@@ -67,8 +67,8 @@
 </main>
 
 <div class="toast" id="toast"></div>
-<script src="train_bank.js?v=20261125e"></script>
-<script src="game.js?v=20261125e"></script>
+<script src="train_bank.js?v=20261125f"></script>
+<script src="game.js?v=20261125f"></script>
 <script>
 (function () {
   Game.renderSidebar("train");
@@ -78,7 +78,7 @@
     var city = document.getElementById("pageCity");
     if (city) {
       var cityFile = lg.cur.city.replace(/[?#].*$/, "").replace(/\.(png|webp)$/, "") + "_train.webp";
-      city.style.backgroundImage = 'url("' + cityFile + '?v=20261125e")';
+      city.style.backgroundImage = 'url("' + cityFile + '?v=20261125f")';
     }
   })();
 
@@ -174,6 +174,7 @@
 
   function pickQuestions(m) {
     var pool = [];
+    var R = m === "paren" ? 15 : ROUND;   // «Дужки» — коротший раунд на 15 завдань
     if (m === "mix") {
       ["add", "sub", "mul", "div", "big", "chain", "paren", "times"].forEach(function (k) {
         bank[k].forEach(function (q) { pool.push({ type: "num", key: k, q: q.q, a: q.a, gems: q.gems }); });
@@ -184,12 +185,12 @@
       var complex = bank.paren.filter(function (q) { return q.complex; });
       var similar = complex.filter(function (q) { return q.similar; });
       var other = complex.filter(function (q) { return !q.similar; });
-      if (similar.length < ROUND / 2) { other = other.concat(complex.filter(function (q) { return !q.complex; })); }
+      if (similar.length < R / 2) { other = other.concat(complex.filter(function (q) { return !q.complex; })); }
       shuffle(similar);
       shuffle(other);
-      pool = similar.slice(0, ROUND / 2).concat(other).map(function (q) {
+      pool = similar.slice(0, R / 2).concat(other).map(function (q) {
         return { type: "num", key: m, q: q.q, a: q.a, gems: q.gems, complex: q.complex, similar: q.similar };
-      }).slice(0, ROUND);
+      }).slice(0, R);
     } else {
       bank[m].forEach(function (q) { pool.push({ type: "num", key: m, q: q.q, a: q.a, gems: q.gems }); });
     }
@@ -197,7 +198,7 @@
       var j = Math.floor(Math.random() * (i + 1));
       var t = pool[i]; pool[i] = pool[j]; pool[j] = t;
     }
-    return pool.slice(0, ROUND);
+    return pool.slice(0, R);
   }
 
   function startRound() {
@@ -384,7 +385,7 @@
       removeRetry(cur);
       var gemGain = rewardOf(cur);
       Game.addGems(gemGain); gemsEarned += gemGain;
-      if (fb) { fb.className = "feedback ok"; fb.innerHTML = "Правильно! +" + gained + " XP · +" + gemGain + ' <img src="art/icon_gem.webp?v=20261125e" class="ico sm" alt="">'; }
+      if (fb) { fb.className = "feedback ok"; fb.innerHTML = "Правильно! +" + gained + " XP · +" + gemGain + ' <img src="art/icon_gem.webp?v=20261125f" class="ico sm" alt="">'; }
       var box = document.getElementById("answer");
       if (box) { box.className = "answer ok"; }
       setTimeout(function () { idx++; maybeInsertRetry(); renderQuestion(); }, 850);
