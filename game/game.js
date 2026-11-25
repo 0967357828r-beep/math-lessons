@@ -693,7 +693,7 @@
     { name: "Космічна", emoji: "🪐", crest: "art/league_cosmic.webp?v=20261125c", city: "art/city_cosmic.webp?v=20261125c", color: "#6f7dff", need: 26000 },
     { name: "Зоряна", emoji: "🌟", crest: "art/league_starlight.webp?v=20261125b", city: "art/city_starlight.webp?v=20261125b", color: "#ffd166", need: 35000 },
     { name: "Легендарна", emoji: "👑", crest: "art/league_legendary.webp?v=20261125c", city: "art/city_legendary.webp?v=20261125c", color: "#ffd700", need: 45000 },
-    { name: "Небесна", emoji: "✨", crest: "art/league_celestial.webp?v=20261125c", city: "art/city_celestial.webp?v=20261125c", color: "#7fd3ff", need: 60000 }
+    { name: "Небесна", emoji: "✨", crest: "art/league_celestial.webp?v=20261125c", city: "art/city_celestial.webp?v=20261125c", color: "#7fd3ff", need: 55000 }
   ];
   function leagueOf(p) {
     var li = 0;
