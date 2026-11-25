@@ -758,6 +758,30 @@ body {
 }
 @media (prefers-reduced-motion: reduce) { .fireflies { animation:none; } }
 
+/* Новорічна погода в Обсидіановій та Діамантовій лігах: сніг замість світляків. */
+body.winter-league::before { display:none; }
+body.winter-league .fireflies { display:none; }
+body.winter-league::after {
+  content:""; position:fixed; inset:0; z-index:1; pointer-events:none; opacity:.92;
+  background-image:
+    radial-gradient(circle at 12% 18%, rgba(255,255,255,.95) 0 1.5px, transparent 2.5px),
+    radial-gradient(circle at 68% 32%, rgba(228,245,255,.9) 0 2px, transparent 3.5px),
+    radial-gradient(circle at 86% 12%, rgba(255,255,255,.85) 0 1px, transparent 2px),
+    radial-gradient(circle at 42% 72%, rgba(235,247,255,.9) 0 2.5px, transparent 4px),
+    radial-gradient(circle at 22% 88%, rgba(255,255,255,.8) 0 1.5px, transparent 3px),
+    radial-gradient(circle at 76% 82%, rgba(228,245,255,.9) 0 2px, transparent 3.5px),
+    radial-gradient(circle at 54% 48%, rgba(255,255,255,.85) 0 1px, transparent 2px),
+    radial-gradient(circle at 92% 58%, rgba(235,247,255,.9) 0 2.5px, transparent 4px);
+  background-size: 260px 300px, 340px 380px, 220px 260px, 420px 460px,
+                   280px 320px, 360px 420px, 240px 280px, 480px 520px;
+  animation: winterSnow 16s linear infinite;
+}
+@keyframes winterSnow {
+  to { background-position: 28px 300px, -36px 380px, 18px 260px, 44px 460px,
+                        -22px 320px, 32px 420px, -16px 280px, 40px 520px; }
+}
+@media (prefers-reduced-motion: reduce) { body.winter-league::after { animation:none; } }
+
 /* цифри в уроці (навчання) — теж зелені */
 .kbig { color: var(--leaf) !important; }
 .kbig .eq { color:#cfe8a8 !important; }

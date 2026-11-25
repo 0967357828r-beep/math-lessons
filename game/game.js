@@ -601,7 +601,7 @@
     MODES_OK.forEach(function (k) { if (ta[k]) { out.trainAt[k] = num(ta[k], 0, 0, Date.now()); } });
     return out;
   }
-  var MODES_OK = ["add", "sub", "mul", "div", "big", "chain", "times", "mix", "cmp"];
+  var MODES_OK = ["add", "sub", "mul", "div", "big", "chain", "paren", "times", "mix", "cmp"];
   var SECTION_SHADE = { add: "#46a302", mul: "#cc5549", share: "#e6ac00", money: "#a568cc",
                         units: "#cc7800", time: "#cc3c3c", compound: "#46a302", multi: "#9463c9",
                         logic: "#e6ac00", mul2: "#cc7024" };
@@ -672,8 +672,8 @@
     { name: "Рубінова", emoji: "🔺", crest: "art/league_ruby.webp?v=20261120b", city: "art/city_ruby.webp?v=20261120b", color: "#ff4b4b", need: 1500 },
     { name: "Аметистова", emoji: "🟣", crest: "art/league_amethyst.webp?v=20261120b", city: "art/city_amethyst.webp?v=20261120b", color: "#a55eea", need: 2100 },
     { name: "Перлинна", emoji: "🦪", crest: "art/league_pearl.webp?v=20261120b", city: "art/city_pearl.webp?v=20261120b", color: "#ff86c8", need: 2800 },
-    { name: "Обсидіанова", emoji: "⚫", crest: "art/league_obsidian.webp?v=20261120b", city: "art/city_obsidian.webp?v=20261120b", color: "#4b4b4b", need: 3600 },
-    { name: "Діамантова", emoji: "💎", crest: "art/league_diamond.webp?v=20261120b", city: "art/city_diamond.webp?v=20261120b", color: "#00c2c7", need: 4500 }
+    { name: "Обсидіанова", emoji: "⚫", crest: "art/league_obsidian.webp?v=20261120b", city: "art/city_obsidian_newyear.webp?v=20261125a", color: "#4b4b4b", need: 3600, winter: true },
+    { name: "Діамантова", emoji: "💎", crest: "art/league_diamond.webp?v=20261120b", city: "art/city_diamond_newyear.webp?v=20261125a", color: "#00c2c7", need: 4500, winter: true }
   ];
   function leagueOf(p) {
     var li = 0;
@@ -757,6 +757,7 @@
     if (!host) { return; }
     var p = load();
     var lg = leagueOf(p);
+    document.body.classList.toggle("winter-league", !!lg.cur.winter);
     var html = '<a class="logo" href="index.html">Тімолінго</a>';
     html += '<nav class="nav">';
     NAV.forEach(function (n) {

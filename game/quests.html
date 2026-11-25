@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Квести — Тімолінго</title>
-<link rel="stylesheet" href="game.css?v=20261120b">
+<link rel="stylesheet" href="game.css?v=20261125a">
 </head>
 <body>
 <div class="story-deco" aria-hidden="true"><span>🍄</span><span>🌿</span><span>✨</span></div>
@@ -19,8 +19,8 @@
 </main>
 
 <div class="toast" id="toast"></div>
-<script src="tasks.js?v=20261121b"></script>
-<script src="game.js?v=20261121b"></script>
+<script src="tasks.js?v=20261125a"></script>
+<script src="game.js?v=20261125a"></script>
 <script>
 (function () {
   Game.renderSidebar("quests");
@@ -29,8 +29,8 @@
     var lg = Game.leagueOf(Game.load());
     var city = document.getElementById("pageCity");
     if (city) {
-      var cityFile = lg.cur.city.replace(/\.(png|webp)$/, "") + "_quests.webp";
-      city.style.backgroundImage = 'url("' + cityFile + '?v=20261120b")';
+      var cityFile = lg.cur.city.replace(/[?#].*$/, "").replace(/\.(png|webp)$/, "") + "_quests.webp";
+      city.style.backgroundImage = 'url("' + cityFile + '?v=20261125a")';
     }
   })();
 
@@ -84,7 +84,7 @@
       '<div class="muted" style="font-size:13px;line-height:1.6;font-weight:700">' +
       'Бали ⚡ нараховуються за кожен пройдений урок. Хвилини ⏱️ рахуються від початку до завершення уроку. ' +
       'Урок «без помилок» — коли головну задачу розв\'язано з першої спроби. ' +
-      'Кристали 💎: +3 за кожну правильну відповідь, +2 за ідеальний урок, +15 за пройдений розділ і нагороди квестів.' +
+      'Кристали 💎: у тренуванні +1 за базовий приклад і +3 за приклад з дужками; у урок +5 без допомоги або +3 з нею, +2 за ідеальний урок, +15 за пройдений розділ і нагороди квестів.' +
       '</div></div>';
 
     host.innerHTML = html;
