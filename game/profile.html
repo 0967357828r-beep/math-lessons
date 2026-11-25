@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Профіль — Тімолінго</title>
-<link rel="stylesheet" href="game.css?v=20261125i">
+<link rel="stylesheet" href="game.css?v=20261125j">
 </head>
 <body>
 <div class="story-deco" aria-hidden="true"><span>🍄</span><span>🌿</span><span>✨</span></div>
@@ -19,9 +19,9 @@
 </main>
 
 <div class="toast" id="toast"></div>
-<script src="tasks.js?v=20261125i"></script>
-<script src="avatars.js?v=20261125i"></script>
-<script src="game.js?v=20261125i"></script>
+<script src="tasks.js?v=20261125j"></script>
+<script src="avatars.js?v=20261125j"></script>
+<script src="game.js?v=20261125j"></script>
 <script>
 (function () {
   var EMOJI = ["🐸", "🦎", "🐛", "🐌", "🦋", "🐞", "🐢", "🐝", "🦊", "🐼", "🦄", "🐙", "🚀", "🌟"];
@@ -31,7 +31,7 @@
 
   function avatarHTML(a, size, radius) {
     if (a && String(a).indexOf("/") > -1) {
-      return '<img src="' + Game.esc(a) + '?v=20261125i" alt="" style="width:' + size + 'px;height:' + size + 'px;' +
+      return '<img src="' + Game.esc(a) + '?v=20261125j" alt="" style="width:' + size + 'px;height:' + size + 'px;' +
              'border-radius:' + (radius || "50%") + ';object-fit:cover;display:block">';
     }
     return a || "🐸";
@@ -43,7 +43,7 @@
     var city = document.getElementById("pageCity");
     if (city) {
       var cityFile = lg.cur.city.replace(/[?#].*$/, "").replace(/\.(png|webp)$/, "") + "_profile.webp";
-      city.style.backgroundImage = 'url("' + cityFile + '?v=20261125i")';
+      city.style.backgroundImage = 'url("' + cityFile + '?v=20261125j")';
     }
   })();
 
@@ -78,7 +78,7 @@
       '<div class="stats">' +
         '<div class="stat"><div class="si">🔥</div><div><b>' + p.streak + '</b><span>денна серія</span></div></div>' +
         '<div class="stat"><div class="si">⚡</div><div><b>' + p.xp + '</b><span>усього балів</span></div></div>' +
-        '<div class="stat"><div class="si"><img class="league-crest sm" src="' + lg.cur.crest + '?v=20261125i" alt=""></div><div><b>' + lg.cur.name + '</b><span>поточна ліга</span></div></div>' +
+        '<div class="stat"><div class="si"><img class="league-crest sm" src="' + lg.cur.crest + '?v=20261125j" alt=""></div><div><b>' + lg.cur.name + '</b><span>поточна ліга</span></div></div>' +
         '<div class="stat"><div class="si">💎</div><div><b>' + p.gems + '</b><span>кристали</span></div></div>' +
       '</div>' +
 
@@ -110,7 +110,7 @@
       var label = a.selected ? "Обрано" : a.owned ? "Обрати" : ("💎 " + a.price);
       var cls = a.selected ? "btn" : "btn ghost";
       return '<div class="shop-item avatar-item' + (a.selected ? " on" : "") + '">' +
-             '<img class="shop-avatar" src="' + Game.esc(a.file) + '?v=20261125i" alt="">' +
+             '<img class="shop-avatar" src="' + Game.esc(a.file) + '?v=20261125j" alt="">' +
              '<div class="sn">' + (a.name ? Game.esc(a.name) : "&nbsp;") + '</div>' +
              '<button class="' + cls + '" data-avatar="' + Game.esc(a.file) + '" data-price="' + a.price + '"' +
              (a.selected ? " disabled" : "") + '>' + label + '</button></div>';
@@ -125,9 +125,9 @@
       '<div class="card" style="margin-bottom:18px"><h3>' + lg.cur.name + ' ліга' +
       ' <a class="more" href="leaderboard.html">дошка</a></h3>' +
       '<div class="league-city" style="background-image:linear-gradient(180deg,rgba(18,14,11,.15),rgba(18,14,11,.75)),url(\'' +
-      cityFile + '?v=20261125i\')"></div>' +
+      cityFile + '?v=20261125j\')"></div>' +
       '<div class="league-row"><div class="league-badge"><img class="league-crest" src="' +
-      lg.cur.crest + '?v=20261125i" alt=""></div><div><b>' + p.xp + ' XP усього</b>' +
+      lg.cur.crest + '?v=20261125j" alt=""></div><div><b>' + p.xp + ' XP усього</b>' +
       '<div class="muted">' + (lg.next ? "До ліги «" + lg.next.name + "»: " + (lg.next.need - p.xp) + " XP" : "Найвища ліга!") +
       '</div></div></div>' +
       '<div class="bar" style="margin-top:12px"><i style="width:' + Math.round(lg.pct * 100) + '%;background:' +

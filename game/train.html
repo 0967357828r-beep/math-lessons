@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Тренування — Тімолінго</title>
-<link rel="stylesheet" href="game.css?v=20261125i">
+<link rel="stylesheet" href="game.css?v=20261125j">
 <style>
   .modes { display: flex; gap: 8px; flex-wrap: wrap; margin: 6px 0 18px; }
   .mode { border: 2px solid #e5e5e5; border-bottom-width: 4px; background: #fff; border-radius: 14px;
@@ -67,8 +67,8 @@
 </main>
 
 <div class="toast" id="toast"></div>
-<script src="train_bank.js?v=20261125i"></script>
-<script src="game.js?v=20261125i"></script>
+<script src="train_bank.js?v=20261125j"></script>
+<script src="game.js?v=20261125j"></script>
 <script>
 (function () {
   Game.renderSidebar("train");
@@ -78,7 +78,7 @@
     var city = document.getElementById("pageCity");
     if (city) {
       var cityFile = lg.cur.city.replace(/[?#].*$/, "").replace(/\.(png|webp)$/, "") + "_train.webp";
-      city.style.backgroundImage = 'url("' + cityFile + '?v=20261125i")';
+      city.style.backgroundImage = 'url("' + cityFile + '?v=20261125j")';
     }
   })();
 
@@ -94,7 +94,7 @@
     { id: "mix", label: "Мішане" },
     { id: "cmp", label: "Порівняння" }
   ];
-  var ROUND = 20;
+  var ROUND = 15;
   var bank = window.TRAIN_BANK || { add: [], sub: [], mul: [], div: [], big: [], chain: [], paren: [], times: [], mix: [], cmp: [] };
   var mode = localStorage.getItem("train_mode") || "add";
   var queue = [], idx = 0, correct = 0, asked = 0, xp = 0, gemsEarned = 0, answered = false, typed = "";
@@ -174,7 +174,7 @@
 
   function pickQuestions(m) {
     var pool = [];
-    var R = m === "paren" ? 15 : ROUND;   // «Дужки» — раунд на 15 завдань
+    var R = ROUND;   // усі режими — 15 завдань за раунд
     if (m === "mix") {
       ["add", "sub", "mul", "div", "big", "chain", "paren", "times"].forEach(function (k) {
         bank[k].forEach(function (q) { pool.push({ type: "num", key: k, q: q.q, a: q.a, gems: q.gems }); });
@@ -385,7 +385,7 @@
       removeRetry(cur);
       var gemGain = rewardOf(cur);
       Game.addGems(gemGain); gemsEarned += gemGain;
-      if (fb) { fb.className = "feedback ok"; fb.innerHTML = "Правильно! +" + gained + " XP · +" + gemGain + ' <img src="art/icon_gem.webp?v=20261125i" class="ico sm" alt="">'; }
+      if (fb) { fb.className = "feedback ok"; fb.innerHTML = "Правильно! +" + gained + " XP · +" + gemGain + ' <img src="art/icon_gem.webp?v=20261125j" class="ico sm" alt="">'; }
       var box = document.getElementById("answer");
       if (box) { box.className = "answer ok"; }
       setTimeout(function () { idx++; maybeInsertRetry(); renderQuestion(); }, 850);
