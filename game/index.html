@@ -46,6 +46,29 @@
   .timo-mascot .tm-lid { transition: none; }
   .timo-mascot .tm-bubble.tm-pop { animation: none; }
 }
+/* лісова жабка-супутниця в порожньому місці внизу карти */
+.zhabka-mascot { position: fixed; left: 412px; bottom: 4px; width: 108px; z-index: 6;
+                 pointer-events: none; filter: drop-shadow(0 7px 10px rgba(0,0,0,.45)); }
+.zhabka-mascot img { display: block; width: 100%; height: auto; }
+.zhabka-mascot .zh-figure { animation: zhIdle 3.4s ease-in-out infinite; transform-origin: 50% 100%; }
+.zhabka-mascot .zh-shadow { width: 62px; height: 10px; margin: -2px auto 0; border-radius: 50%;
+                            background: rgba(0,0,0,.34); filter: blur(3px); animation: zhShadow 3.4s ease-in-out infinite; }
+.zhabka-mascot .zh-bubble { position: absolute; left: 94%; top: 12px; max-width: 150px;
+                            background: rgba(32,25,20,.96); border: 1px solid rgba(255,224,190,.28);
+                            color: #fff1e2; border-radius: 12px; padding: 5px 9px;
+                            font: 800 11px/1.25 inherit; white-space: nowrap;
+                            box-shadow: 0 6px 16px rgba(0,0,0,.35); }
+@keyframes zhIdle { 0%,100% { transform: translateY(0) rotate(1deg); }
+                    50% { transform: translateY(-5px) rotate(-1deg); } }
+@keyframes zhShadow { 0%,100% { transform: scaleX(1); opacity: .5; }
+                      50% { transform: scaleX(.84); opacity: .28; } }
+@media (max-width: 860px) {
+  .zhabka-mascot { left: auto; right: 8px; bottom: 2px; width: 72px; }
+  .zhabka-mascot .zh-bubble { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .zhabka-mascot .zh-figure, .zhabka-mascot .zh-shadow { animation: none !important; }
+}
 /* фінальна скарбниця в самому кінці дороги */
 .finale-chest { position:relative; display:flex; flex-direction:column; align-items:center;
                 margin: 18px 0 44px; padding-top: 30px; z-index:1; cursor:pointer; }
@@ -116,6 +139,14 @@
     <div class="tm-hit" id="tmHit" title="Тімко"></div>
   </div>
   <div class="tm-shadow"></div>
+</div>
+
+<div class="zhabka-mascot" id="zhabkaMascot" aria-hidden="true">
+  <div class="zh-bubble">Я світитиму шлях! 🏮</div>
+  <div class="zh-figure">
+    <img src="art/mascot_zhabka.webp?v=20261124a" alt="">
+  </div>
+  <div class="zh-shadow"></div>
 </div>
 
 <div class="toast" id="toast"></div>
