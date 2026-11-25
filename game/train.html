@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Тренування — Тімолінго</title>
-<link rel="stylesheet" href="game.css?v=20261125b">
+<link rel="stylesheet" href="game.css?v=20261125d">
 <style>
   .modes { display: flex; gap: 8px; flex-wrap: wrap; margin: 6px 0 18px; }
   .mode { border: 2px solid #e5e5e5; border-bottom-width: 4px; background: #fff; border-radius: 14px;
@@ -67,8 +67,8 @@
 </main>
 
 <div class="toast" id="toast"></div>
-<script src="train_bank.js?v=20261125b"></script>
-<script src="game.js?v=20261125b"></script>
+<script src="train_bank.js?v=20261125d"></script>
+<script src="game.js?v=20261125d"></script>
 <script>
 (function () {
   Game.renderSidebar("train");
@@ -78,7 +78,7 @@
     var city = document.getElementById("pageCity");
     if (city) {
       var cityFile = lg.cur.city.replace(/[?#].*$/, "").replace(/\.(png|webp)$/, "") + "_train.webp";
-      city.style.backgroundImage = 'url("' + cityFile + '?v=20261125b")';
+      city.style.backgroundImage = 'url("' + cityFile + '?v=20261125d")';
     }
   })();
 
@@ -101,9 +101,7 @@
   var RETRY_KEY = "train_retry_v1";
 
   function rewardOf(cur) {
-    if (cur && cur.gems) { return cur.gems; }
-    var text = String((cur && (cur.q || cur.l || "")) || "") + " " + String((cur && cur.r) || "");
-    return text.indexOf("(") > -1 ? 3 : 1;
+    return 3;   // 3 💎 за кожну правильну відповідь (Пан Роман, 25.11.2026)
   }
 
   function loadRetry() {
@@ -386,7 +384,7 @@
       removeRetry(cur);
       var gemGain = rewardOf(cur);
       Game.addGems(gemGain); gemsEarned += gemGain;
-      if (fb) { fb.className = "feedback ok"; fb.innerHTML = "Правильно! +" + gained + " XP · +" + gemGain + ' <img src="art/icon_gem.webp?v=20261125b" class="ico sm" alt="">'; }
+      if (fb) { fb.className = "feedback ok"; fb.innerHTML = "Правильно! +" + gained + " XP · +" + gemGain + ' <img src="art/icon_gem.webp?v=20261125d" class="ico sm" alt="">'; }
       var box = document.getElementById("answer");
       if (box) { box.className = "answer ok"; }
       setTimeout(function () { idx++; maybeInsertRetry(); renderQuestion(); }, 850);
@@ -457,7 +455,7 @@
       host.innerHTML = '<div class="train-card result">' +
         '<div class="big">' + emoji + '</div>' +
         '<h2>' + correct + ' з ' + asked + '</h2>' +
-        '<div class="muted" style="font-weight:800;margin-bottom:6px">Зароблено ' + xp + ' XP і ' + gemsEarned + ' 💎 · 1 💎 за базовий приклад, 3 💎 за приклад з дужками</div>' +
+        '<div class="muted" style="font-weight:800;margin-bottom:6px">Зароблено ' + xp + ' XP і ' + gemsEarned + ' 💎 · 3 💎 за кожну правильну відповідь</div>' +
         '<div style="font-weight:900;color:#ff9600;margin-bottom:16px">⏳ Цей розділ — через ' +
         (mm > 0 ? mm + ' хв ' : '') + (ss < 10 ? '0' : '') + ss + ' с</div>' +
         (nx ? '<button class="btn" id="nextMode">Далі: ' + nx.label + '</button> ' : '') +

@@ -4,6 +4,7 @@
 
   var KEY = "mathgame_v1";
   var MAX_LIVES = 10;
+  var HEAL_COST = 67;         // повне відновлення сердець на карті
   var SHOP = [
     { id: "leaf", icon: "art/icon_leaf.webp?v=20261120b", avatar: "art/avatar_leaf.webp?v=20261120b", name: "Листок", cost: 10 },
     { id: "mushroom", icon: "art/shop_mushroom.webp?v=20261120b", avatar: "art/avatar_mushroom.webp?v=20261120b", name: "Мухомор", cost: 15 },
@@ -674,11 +675,17 @@
     { name: "Перлинна", emoji: "🦪", crest: "art/league_pearl.webp?v=20261120b", city: "art/city_pearl.webp?v=20261120b", color: "#ff86c8", need: 2800 },
     { name: "Обсидіанова", emoji: "⚫", crest: "art/league_obsidian.webp?v=20261120b", city: "art/city_obsidian_newyear.webp?v=20261125a", color: "#4b4b4b", need: 3600, winter: true },
     { name: "Діамантова", emoji: "💎", crest: "art/league_diamond.webp?v=20261120b", city: "art/city_diamond_newyear.webp?v=20261125a", color: "#00c2c7", need: 4500, winter: true },
+    { name: "Вогняна", emoji: "🔥", crest: "art/league_flame.webp?v=20261125c", city: "art/city_flame.webp?v=20261125c", color: "#ff5a2b", need: 5000 },
     { name: "Платинова", emoji: "⚪", crest: "art/league_platinum.webp?v=20261125b", city: "art/city_platinum.webp?v=20261125b", color: "#e5e4e2", need: 5500 },
     { name: "Титанова", emoji: "⚙️", crest: "art/league_titanium.webp?v=20261125b", city: "art/city_titanium.webp?v=20261125b", color: "#8f9aa8", need: 7000 },
     { name: "Міфрилова", emoji: "🔹", crest: "art/league_mithril.webp?v=20261125b", city: "art/city_mithril.webp?v=20261125b", color: "#7fe7d4", need: 9000 },
     { name: "Адамантитова", emoji: "🛡️", crest: "art/league_adamantine.webp?v=20261125b", city: "art/city_adamantine.webp?v=20261125b", color: "#2f8f9d", need: 12000 },
-    { name: "Зоряна", emoji: "🌟", crest: "art/league_starlight.webp?v=20261125b", city: "art/city_starlight.webp?v=20261125b", color: "#ffd166", need: 16000 }
+    { name: "Місячна", emoji: "🌙", crest: "art/league_lunar.webp?v=20261125c", city: "art/city_lunar.webp?v=20261125c", color: "#b9c4ff", need: 12500 },
+    { name: "Сонячна", emoji: "☀️", crest: "art/league_solar.webp?v=20261125c", city: "art/city_solar.webp?v=20261125c", color: "#ffb300", need: 19000 },
+    { name: "Космічна", emoji: "🪐", crest: "art/league_cosmic.webp?v=20261125c", city: "art/city_cosmic.webp?v=20261125c", color: "#6f7dff", need: 26000 },
+    { name: "Зоряна", emoji: "🌟", crest: "art/league_starlight.webp?v=20261125b", city: "art/city_starlight.webp?v=20261125b", color: "#ffd166", need: 35000 },
+    { name: "Легендарна", emoji: "👑", crest: "art/league_legendary.webp?v=20261125c", city: "art/city_legendary.webp?v=20261125c", color: "#ffd700", need: 45000 },
+    { name: "Небесна", emoji: "✨", crest: "art/league_celestial.webp?v=20261125c", city: "art/city_celestial.webp?v=20261125c", color: "#7fd3ff", need: 60000 }
   ];
   function leagueOf(p) {
     var li = 0;
@@ -810,7 +817,7 @@
   }
 
   window.Game = {
-    KEY: KEY, MAX_LIVES: MAX_LIVES, SECTIONS: SECTIONS, SEQ: SEQ, LEAGUES: LEAGUES,
+    KEY: KEY, MAX_LIVES: MAX_LIVES, HEAL_COST: HEAL_COST, SECTIONS: SECTIONS, SEQ: SEQ, LEAGUES: LEAGUES,
     todayStr: todayStr, mondayStr: mondayStr, load: load, save: save,
     isDone: isDone, isPerfect: isPerfect, gemsOf: gemsOf, sectionProgress: sectionProgress,
     awardLesson: awardLesson, awardPractice: awardPractice, addGems: addGems,
