@@ -374,7 +374,7 @@
   /* тренування: XP за правильні відповіді, життя не знімаються */
   function awardPractice(correct, mode) {
     var p = load();
-    var xp = correct ? 2 : 0;
+    var xp = correct ? 10 : 0;   // 10 XP за кожну правильну відповідь у тренуванні (Пан Роман, 25.11.2026)
     if (xp) {
       p.xp += xp;
       p.weekXp += xp;

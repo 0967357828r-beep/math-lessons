@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Навчання — Тімолінго</title>
-<link rel="stylesheet" href="game.css?v=20261125d">
+<link rel="stylesheet" href="game.css?v=20261125e">
 <style>
 /* Анімований супутник на карті уроків — повний зріст, прозорий WebP */
 .timo-mascot { position: fixed; left: 272px; bottom: 6px; width: 120px; z-index: 6;
@@ -110,7 +110,7 @@
 <div class="timo-mascot" id="timoMascot" aria-hidden="true">
   <div class="tm-bubble" id="tmBubble">Привіт! Гайда вчитися! 🌿</div>
   <div class="tm-figure">
-    <img src="art/mascot_tymko.webp?v=20261125d" alt="">
+    <img src="art/mascot_tymko.webp?v=20261125e" alt="">
     <img class="tm-lid" id="tmBlink" src="art/mascot_tymko_blink.webp?v=20261120a" alt="">
     <img class="tm-lid" id="tmHappy" src="art/mascot_tymko_happy.webp?v=20261120a" alt="">
     <div class="tm-hit" id="tmHit" title="Тімко"></div>
@@ -119,9 +119,9 @@
 </div>
 
 <div class="toast" id="toast"></div>
-<script src="tasks.js?v=20261125d"></script>
-<script src="avatars.js?v=20261125d"></script>
-<script src="game.js?v=20261125d"></script>
+<script src="tasks.js?v=20261125e"></script>
+<script src="avatars.js?v=20261125e"></script>
+<script src="game.js?v=20261125e"></script>
 <script>
 (function () {
   var p = Game.load();
@@ -327,7 +327,7 @@
     }
     el.innerHTML = '<h3>' + lg.cur.name + ' ліга <a class="more" href="leaderboard.html">переглянути</a></h3>' +
       '<div class="league-row"><div class="league-badge"><img class="league-crest" src="' +
-      lg.cur.crest + '?v=20261125d" alt=""></div><div><b>Ви на ' + lb.rank + ' місці</b>' +
+      lg.cur.crest + '?v=20261125e" alt=""></div><div><b>Ви на ' + lb.rank + ' місці</b>' +
       '<div class="muted">' + (lb.demote ? "Є ризик повернутися в нижчу лігу!"
                                           : lb.promote ? "Ви в зоні підвищення!" : "Тримайте темп!") + '</div></div></div>' +
       '<div style="margin-top:12px" class="bar"><i style="width:' + Math.round(lg.pct * 100) + '%;background:' +
@@ -343,7 +343,7 @@
     var banner = document.getElementById("dailyBanner");
     if (banner) {
       if (!rec.done && task) {
-        banner.innerHTML = '<span><img src="art/icon_star.webp?v=20261125d" class="ico sm" alt=""> <b>Задача дня:</b> ' + Game.esc(task.title) + '</span>' +
+        banner.innerHTML = '<span><img src="art/icon_star.webp?v=20261125e" class="ico sm" alt=""> <b>Задача дня:</b> ' + Game.esc(task.title) + '</span>' +
           '<a class="db-go" href="level.html?id=' + encodeURIComponent(rec.id) + '">Грати · +5 💎</a>';
         banner.style.display = "flex";
       } else {
@@ -353,12 +353,12 @@
     var card = document.getElementById("dailyCard");
     if (card) {
       card.innerHTML = '<h3>Бонуси дня</h3>' +
-        '<div class="quest"><div class="qi"><img src="art/icon_chest.webp?v=20261125d" class="ico" alt=""></div><div class="qm">' +
+        '<div class="quest"><div class="qi"><img src="art/icon_chest.webp?v=20261125e" class="ico" alt=""></div><div class="qm">' +
         '<div class="qt">Скриня дня</div><div class="muted" style="font-size:11px;font-weight:700">' +
         (chest.available ? "Одна на добу — кристали або життя" : "Вже відкрита сьогодні") + '</div></div>' +
         (chest.available ? '<button class="qbtn" id="dailyChest">Відкрити</button>'
                          : '<span class="qr muted">✓</span>') + '</div>' +
-        '<div class="quest"><div class="qi"><img src="art/icon_star.webp?v=20261125d" class="ico" alt=""></div><div class="qm">' +
+        '<div class="quest"><div class="qi"><img src="art/icon_star.webp?v=20261125e" class="ico" alt=""></div><div class="qm">' +
         '<div class="qt">Задача дня</div><div class="muted" style="font-size:11px;font-weight:700">' +
         (rec.done ? "Виконано! +5 💎" : (task ? Game.esc(task.title) : "")) + '</div></div>' +
         (rec.done ? '<span class="qr muted">✓</span>' : '<span class="qr">+5 💎</span>') + '</div>';
@@ -422,7 +422,7 @@
           var reachable = seqIdx === 0 || Game.isDone(p, Game.SEQ[seqIdx - 1].id);
           var cb = document.createElement("button");
           cb.className = "lvl chest" + (reachable ? "" : " locked");
-          cb.innerHTML = '<div class="dot"><img src="art/icon_chest.webp?v=20261125d" class="ico" alt=""></div>' +
+          cb.innerHTML = '<div class="dot"><img src="art/icon_chest.webp?v=20261125e" class="ico" alt=""></div>' +
             '<div class="cap">' + (reachable ? "Скриня!" : "Скриня") + '</div>' +
             '<div class="st">' + (chest.kind === "life" ? "❤️" : "💎") + '</div>';
           if (reachable) {
@@ -434,8 +434,8 @@
           node.className = "lvl " + (done ? "done" : open ? "open" : "locked") + (perfect ? " perfect" : "") + (repeated ? " repeat" : "");
           if (done || open) { node.href = "level.html?id=" + encodeURIComponent(id); }
           node.innerHTML = '<div class="dot">' +
-            (done ? (perfect ? '<img src="art/icon_gem.webp?v=20261125d" class="ico" alt="">' : '<img src="art/icon_check.webp?v=20261125d" class="ico" alt="">')
-                  : open ? "▶️" : '<img src="art/icon_lock.webp?v=20261125d" class="ico" alt="">') + '</div>' +
+            (done ? (perfect ? '<img src="art/icon_gem.webp?v=20261125e" class="ico" alt="">' : '<img src="art/icon_check.webp?v=20261125e" class="ico" alt="">')
+                  : open ? "▶️" : '<img src="art/icon_lock.webp?v=20261125e" class="ico" alt="">') + '</div>' +
             '<div class="cap">' + (repeated ? "🔁 " : "") + Game.esc(task.title) + '</div>' +
             '<div class="st">' + (repeated ? "на завтра" : "") + '</div>';
           step.appendChild(node);
@@ -469,7 +469,7 @@
     var finale = document.createElement("div");
     finale.className = "finale-chest" + (doneAll ? " open" : "");
     finale.innerHTML = '<div class="fc-glow"></div>' +
-      '<img class="fc-img" src="art/final_chest.webp?v=20261125d" alt="Скарбниця курсу">' +
+      '<img class="fc-img" src="art/final_chest.webp?v=20261125e" alt="Скарбниця курсу">' +
       '<div class="fc-cap">Скарбниця курсу</div>' +
       '<div class="fc-sub">' + (doneAll ? "Ти дійшов до кінця! Натисни, щоб відкрити"
                                          : "Пройдено " + doneCount + " із " + Game.SEQ.length + " уроків") + '</div>';
