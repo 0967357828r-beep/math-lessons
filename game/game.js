@@ -673,7 +673,12 @@
     { name: "Аметистова", emoji: "🟣", crest: "art/league_amethyst.webp?v=20261120b", city: "art/city_amethyst.webp?v=20261120b", color: "#a55eea", need: 2100 },
     { name: "Перлинна", emoji: "🦪", crest: "art/league_pearl.webp?v=20261120b", city: "art/city_pearl.webp?v=20261120b", color: "#ff86c8", need: 2800 },
     { name: "Обсидіанова", emoji: "⚫", crest: "art/league_obsidian.webp?v=20261120b", city: "art/city_obsidian_newyear.webp?v=20261125a", color: "#4b4b4b", need: 3600, winter: true },
-    { name: "Діамантова", emoji: "💎", crest: "art/league_diamond.webp?v=20261120b", city: "art/city_diamond_newyear.webp?v=20261125a", color: "#00c2c7", need: 4500, winter: true }
+    { name: "Діамантова", emoji: "💎", crest: "art/league_diamond.webp?v=20261120b", city: "art/city_diamond_newyear.webp?v=20261125a", color: "#00c2c7", need: 4500, winter: true },
+    { name: "Платинова", emoji: "⚪", crest: "art/league_platinum.webp?v=20261125b", city: "art/city_platinum.webp?v=20261125b", color: "#e5e4e2", need: 5500 },
+    { name: "Титанова", emoji: "⚙️", crest: "art/league_titanium.webp?v=20261125b", city: "art/city_titanium.webp?v=20261125b", color: "#8f9aa8", need: 7000 },
+    { name: "Міфрилова", emoji: "🔹", crest: "art/league_mithril.webp?v=20261125b", city: "art/city_mithril.webp?v=20261125b", color: "#7fe7d4", need: 9000 },
+    { name: "Адамантитова", emoji: "🛡️", crest: "art/league_adamantine.webp?v=20261125b", city: "art/city_adamantine.webp?v=20261125b", color: "#2f8f9d", need: 12000 },
+    { name: "Зоряна", emoji: "🌟", crest: "art/league_starlight.webp?v=20261125b", city: "art/city_starlight.webp?v=20261125b", color: "#ffd166", need: 16000 }
   ];
   function leagueOf(p) {
     var li = 0;
@@ -724,9 +729,9 @@
           level: p.xp >= 1000 ? 2 : p.xp >= 500 ? 1 : 0, max: 2, desc: "Зароби 500 балів" });
     add({ id: "gems25", icon: '<img src="art/icon_gem.webp?v=20261120b" class="ico" alt="">', title: "Кристальний", now: Math.min(p.gems, 25), goal: 25,
           level: p.gems >= 50 ? 2 : p.gems >= 25 ? 1 : 0, max: 2, desc: "Збери 25 кристалів" });
-    add({ id: "league", icon: '<img src="art/icon_trophy.webp?v=20261120b" class="ico" alt="">', title: "Чемпіон", now: leagueOf(p).index, goal: 9,
-          level: leagueOf(p).index >= 9 ? 2 : leagueOf(p).index >= 5 ? 1 : 0, max: 2,
-          desc: "Дійди до Діамантової ліги" });
+    add({ id: "league", icon: '<img src="art/icon_trophy.webp?v=20261120b" class="ico" alt="">', title: "Чемпіон", now: leagueOf(p).index, goal: LEAGUES.length - 1,
+          level: leagueOf(p).index >= LEAGUES.length - 1 ? 3 : leagueOf(p).index >= 9 ? 2 : leagueOf(p).index >= 5 ? 1 : 0, max: 3,
+          desc: "Дійди до Зоряної ліги" });
     return a;
   }
 
