@@ -31,6 +31,32 @@
   #playCond { font-size: 22px !important; font-weight: 900 !important; color: #9ccc65 !important;
               padding: 14px 26px !important; border: 2px solid rgba(156,204,101,.55) !important;
               max-width: 400px !important; border-radius: 14px !important; }
+
+  /* ---------- вирази з дужками: порядок дій над знаками + кроки ---------- */
+  .brk-card { background:#fbf7ee; border:3px solid #e5dfd0; border-radius:16px;
+              padding:18px 12px 8px; margin:10px 0 12px; }
+  .brk-expr { display:flex; flex-wrap:wrap; align-items:flex-end; justify-content:center;
+              gap:2px 6px; font-weight:900; font-size:clamp(22px,5vw,34px); color:#3c3c3c; }
+  .brtok { padding:0 2px; }
+  .brop { display:inline-flex; flex-direction:column; align-items:center; gap:2px; }
+  .brop i { font-style:normal; }
+  .brord { width:40px; height:40px; text-align:center; font:900 20px inherit; color:#1cb0f6;
+           border:2px dashed #b9c6d0; border-radius:10px; background:#fff; padding:0; }
+  .brord.ok  { border-style:solid; border-color:#58cc02; color:#3f8000; background:#f0fff4; }
+  .brord.bad { border-style:solid; border-color:#ff4b4b; color:#ea2b2b; background:#fff5f5; }
+  .brk-hintline { text-align:center; font-size:12px; font-weight:800; color:#9a8f80; margin-top:8px; }
+  .brk-lines { display:flex; flex-direction:column; gap:8px; max-width:420px; margin:0 auto; }
+  .brline { display:flex; align-items:center; justify-content:space-between; gap:10px;
+            background:#fff; border:2px solid #e5e5e5; border-radius:12px; padding:8px 12px; }
+  .brlab { font-weight:900; font-size:clamp(18px,4vw,24px); color:#3c3c3c; }
+  .brval { width:84px; height:44px; text-align:center; font:900 22px inherit; color:#1cb0f6;
+           border:2px solid #e5e5e5; border-radius:10px; background:#fafafa; padding:0; }
+  .brval.ok  { border-color:#58cc02; color:#3f8000; background:#f0fff4; }
+  .brval.bad { border-color:#ff4b4b; color:#ea2b2b; background:#fff5f5; }
+  .brk-answer { display:flex; align-items:center; justify-content:center; gap:10px; margin:14px 0 4px; }
+  .brk-answer span { font-weight:900; font-size:clamp(18px,4vw,24px); color:#3c3c3c; }
+  .brk-answer .brval { width:110px; }
+  #brCheck { font-size:18px !important; font-weight:900 !important; }
 </style>
 </head>
 <body>
@@ -52,8 +78,8 @@
 <audio id="ding" preload="auto" src="ding.mp3"></audio>
 <div class="toast" id="toast"></div>
 <script src="train_bank.js?v=20261125k"></script>
-<script src="tasks.js?v=20261126a"></script>
-<script src="game.js?v=20261126a"></script>
+<script src="tasks.js?v=20261126b"></script>
+<script src="game.js?v=20261126b"></script>
 <script>
 (function () {
   Game.renderSidebar("learn");
@@ -398,9 +424,99 @@
   }
 
   function renderMain() {
+    if (task.bracket) { renderBrackets(); return; }
     var info = mainAnswerInfo();
     if (info) { renderMainInput(info); } else { renderMainText(); }
   }
+
+  /* Вираз із дужками: дитина ставить порядок дій над знаками, а тоді вписує
+     кожну дію по черзі й остаточну відповідь. */
+  function renderBrackets() {
+    var b = task.bracket;
+    var stage = document.getElementById("stage");
+    var toks = String(b.expr).match(/\d+|[()]|[+−·:]/g) || [];
+    var opIdx = 0;
+    var exprHTML = toks.map(function (t) {
+      if (/^[+−·:]$/.test(t)) {
+        var i = opIdx++;
+        return '<span class="brop"><input class="brord" data-o="' + i + '" inputmode="numeric" maxlength="1" autocomplete="off" aria-label="порядок дії"><i>' + t + '</i></span>';
+      }
+      return '<span class="brtok">' + Game.esc(t) + '</span>';
+    }).join("");
+    var linesHTML = b.lines.map(function (l, i) {
+      return '<div class="brline"><span class="brlab">' + Game.esc(l.e) + ' =</span>' +
+        '<input class="brval" data-l="' + i + '" inputmode="numeric" maxlength="3" autocomplete="off"></div>';
+    }).join("");
+    stage.innerHTML =
+      '<div class="step-label">Задача</div>' +
+      '<div class="qtitle">Спершу впиши <b>порядок дій</b> над знаками, тоді — кожну дію</div>' +
+      '<div class="brk-card">' +
+        '<div class="brk-expr">' + exprHTML + '</div>' +
+        '<div class="brk-hintline">над знаком — номер дії: 1, 2, 3…</div>' +
+      '</div>' +
+      '<div class="brk-lines">' + linesHTML + '</div>' +
+      '<div class="brk-answer"><span>Відповідь:</span>' +
+        '<input class="brval" id="brAns" inputmode="numeric" maxlength="4" autocomplete="off"></div>' +
+      '<div id="assist" style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:14px"></div>' +
+      '<div style="text-align:center;margin-top:10px"><button type="button" class="btn" id="brCheck">Перевірити</button></div>';
+
+    var hintBtn = makeHintButton();
+    var hintUsed = false;
+    hintBtn.addEventListener("click", function () { hintUsed = true; });
+    document.getElementById("assist").appendChild(hintBtn);
+
+    var check = document.getElementById("brCheck");
+    var ords = Array.prototype.slice.call(stage.querySelectorAll(".brord"));
+    var vals = Array.prototype.slice.call(stage.querySelectorAll(".brval"));
+    /* автоперехід до наступного поля */
+    vals.forEach(function (el, i) {
+      el.addEventListener("input", function () {
+        el.value = el.value.replace(/\D/g, "");
+        if (el.value && vals[i + 1]) { vals[i + 1].focus(); }
+      });
+    });
+    ords.forEach(function (el, i) {
+      el.addEventListener("input", function () {
+        el.value = el.value.replace(/\D/g, "").slice(0, 1);
+        if (el.value && ords[i + 1]) { ords[i + 1].focus(); }
+      });
+    });
+
+    check.addEventListener("click", function () {
+      if (outOfLives || check.disabled) { return; }
+      var bad = 0, empty = 0;
+      ords.forEach(function (el, i) {
+        var v = Number(el.value);
+        el.classList.remove("ok", "bad");
+        if (!el.value) { empty++; return; }
+        if (v === b.order[i]) { el.classList.add("ok"); } else { el.classList.add("bad"); bad++; }
+        if (!el.value) { el.classList.add("bad"); }
+      });
+      b.lines.forEach(function (l, i) {
+        var el = vals[i];
+        el.classList.remove("ok", "bad");
+        if (!el.value) { empty++; return; }
+        if (Number(el.value) === l.a) { el.classList.add("ok"); } else { el.classList.add("bad"); bad++; }
+      });
+      var ansEl = document.getElementById("brAns");
+      ansEl.classList.remove("ok", "bad");
+      var okAns = ansEl.value !== "" && Number(ansEl.value) === Number(b.answer);
+      if (!ansEl.value) { empty++; }
+      ansEl.classList.add(okAns ? "ok" : "bad");
+      if (!okAns) { bad++; }
+
+      if (empty > 0) {
+        msg("Заповни всі віконця: порядок дій, кожну дію і відповідь 🙂", true);
+        return;
+      }
+      if (bad === 0) {
+        winMain(check, hintUsed ? 3 : 5);
+      } else {
+        wrongMain(null);
+      }
+    });
+  }
+
 
   /* задачі з текстовою відповіддлю («на 280 мм», «у 4 рази») — варіанти одразу, як раніше */
   function renderMainText() {
