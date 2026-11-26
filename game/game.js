@@ -68,6 +68,9 @@
 
   /* ---------- розділи: задачі, схожі за типом ---------- */
   var SECTIONS = [
+    { id: "review", emoji: '<img src="art/sec_logic.webp?v=20261120b" class="secico" alt="">', title: "Повторення", color: "#7c6cf5",
+      sub: "Задача, рівняння, периметр, діаграма",
+      ids: ["rev_steps", "rev_equation", "rev_perimeter", "rev_chart"] },
     { id: "add", emoji: '<img src="art/sec_add.webp?v=20261120b" class="secico" alt="">', title: "Додавання й віднімання", color: "#58cc02",
       sub: "Скільки всього, на скільки більше",
       ids: ["am8_pinecones_pc", "am11_pebbles_pb", "am10_wool_wl", "am10_buses_bs2", "am10_school_party_sv", "am7_checkers_ck", "pies_amphibia_video", "am8_cats_kt", "am9_baskets_bk", "am12_classes_cl2", "am12_beach_pb2", "am14_house_hs2", "gis33_1", "ol1_p6_8", "gs1_p22_23", "gs1_p36_4"] },
