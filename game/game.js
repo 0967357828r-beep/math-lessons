@@ -387,7 +387,7 @@
   /* тренування: XP за правильні відповіді, життя не знімаються */
   function awardPractice(correct, mode) {
     var p = load();
-    var xp = correct ? 10 : 0;   // 10 XP за кожну правильну відповідь у тренуванні (Пан Роман, 25.11.2026)
+    var xp = correct ? 15 : 0;   // 15 XP за кожну правильну відповідь у тренуванні (Пан Роман, 27.11.2026; було 10)
     if (xp) {
       p.xp += xp;
       p.weekXp += xp;
@@ -621,8 +621,8 @@
                         units: "#cc7800", time: "#cc3c3c", compound: "#46a302", multi: "#9463c9",
                         logic: "#e6ac00", mul2: "#cc7024" };
 
-  /* тренування: один раунд на режим раз на TRAIN_COOLDOWN (5 хв) */
-  var TRAIN_COOLDOWN = 5 * 60 * 1000;
+  /* тренування: один раунд на режим раз на TRAIN_COOLDOWN (10 хв) */
+  var TRAIN_COOLDOWN = 10 * 60 * 1000;
   function trainReady(mode) {
     var p = load();
     var t = p.trainAt[mode] || 0;

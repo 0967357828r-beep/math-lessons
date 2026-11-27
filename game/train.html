@@ -68,7 +68,7 @@
 
 <div class="toast" id="toast"></div>
 <script src="train_bank.js?v=20261125k"></script>
-<script src="game.js?v=20261126c"></script>
+<script src="game.js?v=20261127a"></script>
 <script>
 (function () {
   Game.renderSidebar("train");
@@ -461,7 +461,7 @@
         (mm > 0 ? mm + ' хв ' : '') + (ss < 10 ? '0' : '') + ss + ' с</div>' +
         (nx ? '<button class="btn" id="nextMode">Далі: ' + nx.label + '</button> ' : '') +
         '<a class="btn ghost" href="index.html" style="margin-left:8px">До карти</a>' +
-        '<div class="hint">Кожен розділ тренування — раз на 5 хвилин</div></div>';
+        '<div class="hint">Кожен розділ тренування — раз на 10 хвилин</div></div>';
       var b = document.getElementById("nextMode");
       if (b) {
         b.addEventListener("click", function () {
