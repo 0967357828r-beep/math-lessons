@@ -121,7 +121,7 @@
 <div class="toast" id="toast"></div>
 <script src="tasks.js?v=20261126c"></script>
 <script src="avatars.js?v=20261125k"></script>
-<script src="game.js?v=20261127a"></script>
+<script src="game.js?v=20261127b"></script>
 <script>
 (function () {
   var p = Game.load();
@@ -137,7 +137,13 @@
      v7: гра будує скрині від розділів, а не від випадкових індексів послідовності.
      Тому кожен новий розділ/партія уроків автоматично отримує свої скрині,
      а вже відкриті лишаються відкритими (нагороду не взяти двічі). */
-  var CHEST_V = 7;
+  var CHEST_V = 8;
+  function chestKind(id) {
+    /* детерміновано від id задачі — склад нагород не стрибає між перерахунками */
+    var h = 0;
+    for (var i = 0; i < id.length; i++) { h = (h * 31 + id.charCodeAt(i)) % 100003; }
+    return (h % 10) < 5 ? "life" : "gems";
+  }
   function chestsOf(p) {
     /* сигнатура: додали уроки чи розділ — розкладка сама перерахується */
     var sig = Game.SEQ.length + ":" + Game.SECTIONS.length;
@@ -147,16 +153,15 @@
     Game.SECTIONS.forEach(function (s, i) { start[i] = acc; acc += s.ids.length; });
 
     /* спадок: що гравець уже відкрив — не відроджуємо */
-    var opened = {}, kindOf = {};
+    var opened = {};
     (Array.isArray(p.chests) ? p.chests : []).forEach(function (c) {
       if (!c) { return; }
       var t = Game.SEQ[c.i];
       if (!t) { return; }
-      kindOf[t.id] = c.kind;
       if (c.opened) { opened[t.id] = 1; }
     });
 
-    var list = [], used = {};
+    var list = [], used = {}, made = 0;
     Game.SECTIONS.forEach(function (sec, si) {
       var n = sec.ids.length;
       if (!n) { return; }
@@ -173,7 +178,9 @@
         if (used[pos]) { continue; }
         used[pos] = 1;
         var id = Game.SEQ[pos].id;
-        list.push({ i: pos, kind: kindOf[id] || (Math.random() < 0.55 ? "life" : "gems"), opened: !!opened[id] });
+        /* кожна друга-п'ята скриня — «зілля подвоєння»: XP ×2 на 10 хв */
+        list.push({ i: pos, kind: (made % 5 === 1) ? "boost" : chestKind(id), opened: !!opened[id] });
+        made++;
       }
     });
 
@@ -281,6 +288,9 @@
     if (chest.kind === "life") {
       if (p.lives < Game.MAX_LIVES) { p.lives += 1; msg = "❤️ У скрині життя! +1"; }
       else { p.gems += 2; msg = "💎 Життя повні — натомість +2 кристали"; }
+    } else if (chest.kind === "boost") {
+      p.boostUntil = Math.max(Date.now(), p.boostUntil || 0) + Game.BOOST_MS;
+      msg = "🧪 Зілля подвоєння! XP ×2 на 10 хвилин";
     } else {
       p.gems += 2; msg = "💎 У скрині +2 кристали";
     }
@@ -424,7 +434,7 @@
           cb.className = "lvl chest" + (reachable ? "" : " locked");
           cb.innerHTML = '<div class="dot"><img src="art/icon_chest.webp?v=20261125k" class="ico" alt=""></div>' +
             '<div class="cap">' + (reachable ? "Скриня!" : "Скриня") + '</div>' +
-            '<div class="st">' + (chest.kind === "life" ? "❤️" : "💎") + '</div>';
+            '<div class="st">' + (chest.kind === "life" ? "❤️" : chest.kind === "boost" ? "🧪" : "💎") + '</div>';
           if (reachable) {
             cb.addEventListener("click", function () { openChest(p, chest); });
           } else { cb.disabled = true; }

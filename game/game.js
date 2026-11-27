@@ -206,6 +206,7 @@
     p.combo = p.combo || 0;
     p.demotedFor = p.demotedFor || null;
     p.trainAt = p.trainAt || {};
+    p.boostUntil = p.boostUntil || 0;
     p.bestCombo = p.bestCombo || 0;
     /* повертаємо комбо x3, якщо воно зникло після оновлення */
     if (p.combo === 0 && p.bestCombo >= 3 && !p.comboRestored) {
@@ -304,7 +305,7 @@
     p.combo = combo;
     p.bestCombo = Math.max(p.bestCombo || 0, combo);
     var comboBonus = (perfect && combo >= 3) ? 2 : 0;   // комбо від 3 уроків поспіль — бонус
-    var xp = (first ? 10 : 4) + comboBonus;             // повторення дає мало
+    var xp = ((first ? 10 : 4) + comboBonus) * boostMul(p);   // повторення дає мало; зілля подвоєння ×2
     p.xp += xp;
     p.weekXp += xp;
     var t = todayStr();
@@ -384,10 +385,21 @@
     return res;
   }
 
+  /* ---------- зілля подвоєння: XP ×2 упродовж BOOST_MS ---------- */
+  var BOOST_MS = 10 * 60 * 1000;
+  function boostLeft() { var p = load(); return Math.max(0, (p.boostUntil || 0) - Date.now()); }
+  function boostMul(p) { return (p.boostUntil || 0) > Date.now() ? 2 : 1; }
+  function addBoost(ms) {
+    var p = load();
+    p.boostUntil = Math.max(Date.now(), p.boostUntil || 0) + (ms || BOOST_MS);
+    save(p);
+    return p.boostUntil - Date.now();
+  }
+
   /* тренування: XP за правильні відповіді, життя не знімаються */
   function awardPractice(correct, mode) {
     var p = load();
-    var xp = correct ? 15 : 0;   // 15 XP за кожну правильну відповідь у тренуванні (Пан Роман, 27.11.2026; було 10)
+    var xp = correct ? 15 * boostMul(p) : 0;   // 15 XP за правильну відповідь; зілля подвоєння ×2
     if (xp) {
       p.xp += xp;
       p.weekXp += xp;
@@ -801,13 +813,24 @@
     host.innerHTML = html;
   }
 
+  function boostText(left) {
+    var s = Math.ceil(left / 1000), mm = Math.floor(s / 60), ss = s % 60;
+    return "🧪 x2 · " + mm + ":" + (ss < 10 ? "0" : "") + ss;
+  }
+  function boostChip() {
+    var left = boostLeft();
+    if (left <= 0) { return ""; }
+    return '<span class="chip boost" style="color:#c792ff"><b id="hud-boost">' + boostText(left) + '</b></span>';
+  }
+
   function hudHTML() {
     var p = load();
     return '<span class="chip lives"><img src="art/icon_heart.webp?v=20261120b" class="ico sm" alt=""> <b id="hud-lives">' + p.lives + '</b></span>' +
            '<span class="chip gems"><img src="art/icon_gem.webp?v=20261120b" class="ico sm" alt=""> <b id="hud-gems">' + p.gems + '</b></span>' +
            '<span class="chip xp"><img src="art/ach_bolt.webp?v=20261120b" class="ico sm" alt=""> <b id="hud-xp">' + p.xp + '</b></span>' +
            '<span class="chip streak"><img src="art/ach_fire.webp?v=20261120b" class="ico sm" alt=""> <b id="hud-streak">' + p.streak + '</b></span>' +
-           '<span class="chip combo"><img src="art/icon_star.webp?v=20261120b" class="ico sm" alt=""> <b id="hud-combo">x' + (p.combo || 0) + '</b></span>';
+           '<span class="chip combo"><img src="art/icon_star.webp?v=20261120b" class="ico sm" alt=""> <b id="hud-combo">x' + (p.combo || 0) + '</b></span>' +
+           boostChip();
   }
   function syncHud() {
     var p = load();
@@ -825,6 +848,15 @@
     clearTimeout(t._h); t._h = setTimeout(function () { t.classList.remove("show"); }, 2300);
   }
 
+  /* тік лічильника зілля подвоєння в HUD */
+  setInterval(function () {
+    var el = document.getElementById("hud-boost");
+    if (!el) { return; }
+    var left = boostLeft();
+    if (left <= 0) { el.parentNode.style.display = "none"; return; }
+    el.textContent = boostText(left);
+  }, 1000);
+
   function esc(s) {
     return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
                     .replace(/"/g, "&quot;");
@@ -837,6 +869,7 @@
     awardLesson: awardLesson, awardPractice: awardPractice, addGems: addGems,
     finishPracticeRound: finishPracticeRound, loseLife: loseLife,
     trainReady: trainReady, trainLeft: trainLeft, trainMark: trainMark,
+    BOOST_MS: BOOST_MS, boostLeft: boostLeft, boostMul: boostMul, addBoost: addBoost,
     quests: quests, claimQuest: claimQuest, leagueOf: leagueOf, weekLeaderboard: weekLeaderboard,
     achievements: achievements, renderSidebar: renderSidebar,
     taskOfDay: taskOfDay, claimTaskOfDay: claimTaskOfDay,
