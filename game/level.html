@@ -40,7 +40,7 @@
   .brtok { padding:0 2px; }
   .brop { display:inline-flex; flex-direction:column; align-items:center; gap:2px; }
   .brop i { font-style:normal; }
-  .brord { width:40px; height:40px; text-align:center; font:900 20px inherit; color:#1cb0f6;
+  .brord { width:40px; height:40px; text-align:center; font-family:inherit; font-size:20px; font-weight:900; color:#1cb0f6;
            border:2px dashed #b9c6d0; border-radius:10px; background:#fff; padding:0; }
   .brord.ok  { border-style:solid; border-color:#58cc02; color:#3f8000; background:#f0fff4; }
   .brord.bad { border-style:solid; border-color:#ff4b4b; color:#ea2b2b; background:#fff5f5; }
@@ -48,10 +48,10 @@
   .brk-lines { display:flex; flex-direction:column; gap:8px; max-width:420px; margin:0 auto; }
   .brline { display:flex; align-items:center; justify-content:center; gap:6px;
             background:#fff; border:2px solid #e5e5e5; border-radius:12px; padding:8px 8px; }
-  .brsel { height:44px; width:58px; text-align:center; text-align-last:center; font:900 22px inherit;
+  .brsel { height:44px; width:58px; text-align:center; text-align-last:center; font-family:inherit; font-size:22px; font-weight:900;
            color:#3c3c3c; border:2px solid #e5e5e5; border-radius:10px; background:#f7f7f7; padding:0 2px; }
   .breq { font-weight:900; font-size:22px; color:#9a9a9a; padding:0 2px; }
-  .brval { width:84px; height:44px; text-align:center; font:900 22px inherit; color:#1cb0f6;
+  .brval { width:84px; height:44px; text-align:center; font-family:inherit; font-size:22px; font-weight:900; color:#1cb0f6;
            border:2px solid #e5e5e5; border-radius:10px; background:#fafafa; padding:0; }
   .brnum { width:66px; }
   .brline .brnum:last-child { width:78px; }
@@ -82,8 +82,8 @@
 <audio id="ding" preload="auto" src="ding.mp3"></audio>
 <div class="toast" id="toast"></div>
 <script src="train_bank.js?v=20261125k"></script>
-<script src="tasks.js?v=20261126c"></script>
-<script src="game.js?v=20261127d"></script>
+<script src="tasks.js?v=20261127f"></script>
+<script src="game.js?v=20261127f"></script>
 <script>
 (function () {
   Game.renderSidebar("learn");

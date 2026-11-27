@@ -73,7 +73,7 @@
       ids: ["rev_steps", "rev_equation", "rev_perimeter", "rev_chart"] },
     { id: "brackets", emoji: '<img src="art/sec_compound.webp?v=20261120b" class="secico" alt="">', title: "Дужки", color: "#1cb0f6",
       sub: "Порядок дій, кроки й відповідь",
-      ids: ["br01", "br02", "br03", "br04", "br05", "br06", "br07", "br08", "br09", "br10", "br11", "br12", "br13", "br14", "br15", "br16", "br17", "br18", "br19", "br20", "br21", "br22", "br23", "br24"] },
+      ids: ["br01", "br02", "br03", "br04", "br05", "br06", "br07", "br08", "br09", "br10", "br11", "br12", "br13", "br14", "br15", "br16", "br17", "br18", "br19", "br20", "br21", "br22", "br23", "br24", "br25", "br26", "br27", "br28", "br29", "br30", "br31", "br32", "br33", "br34", "br35", "br36", "br37", "br38", "br39", "br40", "br41", "br42", "br43", "br44", "br45", "br46", "br47", "br48", "br49", "br50", "br51", "br52", "br53"] },
     { id: "add", emoji: '<img src="art/sec_add.webp?v=20261120b" class="secico" alt="">', title: "Додавання й віднімання", color: "#58cc02",
       sub: "Скільки всього, на скільки більше",
       ids: ["am8_pinecones_pc", "am11_pebbles_pb", "am10_wool_wl", "am10_buses_bs2", "am10_school_party_sv", "am7_checkers_ck", "pies_amphibia_video", "am8_cats_kt", "am9_baskets_bk", "am12_classes_cl2", "am12_beach_pb2", "am14_house_hs2", "gis33_1", "ol1_p6_8", "gs1_p22_23", "gs1_p36_4"] },
