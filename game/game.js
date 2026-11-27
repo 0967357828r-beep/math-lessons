@@ -393,7 +393,7 @@
   }
 
   /* ---------- зілля подвоєння: XP ×2 упродовж BOOST_MS ---------- */
-  var BOOST_MS = 10 * 60 * 1000;
+  var BOOST_MS = 20 * 60 * 1000;
   function boostLeft() { var p = load(); return Math.max(0, (p.boostUntil || 0) - Date.now()); }
   function boostMul(p) { return (p.boostUntil || 0) > Date.now() ? 2 : 1; }
   function addBoost(ms) {

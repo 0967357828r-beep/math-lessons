@@ -121,7 +121,7 @@
 <div class="toast" id="toast"></div>
 <script src="tasks.js?v=20261126c"></script>
 <script src="avatars.js?v=20261125k"></script>
-<script src="game.js?v=20261127c"></script>
+<script src="game.js?v=20261127d"></script>
 <script>
 (function () {
   var p = Game.load();
@@ -178,7 +178,7 @@
         if (used[pos]) { continue; }
         used[pos] = 1;
         var id = Game.SEQ[pos].id;
-        /* кожна друга-п'ята скриня — «зілля подвоєння»: XP ×2 на 10 хв */
+        /* кожна друга-п'ята скриня — «зілля подвоєння»: XP ×2 на 20 хв */
         list.push({ i: pos, kind: (made % 5 === 1) ? "boost" : chestKind(id), opened: !!opened[id] });
         made++;
       }
@@ -290,7 +290,7 @@
       else { p.gems += 2; msg = "💎 Життя повні — натомість +2 кристали"; }
     } else if (chest.kind === "boost") {
       p.boostUntil = Math.max(Date.now(), p.boostUntil || 0) + Game.BOOST_MS;
-      msg = "🧪 Зілля подвоєння! XP ×2 на 10 хвилин";
+      msg = "🧪 Зілля подвоєння! XP ×2 на 20 хвилин";
     } else {
       p.gems += 2; msg = "💎 У скрині +2 кристали";
     }
